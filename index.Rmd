@@ -1,12 +1,13 @@
 ---
-title: "TopPage"
+title: "labseminar"
 date: "`r format(Sys.time(),'%Y/%m/%d')`"
 output:
-  html_document:
-    toc: false
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
 ---
 
-# Contents {.col-md-8}
+# Contents
 
 ## 輪読
 
@@ -24,7 +25,7 @@ output:
 
 * Judea Pearl(2015) [Causal Effect Heterogeneity](https://reijikonishi.github.io/labseminar/paper_review_Pearl_2015.html#/)
 
-## 更新履歴 {.col-md-4 .news}
+# 更新履歴
 
 * 2020/06/13
   * 開設
