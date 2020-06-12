@@ -1,9 +1,11 @@
 name: "サイトタイトル"
 navbar:
-  title: "notebook"
+  title: "labseminar"
   left:
-    - text: "R package"
-      href: R_package.html
+    - text: "論文レビュー"
+      href: paper_review.html
+    - text: "輪読"
+      href: book.html
 output:
   html_document:
     theme: cosmo
