@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Reiji Konishi" />
+
+
+<title>Causal Effect Heterogeneity</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="site_style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">notebook</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="R_package.html">R package</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Causal Effect Heterogeneity</h1>
+<h4 class="author">Reiji Konishi</h4>
+<h4 class="date">2020/06/13</h4>
+
+</div>
+
+
+<div id="消費者の異質性" class="section level1">
+<h1>消費者の異質性</h1>
+<div id="消費者セグメンテーション" class="section level2">
+<h2>消費者セグメンテーション</h2>
+<ul>
+<li>人間の消費行動には当然個体差(異質性)がある
+<ul>
+<li>同じ性別・年齢・大学・研究室・サークルでも、消費行動は違う</li>
+</ul></li>
+<li>市場は、異質な消費者によって構成されていると考えるのが一般的</li>
+</ul>
+<blockquote>
+<p>そういった、異質な消費者の集合体である市場で利益を上げ続けるためには、 消費者の態度、反応性、行動などの特性を的確に把握しなければならない。 (「マーケティングの統計モデル」(朝倉書店, 佐藤, 2015))</p>
+</blockquote>
+<ul>
+<li><p>マーケティングで対象とするグループの大きさに着目すると・・・、</p>
+<ul>
+<li>マスマーケティング</li>
+<li>セグメンテーションマーケティング</li>
+<li>One to Oneマーケティング</li>
+</ul>
+<p>に分類される(程度の問題)</p></li>
+<li><p>別にどれが良いとか悪いとかは無い。目的に応じて使い分け</p>
+<ul>
+<li>でも、たぶん、一番よく利用されるのが、セグメンテーションマーケティング</li>
+<li>マスだと効果的な戦略を行えないし、one to oneだとコスト的に非効率なことが多いから</li>
+</ul></li>
+</ul>
+<blockquote>
+<p>セグメントとセグメンテーション</p>
+<p>1)セグメント 製品やサービスに対する嗜好・興味が似ていたり、 またはマーケティング変数(4Pとか)に対して同質の反応を示したりすることが予想される消費者のグループ</p>
+<p>2)セグメンテーション 市場セグメントを構成する、あるいは発見するプロセス</p>
+</blockquote>
+<ul>
+<li>セグメンテーションにはクラスタ分析などが使われたり…云々…</li>
+</ul>
+</div>
+<div id="消費者行動のモデリング" class="section level2">
+<h2>消費者行動のモデリング</h2>
+<ul>
+<li>一般化線形モデルの世界
+<ul>
+<li>説明変数が同じ値であれば、パラメータの値は全員共通</li>
+<li>交互作用を入れると、群ごとの差はモデルに取り入れられる</li>
+<li>これで分かることもたくさんあるし、十分これで解決できることも多い</li>
+</ul></li>
+<li>混合モデルの世界
+<ul>
+<li>人間が測定できない・測定しなかった個体差をモデルに組み込む</li>
+<li>パラメータに階層構造をもたせたりして…階層ベイズモデルへ…</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="統計的因果推論における異質性" class="section level1">
+<h1>統計的因果推論における異質性</h1>
+<div id="因果効果" class="section level2">
+<h2>因果効果</h2>
+<hr />
+<p><strong><定義></strong></p>
+<p><span class="math inline">\(X\)</span>に<span class="math inline">\(X=x\)</span>という外的操作を行ったときの<span class="math inline">\(Y\)</span>の確率分布を因果効果と呼ぶ。</p>
+<p><span class="math display">\[
+P(y|do(X=x))
+\]</span></p>
+<hr />
+<p>確率分布だから、<span class="math inline">\(Y\)</span>の期待値を以下のように定義することができる</p>
+<hr />
+<p><strong><定義></strong></p>
+<p><span class="math inline">\(X=x\)</span>から<span class="math inline">\(Y\)</span>への平均に対する因果効果</p>
+<p><span class="math display">\[
+E(Y|do(X=x)) = \sum_y y \times P(y|do(X=x))
+\]</span></p>
+<hr />
+<ul>
+<li>平均因果効果(因果リスク差)
+<ul>
+<li>平均に対する因果効果と紛らわしいけど、<span class="math inline">\(X=x\)</span>と<span class="math inline">\(X=x&#39;\)</span>を比較したときの<span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>への平均的因果効果は以下で定義される</li>
+</ul></li>
+</ul>
+<hr />
+<p><strong><定義></strong></p>
+<p><span class="math display">\[
+E(Y|do(X=x)) - E(Y|do(X=x&#39;))
+\]</span></p>
+<hr />
+<ul>
+<li>因果リスク比
+<ul>
+<li>因果リスク差がよく使われるけど、因果リスク比も重要</li>
+</ul></li>
+</ul>
+<hr />
+<p><strong><定義></strong></p>
+<p><span class="math display">\[
+\frac{E(Y|do(X=x))}{E(Y|do(X=x&#39;))}
+\]</span></p>
+<hr />
+<p>通常の「因果効果」と言われる指標は、<strong>平均的な</strong>因果効果を見ている。 つまり、因果関係を図る指標の大きさが人やグループによって異なると、割と問題。</p>
+</div>
+<div id="効果修飾と交互作用効果" class="section level2">
+<h2>効果修飾と交互作用効果</h2>
+<div id="はじめに" class="section level3">
+<h3>はじめに</h3>
+<p>共変量がとる値ごとに因果関係を図る指標の大きさが異なるときに、その共変量による効果の修飾(effect modification)が存在するという</p>
+<div class="figure">
+<img src="pics/def_effect_modifier.png" alt="" />
+<p class="caption">効果修飾</p>
+</div>
+<ul>
+<li>左の集団全体だと、因果リスク差は0なので、因果効果なし</li>
+<li>中央の集団だと、因果リスク差は正なので、因果効果あり</li>
+<li>右の集団だと、因果リスク差は負なので、負の因果効果あり</li>
+<li>集団ごとに因果効果が異なる = <span class="math inline">\(V\)</span>による効果修飾の存在
+<ul>
+<li>効果修飾の原因が<span class="math inline">\(V\)</span>だとは言っていない</li>
+</ul></li>
+</ul>
+<p>これって、交互作用効果と何が違うんだっけ？？</p>
+</div>
+<div id="概念の違い" class="section level3">
+<h3>概念の違い</h3>
+<hr />
+<p><strong><定義>交互作用効果</strong></p>
+<p><span class="math inline">\(X\)</span>がとりうる値を<span class="math inline">\(x_1, x_0\)</span>とし、<span class="math inline">\(Z\)</span>がとりうる値を<span class="math inline">\(z_1, z_0\)</span>とするとき、 <span class="math inline">\(X\)</span>と<span class="math inline">\(Z\)</span>の<span class="math inline">\(Y\)</span>への交互作用効果を、以下のように定義する</p>
+<p><span class="math display">\[
+\begin{align*}
+\{ P(y|do(x_1), &amp;do(z_1)) - P(y|do(x_0), do(z_1)) \} \\
+ &amp; - \{ P(Y|do(x_1), do(z_0))  - P(y|do(x_0), do(z_0)) \} 
+\end{align*}
+\]</span></p>
+<p>これが0でないとき、<span class="math inline">\(X\)</span>と<span class="math inline">\(Z\)</span>の<span class="math inline">\(Y\)</span>への交互作用効果が存在する。</p>
+<hr />
+<hr />
+<p><strong><定義>効果修飾</strong></p>
+<p>「共変量がとる値ごとに」因果効果の大きさが異なる</p>
+<p><span class="math display">\[
+\begin{align*}
+\{ P(y|do(x_1), &amp; z_1) - P(y|do(x_0), z_1) \} \\
+ &amp; - \{ P(Y|do(x_1), z_0)  - P(y|do(x_0), z_0) \} 
+\end{align*}
+\]</span></p>
+<hr />
+<ul>
+<li>交互作用効果は、<strong>2つの処理変数に対する外的操作</strong>によって定義される</li>
+<li>効果修飾は、<strong>単一の変数に対する外的操作</strong>によって定義される</li>
+</ul>
+</div>
+<div id="効果修飾と交互作用効果が同じになるとき" class="section level3">
+<h3>効果修飾と交互作用効果が同じになるとき</h3>
+<p>因果ダイアグラム<span class="math inline">\(G\)</span>より<span class="math inline">\(X\)</span>に向かう矢線をすべて取り除いたグラフにおいて、 空集合が<span class="math inline">\((Z,Y)\)</span>についてバックドア基準を満たすならば、以下を得ることができる。</p>
+<p><span class="math display">\[
+P(y | do(x), do(z)) = P(y|do(x), z)
+\]</span></p>
+<p>このとき、交互作用効果の有無と効果の修飾の有無は一致する。</p>
+<blockquote>
+<p>do計算法の規則2(外的操作・観測変数の交換)</p>
+<blockquote>
+<p><span class="math inline">\(X\)</span>に向かう矢線と、<span class="math inline">\(Z\)</span>から出る矢線をすべて取り除いたグラフにおいて、<span class="math inline">\(X \cup W\)</span>が<span class="math inline">\(Z\)</span>と<span class="math inline">\(Y\)</span>を有向分離するならば、以下が成り立つ <span class="math display">\[
+P(y|do(x), do(z) ,w) = P(do(x), z, w)
+\]</span></p>
+</blockquote>
+</blockquote>
+</div>
+<div id="効果修飾と交互作用効果の関係" class="section level3">
+<h3>効果修飾と交互作用効果の関係</h3>
+<ul>
+<li><span class="math inline">\(X\)</span>と<span class="math inline">\(Z\)</span>の交互作用効果は存在しないが、<span class="math inline">\(Z\)</span>による効果修飾は存在するケースもあり得る</li>
+<li>その逆もあり得る</li>
+<li>因果リスク差を用いるか、因果リスク比を用いるかでも、効果修飾の存在有無は変わる</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="detecting-latent-heterogeneity" class="section level1">
+<h1>Detecting Latent Heterogeneity</h1>
+<p><a href="https://pdfs.semanticscholar.org/cafb/9017ecb7980ebc14b56646395c9ca757f362.pdf">Judea Pearl(2015) Detecting Latent Heterogeneity, <em>Sociological Methods and Research</em></a></p>
+<div id="概要" class="section level2">
+<h2>概要</h2>
+<ul>
+<li>研究対象の母集団が
+<ul>
+<li>複数の小集団(subpopulation)から構成されているかどうかや、</li>
+<li>小集団ごとに処置に対する効果が異なるかどうか</li>
+</ul></li>
+<li>について、観察データだけから判断したい。
+<ul>
+<li>小集団について分析者は知らない状況でも。</li>
+</ul></li>
+<li>以下の3つの場合、その判断ができることを示した。
+<ul>
+<li>2値しか取らない処置によるRCT</li>
+<li>共変量を調整することによって因果効果が識別可能なモデル</li>
+<li>中間変数によって因果効果が識別なモデル</li>
+</ul></li>
+</ul>
+</div>
+<div id="つのタイプの交絡" class="section level2">
+<h2>2つのタイプの交絡</h2>
+<p>ここでの記法</p>
+<ul>
+<li>潜在結果変数
+<ul>
+<li><span class="math inline">\(X=1\)</span>に割り当てられたときの結果変数を<span class="math inline">\(Y_1\)</span></li>
+<li><span class="math inline">\(X=0\)</span>に割り当てられたときの結果変数を<span class="math inline">\(Y_0\)</span></li>
+</ul></li>
+<li>因果効果
+<ul>
+<li>平均因果効果
+<ul>
+<li><span class="math inline">\(E(Y_1 - Y_0) = E(Y_1)-E(Y_0)=\mathit{ATE}\)</span></li>
+</ul></li>
+<li>処置群における平均因果効果
+<ul>
+<li><span class="math inline">\(E(Y_1 - Y_0|X=1) = E(Y_1|X=1)-E(Y_0|X=1)=\mathit{ETT}\)</span></li>
+</ul></li>
+<li>非処置群における平均因果効果
+<ul>
+<li><span class="math inline">\(E(Y_1 - Y_0|X=0) = E(Y_1|X=0)-E(Y_0|X=0)=\mathit{ETU}\)</span></li>
+</ul></li>
+</ul></li>
+</ul>
+<p><span class="math inline">\(\mathit{ATE}\)</span>は、以下のようにいくつかの要素に分解できる</p>
+<p><span class="math display">\[
+\begin{align}
+\mathit{ATE} &amp;= E(Y_1-Y_0) \\
+             &amp;= E(Y|X=1)-E(Y|X=0) \\
+             &amp; \qquad - \left[ E(Y_0 |X=1) - E(Y_0|X=0) \right] \\
+             &amp; \qquad - (\mathit{ETT} - \mathit{ETU})\cdot P(X=0)
+\end{align}
+\]</span></p>
+<hr />
+<p><strong><証明></strong></p>
+<p><span class="math display">\[
+\begin{align}
+\mathit{ATE} &amp;= E(Y_1-Y_0) \\
+             &amp;= E(Y_1) - E(Y_0) \\
+             \\
+             &amp;\text{条件付き期待値に変更} \\
+             &amp;= \left[ E(Y_1 |X=1)\cdot P(X=1) + E(Y_1 |X=0)\cdot P(X=0) \right] \\
+             &amp; \qquad - \left[ E(Y_0 |X=1)\cdot P(X=1) + E(Y_0 |X=0)\cdot P(X=0) \right] \\
+             \\
+             &amp;P(X=1)\text{を} \{ 1-P(X=0) \} \text{に変更}\\
+             &amp;= \left[ E(Y_1 |X=1)\cdot \{1-P(X=0)\} + E(Y_1 |X=0)\cdot P(X=0) \right] \\
+             &amp; \qquad - \left[ E(Y_0 |X=1)\cdot \{1-P(X=0)\} + E(Y_0 |X=0)\cdot P(X=0) \right] \\
+             \\
+             &amp;\text{展開}\\
+             &amp;= E(Y_1|X=1) - E(Y_1|X=1)\cdot P(X=0) + E(Y_1|X=0)\cdot P(X=0) \\
+             &amp; \qquad - E(Y_0|X=1) + E(Y_0|X=1) \cdot P(X=0) - E(Y_0|X=0) \cdot P(X=0) \\
+             \\
+             &amp;\text{整理} \\
+             &amp;= E(Y_1|X=1) - E(Y_0 |X=1) \\
+             &amp; \qquad -\left[ \{ E(Y_1|X=1) - E(Y_0|X=1) \} - \{ E(Y_1|X=0) - E(Y_0|X=0) \} \right] \cdot P(X=0) \\
+             \\
+             &amp;E(Y_0|X=0)\text{を足して引く}\\
+             &amp;= E(Y|X=1)-E(Y|X=0) \\
+             &amp; \qquad - \left[ E(Y_0 |X=1) - E(Y_0|X=0) \right] \\
+             &amp; \qquad - (\mathit{ETT} - \mathit{ETU})\cdot P(X=0)
+\end{align}
+\]</span></p>
+<hr />
+<ul>
+<li><span class="math inline">\(E(Y_0 |X=1) - E(Y_0|X=0)\)</span>
+<ul>
+<li>処置群と非処置群のno-treatmentのときの結果変数の差</li>
+<li>baseline bias</li>
+</ul></li>
+<li><span class="math inline">\(\mathit{ETT} - \mathit{ETU}\)</span>
+<ul>
+<li>処置群と非処置群の効果の違い</li>
+<li>Variable-Effect bias</li>
+</ul></li>
+</ul>
+</div>
+<div id="variable-effect-biasから固定効果を分離させる" class="section level2">
+<h2>Variable-Effect biasから固定効果を分離させる</h2>
+<p>例えば、以下のグラフのモデルを考える</p>
+<div class="figure">
+<img src="pics/interaction.png" alt="" />
+<p class="caption">交互作用</p>
+</div>
+<p>構造方程式で書くと</p>
+<p><span class="math display">\[
+\begin{align}
+y &amp;= \beta x + \gamma z + \delta xz + \epsilon_1 \\
+x &amp;= \alpha z + \epsilon_2 \\
+z &amp;= \epsilon_3
+\end{align}
+\]</span></p>
+<p>このとき、variable-effect biasは、以下のように求まる</p>
+<p><span class="math display">\[
+\textit{ETT} - \textit{ETU} = \alpha \delta (x&#39; - x)^2
+\]</span></p>
+<p>また、baseline biasは、以下のようになる</p>
+<p><span class="math display">\[
+E(Y_x | X= X&#39;) -E(Y_x | X=x) = \gamma \alpha (x&#39; - x)
+\]</span></p>
+<p>証明は論文のappendix Bにあるので、省略。</p>
+<p>baseline biasは交互作用関係なく生生じるのに対して、variable-effect biasは交互作用<span class="math inline">\(\delta\)</span>によって生じている。</p>
+<p>ただし、<span class="math inline">\(\alpha =0\)</span>のとき、<span class="math inline">\(\textit{ETT} - \textit{ETU}\)</span>は消えるので、 <span class="math inline">\(Z\)</span>が<span class="math inline">\(X\)</span>の割当てに作用しない限り、<span class="math inline">\(\textit{ETT} - \textit{ETU}\)</span>の差だけでは、異質性は明らかにならない</p>
+</div>
+<div id="異質性を特定する3つの方法" class="section level2">
+<h2>異質性を特定する3つの方法</h2>
+<p>前のパートまでで、異質性の元となる共変量を特定しなくても、ETTとETUを識別できれば、異質性の兆候を発見できることがわかった。</p>
+<p>また、グラフィカルモデルを使えば、ETTとETUを識別するためにはどの変数を測定し、どのようにETTとETUを推定すればよいかが分かる。</p>
+<div id="rctによって異質性を特定する" class="section level3">
+<h3>RCTによって異質性を特定する</h3>
+<p><span class="math inline">\(E(Y_0)\)</span>と<span class="math inline">\(E(Y_1)\)</span>が識別できているのであれば、ETTとETUも識別可能</p>
+<p><span class="math display">\[
+\begin{align}
+\text{ここで} p=P(X=1) \text{とする}\\
+\\
+\textit{ETT}  &amp;= E(Y_1 - Y_0 |X=1) \\
+              &amp;= E(Y_1 |X=1) - E(Y_0|X=1) \\
+              \\
+              &amp;\text{consistensyの仮定より} \\
+              &amp;= E(Y|X=1) - E(Y_0|X=1) \\
+              \\
+              &amp; \text{以下の関係式を用いる} E(Y_0) = E(Y_0|X=1)p + E(Y_0|X=0)(1-p) \\
+              &amp;=E(Y|X=1) - \{ E(Y_0) - E(Y|X=0)(1-p) \} / p \\
+\\              
+\text{同様に} \\
+\\
+\textit{ETU} &amp;= E(Y_1 - Y_0 |X=0) \\
+             &amp;= \{ E(Y_1) - E(Y|X=1)p \}(1-p) - E(Y|X=0)
+\end{align}
+\]</span></p>
+<p>上記を使うと、<span class="math inline">\(\textit{ETT} - \textit{ETU}\)</span>が計算できる。</p>
+<p>RCTをやってるのに、処置群と非処置群で因果効果が違うのだったら、少なくとも何かしら因果効果の違うグループがあることが分かる</p>
+</div>
+<div id="調整によって異質性を特定する" class="section level3">
+<h3>調整によって異質性を特定する</h3>
+<p>バックドア基準を満たす共変量集合<span class="math inline">\(Z\)</span>が観測できているのであれば、<span class="math inline">\(\textit{ETT}\)</span>と<span class="math inline">\(\textit{ETU}\)</span>は識別可能である。</p>
+<p>以下では、<span class="math inline">\(Z\)</span>がバックドア基準を満たすと仮定する。</p>
+<ul>
+<li><p>バックドア調整による因果効果 <span class="math display">\[
+E(Y_x) = \sum_z E(Y|x,z)P(z)
+\]</span></p></li>
+<li><p>バックドア調整によるETT <span class="math display">\[
+E(Y_x|x&#39;) = \sum_z E(Y|x,z)P(z|x&#39;)
+\]</span></p></li>
+</ul>
+<p>上記を用いると、<span class="math inline">\(\textit{ETT}\)</span>と<span class="math inline">\(\textit{ETU}\)</span>の差は、以下のように求められる</p>
+<p><span class="math display">\[
+\begin{align}
+\textit{ETT} - \textit{ETU} &amp;= E(Y_{x&#39;} - Y_x | X = x&#39;) - E(Y_{x&#39;} - Y_x | X = x) \\
+\\
+                            &amp;= \sum_z \left[ E(Y|X=x&#39;,z) - E(Y|X=x,z) \right] \left[ P(z|X=x&#39;)-P(z|X=x) \right]
+\end{align}
+\]</span></p>
+<hr />
+<p><strong><証明></strong></p>
+<p>ここからちゃんと追えてないので、次回…</p>
+<hr />
+</div>
+<div id="フロントドア基準による異質性の特定" class="section level3">
+<h3>フロントドア基準による異質性の特定</h3>
+<p>フロントドア基準を使うと、これまでと同じように、ETTとETUを計算できるから…、 未観測共通原因があっても異質性を特定できる場合がある</p>
+</div>
+</div>
+</div>
+<div id="今後" class="section level1">
+<h1>今後</h1>
+<p>異質性のあるデータで因果探索をする論文があったので、これを読む(割と長いけど…)</p>
+<p><a href="https://arxiv.org/abs/1903.01672">Biwei Huang(2020) Causal Discovery from Heterogeneous/Nonstationary Data</a></p>
+<p>ざっと見た感じ、制約ベースのアルゴリズム</p>
+</div>
+<div id="参考文献" class="section level1">
+<h1>参考文献</h1>
+<p>黒木学(2017) 構造的因果モデルの基礎, 共立出版 Judea Pearl(2015) Detecting Latent Heterogeneity, <em>Sociological Methods and Research</em></p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
