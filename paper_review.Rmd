@@ -1,8 +1,0 @@
----
-title: "論文レビュー"
-date: "`r format(Sys.time(),'%Y/%m/%d')`"
----
-
-# 2020/06/09 
-
-* Judea Pearl(2015) [Causal Effect Heterogeneity](https://reijikonishi.github.io/labseminar/paper_review_Pearl_2015.html#/)

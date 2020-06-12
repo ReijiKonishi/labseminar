@@ -2,10 +2,7 @@ name: "サイトタイトル"
 navbar:
   title: "labseminar"
   left:
-    - text: "論文レビュー"
-      href: paper_review.html
-    - text: "輪読"
-      href: book.html
+  
 output:
   html_document:
     theme: cosmo
