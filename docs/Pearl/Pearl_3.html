@@ -1,0 +1,1923 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="小西伶児" />
+  <title>統計的因果推論 輪読</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="Pearl_3_files/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    background-color: #ffffff;
+    color: #a0a0a0;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #a0a0a0;  padding-left: 4px; }
+div.sourceCode
+  { color: #1f1c1b; background-color: #ffffff; }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span. { color: #1f1c1b; } /* Normal */
+code span.al { color: #bf0303; background-color: #f7e6e6; font-weight: bold; } /* Alert */
+code span.an { color: #ca60ca; } /* Annotation */
+code span.at { color: #0057ae; } /* Attribute */
+code span.bn { color: #b08000; } /* BaseN */
+code span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
+code span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #924c9d; } /* Char */
+code span.cn { color: #aa5500; } /* Constant */
+code span.co { color: #898887; } /* Comment */
+code span.cv { color: #0095ff; } /* CommentVar */
+code span.do { color: #607880; } /* Documentation */
+code span.dt { color: #0057ae; } /* DataType */
+code span.dv { color: #b08000; } /* DecVal */
+code span.er { color: #bf0303; text-decoration: underline; } /* Error */
+code span.ex { color: #0095ff; font-weight: bold; } /* Extension */
+code span.fl { color: #b08000; } /* Float */
+code span.fu { color: #644a9b; } /* Function */
+code span.im { color: #ff5500; } /* Import */
+code span.in { color: #b08000; } /* Information */
+code span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
+code span.op { color: #1f1c1b; } /* Operator */
+code span.ot { color: #006e28; } /* Other */
+code span.pp { color: #006e28; } /* Preprocessor */
+code span.re { color: #0057ae; background-color: #e0e9f8; } /* RegionMarker */
+code span.sc { color: #3daee9; } /* SpecialChar */
+code span.ss { color: #ff5500; } /* SpecialString */
+code span.st { color: #bf0303; } /* String */
+code span.va { color: #0057ae; } /* Variable */
+code span.vs { color: #bf0303; } /* VerbatimString */
+code span.wa { color: #bf0303; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="Pearl_3_files/reveal.js-3.3.0.1/css/theme/sky.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="for_revealjs.css"/>
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}  
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+    
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+    <link href="Pearl_3_files/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+    <link href="Pearl_3_files/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+    <script src="Pearl_3_files/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+    <script src="Pearl_3_files/viz-0.3/viz.js"></script>
+    <link href="Pearl_3_files/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
+    <script src="Pearl_3_files/grViz-binding-1.0.1/grViz.js"></script>
+    <script src="Pearl_3_files/jquery-1.12.4/jquery.min.js"></script>
+    <link href="Pearl_3_files/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+    <script src="Pearl_3_files/datatables-binding-0.11/datatables.js"></script>
+    <link href="Pearl_3_files/dt-core-1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="Pearl_3_files/dt-core-1.10.19/css/jquery.dataTables.extra.css" rel="stylesheet" />
+    <script src="Pearl_3_files/dt-core-1.10.19/js/jquery.dataTables.min.js"></script>
+    <link href="Pearl_3_files/dt-ext-fixedcolumns-1.10.19/css/fixedColumns.dataTables.min.css" rel="stylesheet" />
+    <script src="Pearl_3_files/dt-ext-fixedcolumns-1.10.19/js/dataTables.fixedColumns.min.js"></script>
+    <link href="Pearl_3_files/crosstalk-1.0.0/css/crosstalk.css" rel="stylesheet" />
+    <script src="Pearl_3_files/crosstalk-1.0.0/js/crosstalk.min.js"></script>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">統計的因果推論 輪読</h1>
+  <h1 class="subtitle">第3章 因果ダイアグラムと因果効果の識別可能条件</h1>
+    <h2 class="author">小西伶児</h2>
+    <h3 class="date">2020/01/15</h3>
+</section>
+
+<section><section id="first_of_all" class="title-slide slide level1"><h1>3.1. はじめに</h1></section><section id="puropose" class="slide level2">
+<h2>本章の目的</h2>
+<ul>
+<li>対象とする研究領域において適切であると考えられる定性的な因果的仮定とデータを組み合わせることによって、因果関係を学習する方法論</li>
+<li>因果グラフを既知と仮定した上で、因果関係の大きさを評価</li>
+<li>データ生成過程が潜在変数を含まないDAGで記述されている場合、非実験データから介入効果を推定できる
+<ul>
+<li>非観測変数が存在する場合、識別問題が生じる</li>
+<li>因果ダイアグラムによる簡便な検証法を用いると、因果効果が識別可能か判断できる</li>
+</ul></li>
+<li>do計算法の導入
+<ul>
+<li>介入変数と観測変数からなる数式表現を、他の数式表現へ変換する規則</li>
+</ul></li>
+<li>構造方程式と回帰方程式の区別</li>
+<li>直接効果と間接効果の定義</li>
+<li>構造方程式とNeyman-Rubinモデルとの関係</li>
+</ul>
+</section><section id="example1" class="slide level2">
+<h2>扱う問題の例</h2>
+<ul>
+<li>土壌燻蒸剤(<span class="math inline">\(X\)</span>)により、線虫の個体数(<span class="math inline">\(Z\)</span>)を制御することによって、オート麦の収穫量(<span class="math inline">\(Y\)</span>)を増やすという実験</li>
+<li>土壌燻蒸剤は、収穫量に対しても直接的な影響を与えている</li>
+<li>土壌燻蒸剤は、昨年の線虫の個体数(<span class="math inline">\(Z_0\)</span>)に基づいて決定している</li>
+<li><span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>への因果効果を知りたい</li>
+</ul>
+</section><section id="example1_graph" class="slide level2">
+<h2>扱う問題の因果グラフ</h2>
+<div class="column1">
+<ul>
+<li>Z_0：昨年の線虫数</li>
+<li>Z_1：燻蒸前の線虫数</li>
+<li>Z_2：燻蒸後の線虫数</li>
+<li>Z_3：季節終わりの線虫数</li>
+<li>B：線虫の捕食者の個体数</li>
+<li>○は非観測変数、□は観測変数</li>
+</ul>
+</div>
+<div class="column2">
+<div id="htmlwidget-5e2b7838a69d5fd5ebe8" style="width:300px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-5e2b7838a69d5fd5ebe8">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\"]\n  \n  node[shape = box]\n  X\n  Y\n  Z_0[shape = oval]\n  Z_1\n  Z_2\n  Z_3\n  B[shape = oval]\n  \n  edge[]\n  X -> Z_2\n  X -> Y\n  Z_2 -> Y\n  Z_2 -> Z_3\n  Z_3 -> Y\n  Z_1 -> Z_2\n  Z_0 -> X[style = dashed]\n  Z_0 -> Z_1[style = dashed]\n  Z_0 -> B[style = dashed]\n  B -> Z_3[style = dashed]\n  \n  {rank = same; Z_1; B}\n  {rank = same; X; Z_2; Z_3}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+</section><section id="本章でわかること" class="slide level2">
+<h2>本章でわかること</h2>
+<ul>
+<li>(先の例の続き)</li>
+<li><span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>への因果効果は、<span class="math inline">\(Z, Z_1, Z_2, Z_3, Y\)</span>の観測分布に基づいて一致推定できる</li>
+<li>(すべての変数が離散型確率変数である場合には)<span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>への因果効果は、以下で与えられる</li>
+</ul>
+<p><span class="math display">\[
+P(y|do(x)) = \sum_{z_1} \sum_{z_2} \sum_{z_3} P(y | z_2, z_3, x) P(z_2 | z_1, x) \sum_{x&#39;} P(z_3 | z_1, z_2, x&#39;)P(z_1, x&#39;)
+\]</span></p>
+<ul>
+<li><span class="math inline">\(Y\)</span>と<span class="math inline">\(Z_3\)</span>が交絡している場合には、<span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>への因果効果の一致推定量を得ることはできないが、<span class="math inline">\(Z_2\)</span>と<span class="math inline">\(Y\)</span>が交絡していても<span class="math inline">\(P(y|do(x))\)</span>の一致推定量を得ることができる</li>
+</ul>
+</section></section>
+<section><section id="マルコフモデルに基づく介入" class="title-slide slide level1"><h1>3.2. マルコフ・モデルに基づく介入</h1></section><section id="intervention_graph" class="slide level2">
+<h2>介入を表現するモデルとしてのグラフ</h2>
+<ul>
+<li>DAGについての因果的理解
+<ul>
+<li>対応する変数間の<strong>自律的な関数関係</strong>によって表現できる</li>
+<li>自律的：ある方程式に影響を与える外部変化が起こっても、他の方程式は変わらない</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[
+x_i = f_i(pa_i, \epsilon_i), \quad i = 1,\ldots ,n
+\]</span></p>
+<ul>
+<li><span class="math inline">\(pa_i\)</span>は<span class="math inline">\(X_i\)</span>の親集合</li>
+<li>誤差変数<span class="math inline">\(\epsilon_i\)</span>は解析に取り入れられない背景因子
+<ul>
+<li>誤差変数は互いに独立であり、任意の分布に従う</li>
+<li>背景因子が複数の変数に影響を与える(誤差変数同士が独立でない)場合は、その背景因子は非観測変数として解析に取り入れられる</li>
+</ul></li>
+<li><p>より一般的な因果モデルは、 <span class="math display">\[
+x_i = f_i(pa_i, u_i), \quad i = 1,\ldots ,n
+\]</span></p>
+<ul>
+<li>背景因子の集合 <span class="math inline">\(U\)</span>：すべての非観測因子(<span class="math inline">\(\epsilon_i\)</span>を含む)の集合</li>
+<li>上記の関数関係の集合と背景因子の同時分布<span class="math inline">\(P(u)\)</span>で表現できる</li>
+</ul></li>
+</ul>
+</section><section id="例因果グラフの関数表現" class="slide level2">
+<h2>例：因果グラフの関数表現</h2>
+<div class="column1">
+<p><span class="math display">\[
+Z_0 = f_0(\epsilon_0) \\
+Z_1 = f_1(Z_0, \epsilon_1) \\
+Z_2 = f_2(X, Z_1, \epsilon_2) \\
+Z_3 = f_3(B, Z_2, \epsilon_3) \\
+B = f_B(Z_0, \epsilon_B) \\
+X = f_X(Z_0, \epsilon_X) \\
+Y = f_Y(X, Z_2, Z_3, \epsilon_Y)
+\]</span></p>
+</div>
+<div class="column2">
+<div id="htmlwidget-e83ce2d8d7f00b8fe11f" style="width:300px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e83ce2d8d7f00b8fe11f">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\"]\n  \n  node[shape = box]\n  X\n  Y\n  Z_0[shape = oval]\n  Z_1\n  Z_2\n  Z_3\n  B[shape = oval]\n  \n  edge[]\n  X -> Z_2\n  X -> Y\n  Z_2 -> Y\n  Z_2 -> Z_3\n  Z_3 -> Y\n  Z_1 -> Z_2\n  Z_0 -> X[style = dashed]\n  Z_0 -> Z_1[style = dashed]\n  Z_0 -> B[style = dashed]\n  B -> Z_3[style = dashed]\n  \n  {rank = same; Z_1; B}\n  {rank = same; X; Z_2; Z_3}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+</section><section id="原子的な介入" class="slide level2">
+<h2>原子的な介入</h2>
+<ul>
+<li>ある関数集合に対して、それ以外の関数集合を変えること無く、その関数集合全体を変化させる行為を介入とみなす</li>
+<li>介入によって変化したメカニズムの特徴を識別できれば、介入効果を予測することができる</li>
+<li>最も簡単な介入方式は、<strong>単一変数<span class="math inline">\(X_i\)</span>を定数<span class="math inline">\(x\)</span>に固定する</strong>というもの
+<ul>
+<li>これを<strong>原始的な介入</strong>という</li>
+<li><span class="math inline">\(do(x_i)\)</span>または<span class="math inline">\(do(X_i = x_i)\)</span>と表現する</li>
+</ul></li>
+</ul>
+<div class="column1">
+<ul>
+<li>介入<strong>前</strong>の関数集合 <span class="math display">\[
+Z_0 = f_0(\epsilon_0) \\
+Z_1 = f_1(Z_0, \epsilon_1) \\
+Z_2 = f_2(X, Z_1, \epsilon_2) \\
+Z_3 = f_3(B, Z_2, \epsilon_3) \\
+B = f_B(Z_0, \epsilon_B) \\
+X = f_X(Z_0, \epsilon_X) \\
+Y = f_Y(X, Z_2, Z_3, \epsilon_Y)
+\]</span></li>
+</ul>
+</div>
+<div class="column1">
+<ul>
+<li><span class="math inline">\(X\)</span>に介入<strong>後</strong>の関数集合 <span class="math display">\[
+Z_0 = f_0(\epsilon_0) \\
+Z_1 = f_1(Z_0, \epsilon_1) \\
+Z_2 = f_2(\color{red}{x_i}, Z_1, \epsilon_2) \\
+Z_3 = f_3(B, Z_2, \epsilon_3) \\
+B = f_B(Z_0, \epsilon_B) \\
+X = \color{red}{x_i} \\
+Y = f_Y(\color{red}{x_i}, Z_2, Z_3, \epsilon_Y)
+\]</span></li>
+</ul>
+</div>
+</section><section id="def_causal_effect" class="slide level2">
+<h2>因果効果(定義3.2.1)</h2>
+<div class="box">
+<p>互いに排反な集合<span class="math inline">\(X\)</span>と<span class="math inline">\(Y\)</span>に対して、<span class="math inline">\(X\)</span>の実現値<span class="math inline">\(x\)</span>に対して、 <span class="math inline">\(x_i = f_i(pa_i , u_i)\)</span>のモデルから<span class="math inline">\(X\)</span>の要素を左辺にもつ方程式をすべて取り除き、 それ以外の方程式の右辺にある<span class="math inline">\(X\)</span>を<span class="math inline">\(x\)</span>と置き換えることによって得られる<span class="math inline">\(Y=y\)</span>の確率を<span class="math inline">\(P(y|do(x))\)</span>と記す。 この時、<span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>の確率分布の空間への関数<span class="math inline">\(P(y|do(x))\)</span>を<span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>への因果効果という</p>
+</div>
+<ul>
+<li>介入によって得られる方程式集合に対するグラフは、<span class="math inline">\(X\)</span>へ向かう矢線すべてをグラフから取り除いた部分グラフ</li>
+<li>期待値の差<span class="math inline">\(E(Y|do(x&#39;)) - E(Y|do(x&#39;&#39;))\)</span>を因果効果の定義とすることもある
+<ul>
+<li>この差は<span class="math inline">\(P(y|do(x))\)</span>から計算することができる</li>
+</ul></li>
+</ul>
+</section><section id="intervention_variable" class="slide level2">
+<h2>変数としての介入</h2>
+<ul>
+<li>介入を行う力をモデルに含まれる変数とみなすことで、介入を説明することもできる</li>
+<li>関数<span class="math inline">\(f_i\)</span>を変数<span class="math inline">\(F_i\)</span>の実現値として表現する</li>
+</ul>
+<p><span class="math display">\[
+x_i = I(pa_i, f_i, u_i) \\
+I は、b = f_i であるときに \quad I(a,b,c)=f_i(a,c) \quad を満たす関数
+\]</span></p>
+<ul>
+<li>例えば、原子的介入の場合、<span class="math inline">\(F_i\)</span>は<span class="math inline">\({do(x_i&#39;, idle)}\)</span>のどちらかの値をとる変数として、グラフに<span class="math inline">\(F_i \rightarrow X_i\)</span>を加える
+<ul>
+<li><span class="math inline">\(x_i&#39;\)</span>は<span class="math inline">\(X_i\)</span>が取りうる値、“idle”は介入を行わないことを表す</li>
+</ul></li>
+<li>このように、介入を変数として表現することで、親変数に依存した介入などの複雑な介入でも表現できるようになる</li>
+</ul>
+</section><section id="intervention_variable_graph" class="slide level2">
+<h2>変数としての介入のグラフ</h2>
+<p><img data-src="pics/Fig3_1.png" alt="図3_1" /></p>
+<p><span class="math display">\[
+P(x_i|pa_i&#39;) = \begin{cases}
+P(x_i|pa_i) \quad F_i = {\rm idle} のとき \\
+0 \quad F_i = do(x_i&#39;)かつx_i \neq x_i&#39; のとき \\
+1 \quad F_i = do(x_i&#39;)かつx_i = x_i&#39; のとき
+\end{cases}
+\]</span></p>
+<p><span class="math display">\[
+P(x_1,\ldots ,x_n|do(x_i&#39;)) = P&#39;(x_1,\ldots ,x_n|F_i = do(x_i&#39;))
+\]</span></p>
+</section><section id="intervention_calc" class="slide level2">
+<h2>介入効果の計算</h2>
+<ul>
+<li>原子的介入は、因果効果の定義より、以下のように表現できる</li>
+</ul>
+<p><span class="math display">\[
+P(x_1,\ldots ,x_n|do(x_i&#39;)) = \begin{cases}
+\Pi_{j \neq i} P(x_j|pa_j) \quad x_i = x_i&#39; のとき \\
+0 \quad x_i \neq x_i&#39; のとき
+\end{cases}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(pa_i\)</span>は<span class="math inline">\(X_i\)</span>に影響を与えないので、切断的因数分解より<span class="math inline">\(P(x_i|pa_i)\)</span>の項が取り除かれている
+<ul>
+<li><span class="math inline">\(P(x_i|pa_i)=1\)</span>である</li>
+</ul></li>
+<li><span class="math inline">\(P(x_i|pa_i)\)</span>を式から取り除くことと、<span class="math inline">\(PA_i\)</span>から<span class="math inline">\(X_i\)</span>の矢線をグラフから取り除く(それ以外は変えない)ことは同値である
+<ul>
+<li>次のページの例で説明</li>
+</ul></li>
+</ul>
+</section><section id="interventin_graph_equ" class="slide level2">
+<h2>例：介入のグラフと式の関係</h2>
+<div class="column1">
+<p><div id="htmlwidget-9047567a1e3ec1a1571b" style="width:300px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-9047567a1e3ec1a1571b">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\"]\n  \n  node[shape = box]\n  X\n  Y\n  Z_0[shape = oval]\n  Z_1\n  Z_2\n  Z_3\n  B[shape = oval]\n  \n  edge[]\n  X -> Z_2\n  X -> Y\n  Z_2 -> Y\n  Z_2 -> Z_3\n  Z_3 -> Y\n  Z_1 -> Z_2\n  Z_0 -> X[style = dashed]\n  Z_0 -> Z_1[style = dashed]\n  Z_0 -> B[style = dashed]\n  B -> Z_3[style = dashed]\n  \n  {rank = same; Z_1; B}\n  {rank = same; X; Z_2; Z_3}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script><div id="htmlwidget-332e144f3896254a32fb" style="width:300px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-332e144f3896254a32fb">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\"]\n  \n  node[shape = box]\n  X\n  Y\n  Z_0[shape = oval]\n  Z_1\n  Z_2\n  Z_3\n  B[shape = oval]\n  \n  edge[]\n  X -> Z_2\n  X -> Y\n  Z_2 -> Y\n  Z_2 -> Z_3\n  Z_3 -> Y\n  Z_1 -> Z_2\n#  Z_0 -> X[style = dashed]\n  Z_0 -> Z_1[style = dashed]\n  Z_0 -> B[style = dashed]\n  B -> Z_3[style = dashed]\n  \n  {rank = same; Z_1; B}\n  {rank = same; X; Z_2; Z_3}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script></p>
+</div>
+<div class="column2">
+<ul>
+<li><p>介入前 <span class="math display">\[
+\begin{align*}
+P&amp;(z_0,z_1,b,z_2,z_3,x,y) \\
+= &amp;P(z_0)P(z_1|z_0)P(b|z_0) \\
+&amp;P(x|z_0)P(z_2|x,z_1) \\
+&amp;P(z_3|z_2,b)P(y|x,z_2,z_3)
+\end{align*}
+\]</span></p></li>
+<li>介入後 <span class="math display">\[
+\begin{align*}
+P&amp;(z_0,z_1,b,z_2,z_3,x&#39;,y) \\
+= &amp;P(z_0)P(z_1|z_0)P(b|z_0) \\
+&amp;P(z_2|x&#39;,z_1) \\
+&amp;P(z_3|z_2,b)P(y|x&#39;,z_2,z_3)
+\end{align*}
+\]</span></li>
+</ul>
+</div>
+</section><section id="intervention_before_after" class="slide level2">
+<h2>介入前の分布との関係</h2>
+<ul>
+<li>介入前後の分布の関係性は、前々頁の式を<span class="math inline">\(P(x_i&#39;|pa_i)\)</span>で割ることで表現できる</li>
+</ul>
+<p><span class="math display">\[
+\begin{align*}
+P(x_1,\ldots ,x_n|do(x_i&#39;)) &amp;= \frac{\Pi_{j \neq i} P(x_j|pa_j) P(x_i&#39;|pa_i)}{P(x_i&#39;|pa_i)} \\
+&amp;= \frac{\Pi_{j} P(x_j|pa_j)}{P(x_i&#39;|pa_i)} \\
+&amp;= \frac{P(x_1,\ldots ,x_n)}{P(x_i&#39;|pa_i)}
+\end{align*}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(x_i \neq x_i&#39;\)</span>のときは省略</li>
+<li>状態を表す抽象的な点<span class="math inline">\((x_1,\ldots ,x_n)\)</span>全体に重みを割り当てたものを同時分布としてみなすと、 上記の式から、介入<span class="math inline">\(do(x_i&#39;)\)</span>は重みの分布を変化させるものと解釈できる</li>
+</ul>
+</section><section id="intervention_expansion" class="slide level2">
+<h2>さらなる式展開</h2>
+<p><span class="math display">\[
+\begin{align*}
+P(x_1,\ldots ,x_n|do(x_i&#39;)) &amp;= \frac{P(x_1,\ldots ,x_n)}{P(x_i&#39;|pa_i)} \\
+&amp;= \frac{P(x_1,\ldots ,x_n | x_i&#39;, pa_i)P(x_i&#39;, pa_i)}{P(x_i&#39;|pa_i)} \\
+&amp;= \frac{P(x_1,\ldots ,x_n | x_i&#39;, pa_i)P(x_i&#39;| pa_i)P(pa_i)}{P(x_i&#39;|pa_i)} \\
+&amp;= P(x_1,\ldots ,x_n | x_i&#39;, pa_i)P(pa_i)
+\end{align*}
+\]</span></p>
+</section><section id="theo_dir_cause" class="slide level2">
+<h2>直接原因による調整(定理3.2.2)</h2>
+<div class="box">
+<p><span class="math inline">\(PA_i\)</span>を<span class="math inline">\(X_i\)</span>の直接原因からなる集合、<span class="math inline">\(Y\)</span>を<span class="math inline">\({X_i \cup PA_i}\)</span>と互いに排反な任意の変数集合とする。</p>
+<p>介入<span class="math inline">\(do(x_i&#39;)\)</span>の<span class="math inline">\(Y\)</span>への効果は以下で与えられる。</p>
+<p><span class="math display">\[
+P(y|do(x_i&#39;)) = \sum_{pa_i} P(y|x_i&#39;, pa_i)P(pa_i)
+\]</span></p>
+</div>
+<ul>
+<li><span class="math inline">\(P(y|x_i&#39;, pa_i)\)</span>と<span class="math inline">\(P(pa_i)\)</span>は介入前の確率を表す</li>
+<li><span class="math inline">\(X\)</span>の親を<span class="math inline">\(P(y|x_i&#39;)\)</span>に条件づけた上で、<span class="math inline">\(PA_i=pa_i\)</span>の事前確率で重みを付けて、その結果を平均化している</li>
+<li>この条件づけ&amp;平均化で定義された操作を<strong><span class="math inline">\(PA_i\)</span>による調整</strong>と呼ぶ</li>
+</ul>
+</section><section id="intervention_example1" class="slide level2">
+<h2>ここまでの具体例</h2>
+<div class="column3">
+<div id="htmlwidget-449be8a3ff2df87f205b" style="width:300px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-449be8a3ff2df87f205b">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\"]\n  \n  node[shape = box]\n  X\n  Y\n  Z_1\n  Z_2\n\n  edge[]\n  Z_1 -> Z_2\n  Z_1 -> Y\n  Z_2 -> X\n  Z_2 -> Y\n  X -> Y\n\n  {rank = same; X; Y}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+<div class="column4">
+<ul>
+<li>介入前</li>
+</ul>
+<p><span class="math display">\[
+\begin{align}
+&amp;P(x,y,z_1,z_2) \\
+&amp;= P(y|x,Z_1,Z_2)P(x|z_2)P(z_2|z_1)P(z_1)
+\end{align}
+\]</span></p>
+<ul>
+<li>介入後</li>
+</ul>
+<p><span class="math display">\[
+\begin{align}
+&amp;P(y,z_1,z_2|do(x&#39;)) \\
+&amp;= P(y|x&#39;,Z_1,Z_2)P(z_2|z_1)P(z_1)
+\end{align}
+\]</span></p>
+</div>
+<ul>
+<li><span class="math inline">\(Y\)</span>の周辺分布を考えることで以下が得られる(因果効果)</li>
+</ul>
+<p><span class="math display">\[
+P(y|do(x&#39;)) = \sum_{z_1, z_2}P(y|x&#39;, z_1, z_2)P(z_1, z_2)
+\]</span></p>
+</section><section id="intervention_example2" class="slide level2">
+<h2>ここまでの具体例(つづき)</h2>
+<ul>
+<li><span class="math inline">\(Z_2\)</span>が<span class="math inline">\(X\)</span>と<span class="math inline">\(Z_1\)</span>を有向分離している
+<ul>
+<li><span class="math inline">\(Z_1 \mathop{\,\perp\!\!\!\!\!\perp\,}X | Z_2\)</span> が成立</li>
+<li>つまり、<span class="math inline">\(P(z_1|z_2) = p(z_1|x, z_2)\)</span>が成立</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[
+\begin{align}
+P(y|do(x&#39;)) &amp;= \sum_{z_1, z_2}P(y|x&#39;, z_1, z_2)P(z_1, z_2) \\
+&amp;= \sum_{z_1,z_2}P(y|x&#39;, z_1,z_2)P(z_1|z_2)P(z_2) \\
+&amp;= \sum_{z_1,z_2}P(y|x&#39;, z_1,z_2)P(z_1|x&#39;, z_2)P(z_2) \\
+&amp;= \sum_{z_2}P(y|x&#39;, z_2)P(z_2)
+\end{align}
+\]</span></p>
+<ul>
+<li>因果効果は<span class="math inline">\(Z_1\)</span>の値に依存しないことがわかる</li>
+<li>この因果グラフにおいて、<span class="math inline">\(Z_1\)</span>が観測できなくても、<span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>の因果効果を評価できる</li>
+</ul>
+</section><section id="average_causal_effect" class="slide level2">
+<h2>平均因果効果の導出</h2>
+<ul>
+<li>定理3.2.2より、<span class="math inline">\(Y\)</span>の期待値を定義することができる</li>
+<li>以下をを<span class="math inline">\(X_i=x_i&#39;\)</span>から<span class="math inline">\(Y\)</span>への<strong>平均に対する因果効果</strong>と呼ぶ</li>
+</ul>
+<p><span class="math display">\[
+E(Y|do(x_i&#39;)) = \sum_y y \times P(y|do(x_i&#39;))
+\]</span></p>
+<ul>
+<li>以下を、<span class="math inline">\(x_i&#39;\)</span>と<span class="math inline">\(x_i&#39;&#39;\)</span>を比較したときの<span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>への<strong>平均的因果効果</strong>と呼ぶ
+<ul>
+<li>平均に対する因果効果との区別が紛らわしいので、<strong>因果リスク差</strong>と呼ぶこともある</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[
+E(Y|do(x_i&#39;)) - E(Y|do(x_i&#39;&#39;))
+\]</span></p>
+</section><section id="causal_effect_2" class="slide level2">
+<h2>因果効果の定義の拡張</h2>
+<ul>
+<li>前頁の定理は、原子的介入のみに対するもの</li>
+<li>介入は原子的なものに限定されない
+<ul>
+<li>共変量の値に応じて処理変数の値を変える<strong>条件付き介入</strong></li>
+<li>確率的に処理変数の値を変化させる<strong>確率的介入</strong></li>
+</ul></li>
+<li>複数の変数に同時に介入した場合
+<ul>
+<li><span class="math inline">\(S\)</span>を変数の部分集合であるとし、同時介入<span class="math inline">\(do(S=s)\)</span>を行う</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[
+P(x_1,\ldots ,x_n|do(s)) = \prod_{i|X_i \notin S} P(x_i|pa_i)
+\]</span></p>
+<ul>
+<li>新しい変数集合<span class="math inline">\(PA_i^*\)</span>を含む方程式で<span class="math inline">\(X_i\)</span>の値を決定するメカニズムを置き換える場合
+<ul>
+<li>修正された同時分布は<span class="math inline">\(P(x_i|pa_i)\)</span>を<span class="math inline">\(P^*(x_i|pa_i^*)\)</span>で置き換えることで得られる</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[
+P^*(x_1,\ldots ,x_n) = \frac{P(x_1,\ldots ,x_n)P^*(x_i|pa_i)}{P(x_i|pa_i)}
+\]</span></p>
+</section><section id="eg_1" class="slide level2">
+<h2>例:工程管理</h2>
+<ul>
+<li>変数<span class="math inline">\(Z_k\)</span>を時間<span class="math inline">\(t_k\)</span>における生産工程の状態</li>
+<li><span class="math inline">\(X_k\)</span>を工程を制御するために使われる変数の集合</li>
+<li><span class="math inline">\(X_k\)</span>を決定する計画<span class="math inline">\(S\)</span>
+<ul>
+<li><span class="math inline">\(X_k\)</span>を観測する前に変数<span class="math inline">\((X_{k-1}, Z_k, Z_{k-1})\)</span>をモニタリング</li>
+<li>確率<span class="math inline">\(P(x_k|x_{k-1}, z_k, z_{k-1})\)</span>に基づいて<span class="math inline">\(X_k = x_k\)</span>を選択する</li>
+</ul></li>
+<li>結果変数は<span class="math inline">\(Y\)</span></li>
+<li><span class="math inline">\(X_k\)</span>を新しい条件付き確率<span class="math inline">\(P^*(x_k|x_{k-1}, z_k, z_{k-1})\)</span>に従って選択するという新しい計画<span class="math inline">\(S^*\)</span>に変えることの評価を行う</li>
+</ul>
+<p><img data-src="pics/Fig3_3.png" alt="図3.3" /></p>
+</section><section id="eg_2" class="slide level2">
+<h2>例:工程管理(つづき1)</h2>
+<p><span class="math display">\[
+\begin{align}
+P^*(y) &amp;= \sum_{z_1,\ldots ,z_n,x_1,\ldots ,x_n} P^*(y,z_1,\ldots ,z_n,x_1,\ldots ,x_n) \\
+&amp;= \sum_{z_1,\ldots ,z_n,x_1,\ldots ,x_n} P(y|z_1,\ldots ,z_n,x_1,\ldots ,x_n) \\
+&amp;\times \prod_{k=1}^n P(z_k|z_{k-1},x_{k-1}) \prod_{k-1}^n P^*(x_k|x_{k-1},z_k,z_{k-1})
+\end{align}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(S^*\)</span>が決定論的でかつ時間に不変である場合、<span class="math inline">\(X_k\)</span>は以下の関数で規定される</li>
+</ul>
+<p><span class="math display">\[
+x_k = g_k(x_{k-1},z_k,z_{k-1})
+\]</span></p>
+<p>よって、この時、<span class="math inline">\(x_1,\ldots ,x_n\)</span>について和をとることで、以下を得る</p>
+<p><span class="math display">\[
+\begin{align}
+P^*(y) &amp;= \sum_{z_1,\ldots ,z_n} P(y|z_1,\ldots ,z_n,g_1,\ldots ,g_n) \\
+&amp;\times \prod_{k=1}^n P(z_k|z_{k-1},g_{k-1})
+\end{align}
+\]</span></p>
+</section><section id="eg_3" class="slide level2">
+<h2>例:工程管理(つづき2)</h2>
+<ul>
+<li>特別な場合として、計画<span class="math inline">\(S^*\)</span>が原子的介入<span class="math inline">\(do(x_k)\)</span>から構成されるときには、関数<span class="math inline">\(g_k\)</span>は定数<span class="math inline">\(x_k\)</span>となり、以下を得る</li>
+</ul>
+<p><span class="math display">\[
+\begin{align}
+P^*(y) &amp;= P(y|do(x_1),\ldots ,do(x_n)) \\
+&amp;= \sum_{z_1,\ldots ,z_n} P(y|z_1,\ldots ,z_n,x_1,\ldots ,x_n) \\
+&amp;\times \prod_{k=1}^n P(z_k|z_{k-1},x_{k-1})
+\end{align}
+\]</span></p>
+</section><section id="conc_1" class="slide level2">
+<h2>ここまでのまとめ</h2>
+<ul>
+<li>介入が行われる変数の直接原因（親）がすべて観測された因果ダイアグラムが与えられたとき、 介入前の分布から介入後の分布を推測できる
+<ul>
+<li>つまり、このような仮定の元では、非実験的な観察データから切断分解公式を用いて介入効果を推定できる</li>
+</ul></li>
+<li>以降では、<span class="math inline">\(PA_i\)</span>のいくつかの要素が観測できない状況の下での因果効果について扱う
+<ul>
+<li><span class="math inline">\(P(x_j|do(x_i&#39;))\)</span>がどのような場合に推定可能であるかを判断するためのグラフィカル検証法を紹介する</li>
+</ul></li>
+<li>まずは、受動的観測データから推定される因果的量<span class="math inline">\(Q\)</span>の意味について定義する
+<ul>
+<li><strong>識別可能性</strong>という用語で記述される問題を形式的に定義する</li>
+</ul></li>
+</ul>
+</section></section>
+<section><section id="因果的量の識別可能性" class="title-slide slide level1"><h1>3.2.4. 因果的量の識別可能性</h1></section><section id="causal_quantity" class="slide level2">
+<h2>因果的量</h2>
+<ul>
+<li>因果的量は、因果モデル<span class="math inline">\(M\)</span>によって定義されるものである
+<ul>
+<li>観測変数集合<span class="math inline">\(V\)</span>の同時分布<span class="math inline">\(P_M(v)\)</span>で定義されるものではない</li>
+</ul></li>
+<li>非実験データは<span class="math inline">\(P_M(v)\)</span>のみに関する情報を与えるだけで、興味のある量をデータから識別できない危険性がある
+<ul>
+<li>なぜなら、複数の因果モデルにより同じ分布が生成できるため</li>
+</ul></li>
+<li>識別可能条件は、因果モデル<span class="math inline">\(M\)</span>を十分に説明できない場合、ある仮定を加える事によって、 欠測した情報を埋めることができることを保証するもの</li>
+</ul>
+</section><section id="Identifiability" class="slide level2">
+<h2>識別可能性(定義3.2.3)</h2>
+<div class="box">
+<p><span class="math inline">\(Q(M)\)</span>をモデル<span class="math inline">\(M\)</span>において計算可能な量とする。</p>
+<p>モデルのクラス<span class="math inline">\(M\)</span>から得られる任意のモデル<span class="math inline">\(M_1\)</span>と<span class="math inline">\(M_2\)</span>に対して、<span class="math inline">\(P_{M_1}(v)=P_{M_2}(v)\)</span>が成り立つ場合はいつでも <span class="math inline">\(Q(M_1)=Q(M_2)\)</span>であるとき、モデル<span class="math inline">\(M\)</span>において<span class="math inline">\(Q\)</span>は識別可能であるという。</p>
+<p>観測変数が限定され、<span class="math inline">\(P_M(v)\)</span>の部分集合<span class="math inline">\(F_M\)</span>が推定可能である場合、<span class="math inline">\(F_{M_1}=F_{M_2}\)</span>が成り立つときはいつでも <span class="math inline">\(Q(M_1)=Q(M_2)\)</span>であるとき、<span class="math inline">\(Q\)</span>は<span class="math inline">\(F_M\)</span>から識別可能であると定義する。</p>
+</div>
+<ul>
+<li>識別可能であれば、<span class="math inline">\(M\)</span>について詳しく規定しなくても、<span class="math inline">\(P(v)\)</span>に関する標本に基づいて<span class="math inline">\(Q\)</span>の一致推定を得られる</li>
+</ul>
+</section><section id="identifiability_causal_effect" class="slide level2">
+<h2>因果効果の識別可能性(定義3.2.4)</h2>
+<ul>
+<li>因果効果の定義より、モデル<span class="math inline">\(M\)</span>から因果効果は計算できる
+<ul>
+<li>しかし、<span class="math inline">\(M\)</span>が十分に規定されない場合でも、<span class="math inline">\(M\)</span>に関連するグラフ<span class="math inline">\(G\)</span>によって記述された特徴を用いて因果効果を計算しなければならないこともある</li>
+</ul></li>
+</ul>
+<ol type="1">
+<li>同じ親子関係（すなわち、同じ因果グラフ<span class="math inline">\(G\)</span>）をもつ</li>
+<li>観測変数は正値分布に従う（すなわち、<span class="math inline">\(P(v)&gt;0\)</span>）</li>
+</ol>
+<p>という特徴を持つモデル<span class="math inline">\(M\)</span>のクラスについて次の定義を与える</p>
+<div class="box">
+<p>量<span class="math inline">\(P(y|do(x))\)</span>が正値である任意の観測変数の分布から一意に計算できる、すなわち、 <span class="math inline">\(P_{M_1}(v)=P_{M_2}(v)&gt;0\)</span>かつ<span class="math inline">\(G(M_1)=G(M_2)=G\)</span>なる全てのモデルの組<span class="math inline">\(M_1\)</span>と<span class="math inline">\(M_2\)</span>に対して、 <span class="math inline">\(P_{M_1}(y|do(x))=P_{M_2}(y|do(x))\)</span>が成り立つとき、<span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>への因果効果はグラフ<span class="math inline">\(G\)</span>において識別可能であるという。</p>
+</div>
+</section><section id="identifiability_causal_effect_2" class="slide level2">
+<h2>余談:因果効果の識別可能性</h2>
+<ul>
+<li>識別可能性の定義、わかりづらくないですか？</li>
+</ul>
+<p><span class="math display">\[
+P_{M_1}(v)=P_{M_2}(v)\\
+\Rightarrow Q(M_1)=Q(M_2) \\
+\]</span></p>
+<p>とか</p>
+<p><span class="math display">\[
+P_{M_1}(v)=P_{M_2}(v)&gt;0 \text{　かつ、} G(M_1)=G(M_2)=G \\
+\Rightarrow P_{M_1}(y|do(x))=P_{M_2}(y|do(x))
+\]</span></p>
+<ul>
+<li>対偶で考えよう</li>
+</ul>
+<p><span class="math display">\[
+P_{M_1}(y|do(x)) \neq P_{M_2}(y|do(x)) \\
+\Rightarrow 
+P_{M_1}(v) \neq P_{M_2}(v)&gt;0 \text{　または、} G(M_1) \neq G,  G(M_2) \neq G
+\]</span></p>
+<ul>
+<li>「因果効果が異なるならば、観測変数の分布が異なる or グラフが異なる」が成立すると識別可能である</li>
+<li>「因果効果が異なるのに、観測変数の分布が同じ and グラフが同じ」だと、識別可能でない</li>
+</ul>
+</section><section id="identifiability_causal_effect_3" class="slide level2">
+<h2>因果効果の識別可能性(つづき)</h2>
+<p><span class="math inline">\(P(y|do(x))\)</span>が識別可能である時</p>
+<ol type="1">
+<li>観察データから得られた同時確率分布<span class="math inline">\(P(v)\)</span></li>
+<li>どのような変数が各変数の値を決定するのに関与しているかを規定している因果グラフ<span class="math inline">\(G\)</span></li>
+</ol>
+<p>という2つの情報源に基づいて、介入<span class="math inline">\(do(x)\)</span>から<span class="math inline">\(Y\)</span>への効果を推測できることが保証される</p>
+<ul>
+<li>制約は、データ生成過程<span class="math inline">\(M_1\)</span>と<span class="math inline">\(M_2\)</span>がともに同じ因果グラフ<span class="math inline">\(G\)</span>と同時分布<span class="math inline">\(P(v)\)</span>を持つことのみ
+<ul>
+<li><span class="math inline">\(M_1\)</span>と<span class="math inline">\(M_2\)</span>が異なっていてもOK、詳細に記述されてなくてもOK</li>
+</ul></li>
+<li>識別不能で有ることを証明するためには、観測変数についてまったく同じ分布を引き起こすが、 異なる因果効果を持つ構造方程式が2つ存在することを示せば良い</li>
+</ul>
+<!-- ## 例:因果効果の識別可能性 {#identifiability_eg} -->
+<!-- * $X$と$\epsilon_y$は独立に平均0、分散1とする正規分布に従う -->
+<!-- * 以下の2つのデータ生成過程$M_1$と$M_2$を考える -->
+<!-- $$ -->
+<!-- M_1 : Y = X + \epsilon_y \\ -->
+<!-- M_2 : Y = X - \epsilon_y -->
+<!-- $$ -->
+<!-- * 因果グラフは2つとも $X \rightarrow Y$ である -->
+<!-- * 同時分布は、平均0、$Y$の分散$\sigma_{yy} =2$、$X$と$Y$の共分散$\sigma_{xy}=1$の正規分布になる -->
+<!-- * つまり$M_1$と$M_2$は同じクラスに属する -->
+</section><section id="identifiability_malkov_model" class="slide level2">
+<h2>マルコフモデルの因果効果の識別可能性</h2>
+<div class="box">
+<p>定理3.2.5</p>
+<p>変数の部分集合<span class="math inline">\(V\)</span>が観測されているマルコフモデルに対応する因果グラフ<span class="math inline">\(G\)</span>において、 <span class="math inline">\({X \cup Y \cup PA_X} \subseteq V\)</span>、すなわち、<span class="math inline">\(X,Y\)</span>と<span class="math inline">\(X\)</span>のすべての親集合が観測されている時、 因果効果<span class="math inline">\(P(y|do(x))\)</span>は識別可能であり、<span class="math inline">\(PA_X\)</span>で調整することによって、計算することができる</p>
+</div>
+<ul>
+<li>マルコフモデルとは、背景因子が独立で、グラフ<span class="math inline">\(G\)</span>が非巡回的であるモデルのこと</li>
+<li>今後は、セミマルコフモデルにおける識別問題に注目する</li>
+</ul>
+</section></section>
+<section><section id="control_confounding" class="title-slide slide level1"><h1>3.3. 交絡因子の制御</h1></section><section id="first_of_all_confounding" class="slide level2">
+<h2>はじめに</h2>
+<ul>
+<li>ある要因<span class="math inline">\(X\)</span>からもう1つの要因<span class="math inline">\(Y\)</span>への効果を評価する場合、交絡因子と呼ばれる要因<span class="math inline">\(Z\)</span>の変動を調整すべきかという問題が生じる
+<ul>
+<li>調整とは、母集団を<span class="math inline">\(Z\)</span>について等質なグループに分割し、各グループの因果効果を評価&amp;平均化すること</li>
+<li>シンプソンのパラドックス(詳細は省略)</li>
+</ul></li>
+<li>Rosenbaum and Rubinは、潜在反応モデルを用いて、<strong>無視可能性</strong>を提案
+<ul>
+<li><span class="math inline">\(Z\)</span>を与えた時、<span class="math inline">\(X\)</span>が<span class="math inline">\(x\)</span>という値をとった場合に<span class="math inline">\(Y\)</span>が取り得る値が<span class="math inline">\(X\)</span>と独立であるならば、<span class="math inline">\(Z\)</span>は許容可能な共変量集合である</li>
+<li>どの変数で調整すればよいか？までは分からない</li>
+</ul></li>
+<li>本節では、因果グラフを使って、調整問題に対する一般的かつ形式的解を与える
+<ul>
+<li>バックドア基準・フロントドア規準</li>
+</ul></li>
+</ul>
+</section><section id="no_confouding" class="slide level2">
+<h2>非交絡(定義)</h2>
+<div class="box">
+<p>排反な2つの集合<span class="math inline">\(X,Y \subseteq V\)</span>に対して、</p>
+<p><span class="math display">\[
+P(y|do(X = x)) = P(y|X = x)
+\]</span></p>
+<p>が成り立つ時、<span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>への因果効果は交絡しないという</p>
+</div>
+<ul>
+<li><span class="math inline">\(P(y|do(X = x)) \neq P(y|X = x)\)</span> であるとき、<span class="math inline">\(X\)</span>と<span class="math inline">\(Y\)</span>は交絡するということになる</li>
+<li>因果効果を識別可能とする十分な共変量集合を<strong>十分な交絡因子</strong>と呼ぶ</li>
+<li>十分な交絡因子に属する共変量を<strong>交絡因子</strong>と呼ぶ</li>
+<li>共変量集合<span class="math inline">\(\bf{Z}\)</span>を導入して、<span class="math inline">\({\bf Z} = {\bf z}\)</span>を与えた時に<span class="math inline">\(X\)</span>と<span class="math inline">\(Y\)</span>は交絡しないということもある</li>
+</ul>
+<p><span class="math display">\[
+P(y|do(X = x, {\bf z} )) = P(y|X = x, {\bf z})
+\]</span></p>
+</section><section id="backdoor" class="slide level2">
+<h2>バックドア基準(定義3.3.1)</h2>
+<ul>
+<li>交絡する場合、<span class="math inline">\(X\)</span>の親変数で調整すれば、<span class="math inline">\(Y\)</span>への因果効果を識別できることを前節で理解した</li>
+<li>しかしグラフには変数の親が含まれていたとしても、測定されないために観測値が手に入らないということもある
+<ul>
+<li>この場合に因果効果を識別するには、別の変数の集合について調整する必要がある</li>
+</ul></li>
+<li>バックドア基準を因果グラフに適用することで、 変数集合<span class="math inline">\(Z \subseteq V\)</span>が<span class="math inline">\(P(y|do(x))\)</span>を識別するのに十分であるかどうかを検証することができる</li>
+</ul>
+</section><section id="def_backdoor" class="slide level2">
+<h2>バックドア(定義3.3.1)</h2>
+<div class="box">
+<p>DAG <span class="math inline">\(G\)</span>において、次の条件を満たす変数集合<span class="math inline">\(Z\)</span>は順序対<span class="math inline">\(X_i, X_j\)</span>についてバックドア基準を満たすという</p>
+<ol type="1">
+<li><span class="math inline">\(Z\)</span>の任意の要素は<span class="math inline">\(X_i\)</span>の子孫ではない</li>
+<li><span class="math inline">\(Z\)</span>は<span class="math inline">\(X_i\)</span>に向かう矢線を含む道で、<span class="math inline">\(X_i\)</span>と<span class="math inline">\(X_j\)</span>を結ぶものすべてを有向分離する</li>
+</ol>
+<p>同様に、<span class="math inline">\(X\)</span>と<span class="math inline">\(Y\)</span>が<span class="math inline">\(G\)</span>における互いに排反な頂点集合である時、<span class="math inline">\(Z\)</span>が任意の<span class="math inline">\(X_i \in X\)</span>と<span class="math inline">\(X_j \in Y\)</span>に対してバックドア基準を満たすならば、 <span class="math inline">\(Z\)</span>は<span class="math inline">\(X\)</span>と<span class="math inline">\(Y\)</span>についてバックドア基準を満たすという</p>
+</div>
+<ul>
+<li><span class="math inline">\(PA(X_i)\)</span>は必ずバックドア基準を満たす</li>
+<li><span class="math inline">\(PA(X_i)\)</span>以外にもバックドア基準を満たす変数集合が存在しうる</li>
+</ul>
+</section><section id="eg_backdoor" class="slide level2">
+<h2>例:バックドア基準</h2>
+<div class="column3">
+<p><img data-src="pics/Fig3_4.png" alt="図3.4" /></p>
+</div>
+<div class="column4">
+<ul>
+<li>バックドア基準を<strong>満たす</strong>集合
+<ul>
+<li><span class="math inline">\(\{ X_3, X_4 \}\)</span></li>
+<li><span class="math inline">\(\{ X_4, X_5 \}\)</span></li>
+</ul></li>
+<li>バックドア基準を<strong>満たさない</strong>集合
+<ul>
+<li><span class="math inline">\(\{ X4 \}\)</span></li>
+</ul></li>
+</ul>
+</div>
+</section><section id="eg_backdoor_dagitty_code1" class="slide level2">
+<h2>例:バックドア基準{dagitty}</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(dagitty)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">g &lt;-<span class="st"> </span><span class="kw">dagitty</span>( <span class="st">&#39;dag {</span></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="st">    X1 [pos=&quot;0,0&quot;]</span></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="st">    X2 [pos=&quot;2,0&quot;]</span></a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="st">    X3 [pos=&quot;0,1&quot;]</span></a>
+<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="st">    X4 [pos=&quot;1,1&quot;]</span></a>
+<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="st">    X5 [pos=&quot;2,1&quot;]</span></a>
+<a class="sourceLine" id="cb1-8" data-line-number="8"><span class="st">    X6 [pos=&quot;1,2&quot;]</span></a>
+<a class="sourceLine" id="cb1-9" data-line-number="9"><span class="st">    Xi [pos=&quot;0,2&quot;]</span></a>
+<a class="sourceLine" id="cb1-10" data-line-number="10"><span class="st">    Xj [pos=&quot;2,2&quot;]</span></a>
+<a class="sourceLine" id="cb1-11" data-line-number="11"><span class="st">    </span></a>
+<a class="sourceLine" id="cb1-12" data-line-number="12"><span class="st">    X1 -&gt; X3 -&gt; Xi -&gt; X6 -&gt; Xj</span></a>
+<a class="sourceLine" id="cb1-13" data-line-number="13"><span class="st">    X1 -&gt; X4 -&gt; Xi</span></a>
+<a class="sourceLine" id="cb1-14" data-line-number="14"><span class="st">    X2 -&gt; X4 -&gt; Xj</span></a>
+<a class="sourceLine" id="cb1-15" data-line-number="15"><span class="st">    X2 -&gt; X5 -&gt; Xj</span></a>
+<a class="sourceLine" id="cb1-16" data-line-number="16"><span class="st">}&#39;</span>)</a></code></pre></div>
+</section><section id="eg_backdoor_dagitty_code2" class="slide level2">
+<h2>例:バックドア基準{dagitty}</h2>
+<p><img src="Pearl_3_files/figure-revealjs/unnamed-chunk-6-1.png" width="50%" height="300" /></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">adjustmentSets</span>(g, <span class="st">&quot;Xi&quot;</span>, <span class="st">&quot;Xj&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;minimal&quot;</span>)</a></code></pre></div>
+<pre><code> { X4, X5 }
+ { X2, X4 }
+ { X1, X4 }
+ { X3, X4 }</code></pre>
+</section><section id="theo_backdoor" class="slide level2">
+<h2>バックドア調整(定理3.3.2)</h2>
+<div class="box">
+<p>変数集合<span class="math inline">\(Z\)</span>が<span class="math inline">\((X,Y)\)</span>についてバックドア基準を満たすならば、<span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>への因果効果は識別可能であり、以下で与えられる</p>
+<p><span class="math display">\[
+P(y|do(x)) = \sum_z P(y|x,z)P(z)
+\]</span></p>
+</div>
+<ul>
+<li>上記が成り立つ時、Rosenbaum and Rubin(1983)は、「<span class="math inline">\(Z\)</span>を与えたときに条件付き無視可能である」といっている
+<ul>
+<li>無視可能性とは「<span class="math inline">\(Z\)</span>を与えたとき、<span class="math inline">\(X\)</span>が<span class="math inline">\(x\)</span>という値をとった場合に<span class="math inline">\(Y\)</span>が取るであろう値が<span class="math inline">\(X\)</span>と独立であるならば、<span class="math inline">\(Z\)</span>は許容可能な共変量集合である」というもの</li>
+<li><span class="math inline">\(X \mathop{\,\perp\!\!\!\!\!\perp\,}\{Y(0),Y(1) \} |Z\)</span></li>
+</ul></li>
+<li>グラフの大小や形には関係なく、システマティックな手続きを用いて、 最適な共変量集合(標本変動や測定コストを最小にする集合<span class="math inline">\(Z\)</span>)を探索ることができる</li>
+<li>因果効果を識別可能とする十分な共変量集合を<strong>十分な交絡因子</strong>と呼ぶ
+<ul>
+<li>十分な交絡因子に属する共変量を<strong>交絡因子</strong>と呼ぶ</li>
+</ul></li>
+</ul>
+</section><section id="proof_backdoor" class="slide level2">
+<h2>証明:バックドア調整</h2>
+<p><span class="math inline">\(Z\)</span>が<span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>へのすべてのバックドアパスをブロックしている時、 <span class="math inline">\(X=x\)</span>を条件付けることと、<span class="math inline">\(X=X\)</span>と固定することが<span class="math inline">\(Y\)</span>に対して同じ影響を与えるという解釈で証明を進める。</p>
+<p>変数による介入を考え、<span class="math inline">\(F_x \rightarrow X\)</span>が加えられた拡張グラフ<span class="math inline">\(G&#39;\)</span>を見ると、 <span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>へのバックドアパスがすべてブロックされているならば、<span class="math inline">\(F_x\)</span>から<span class="math inline">\(Y\)</span>へのすべての道は<span class="math inline">\(X\)</span>の子を経由していなければならない。</p>
+<p>この時、<span class="math inline">\(X\)</span>を与えた時に<span class="math inline">\(Y\)</span>と<span class="math inline">\(F_X\)</span>とは独立である。</p>
+<p><span class="math display">\[
+P(y|x, F_X =do(x)) = P(y |x, F_X = idle) = P(y|x)
+\]</span></p>
+<p>つまり、<span class="math inline">\(X=x\)</span> と <span class="math inline">\(F_X=do(x)\)</span>が一致する。</p>
+<p>因果効果は、<span class="math inline">\(G&#39;\)</span>による拡張確率関数に基づいて以下の様に表現できる。</p>
+<p><span class="math display">\[
+\begin{align}
+P(y|do(x)) &amp;= P&#39;(y|F_x) \\
+&amp;= \sum_z P&#39;(y|z,F_x)P&#39;(z|F_x) \\
+&amp;= \sum_z P&#39;(y|z,x,F_x)P&#39;(z|F_x)
+\end{align}
+\]</span></p>
+</section><section id="proof_backdoor2" class="slide level2">
+<h2>証明:バックドア調整(つづき)</h2>
+<ul>
+<li>前頁の右辺から<span class="math inline">\(F_x\)</span>を取り除くために、バックドア基準の定義を適用する</li>
+<li><span class="math inline">\(F_x\)</span>は<span class="math inline">\(X\)</span>を子とするルートであるから、<span class="math inline">\(Z\)</span>を含む<span class="math inline">\(X\)</span>の非子孫すべてと独立でなければならない(条件1)</li>
+</ul>
+<p><span class="math display">\[
+P&#39;(z|F_x) = P&#39;(z) = P(z)
+\]</span></p>
+<ul>
+<li>前頁より<span class="math inline">\(P(y|x, F_x)=P(y|x)\)</span>が成り立つ</li>
+<li>よって、<span class="math inline">\(P&#39;(y|z,x,F_x) = P(y|x,z)\)</span>となる</li>
+</ul>
+<p>すなわち <span class="math display">\[
+P(y|do(x)) = \sum_z P(y|x,z)P(z)
+\]</span></p>
+</section></section>
+<section><section id="フロントドア基準" class="title-slide slide level1"><h1>3.3.2. フロントドア基準</h1></section><section id="frontdoor_intuition" class="slide level2">
+<h2>フロントドア基準の直感的理解</h2>
+<ul>
+<li>バックドア基準により、観察データから因果効果を推定する場合に、どの変数について調整すればよいか判断できる(前節)</li>
+<li>しかし、バックドア基準だけで因果効果を推定する方法をすべて見つけることができるわけではない</li>
+<li>フロントドア基準を導入することで、処理変数の影響を受ける変数を使って因果効果を推測する(本節)</li>
+</ul>
+</section><section id="frontdoor_intuition_eg1" class="slide level2">
+<h2>例)フロントドア基準の直感的理解</h2>
+<div class="column3">
+<p><img data-src="pics/Fig3_4.png" alt="図3.4" /></p>
+<p><img data-src="pics/Fig3_5.png" alt="図3.5" /></p>
+</div>
+<div class="column4">
+<ul>
+<li>上図で<span class="math inline">\(X_1,\cdots,X_5\)</span>が非観測の場合を考える</li>
+<li><p><span class="math inline">\(\{X_i, X_6, X_j\}\)</span>を<span class="math inline">\(\{X,Z,Y\}\)</span>とおく <br> → 下図</p></li>
+<li>下図では<span class="math inline">\(Z\)</span>はバックドア基準を満たしていないが、<span class="math inline">\(Z\)</span>を観測することで<span class="math inline">\(P(y|do(x))\)</span>の一致推定量を得られる</li>
+<li>バックドア基準を2回使うイメージ
+<ul>
+<li><span class="math inline">\(X\)</span>から<span class="math inline">\(Z\)</span>へのバックドアパスは存在しないので、<span class="math inline">\(X\rightarrow Z\)</span>は識別可能</li>
+<li><span class="math inline">\(X\)</span>を条件付けることでバックドアパスを閉じれるので、<span class="math inline">\(Z \rightarrow Y\)</span>は識別可能</li>
+</ul></li>
+</ul>
+</div>
+</section><section id="frontdoor_1" class="slide level2">
+<h2>フロントドア基準</h2>
+<ul>
+<li>前頁の下図の同時分布は、以下と分解できる</li>
+</ul>
+<p><span class="math display">\[
+P(x,u,z,u) = P(u)P(x|u)P(z|x)P(y|z,u)
+\]</span></p>
+<ul>
+<li>この時、介入<span class="math inline">\(do(x)\)</span>によって<span class="math inline">\(P(x|u)\)</span>を除去できる</li>
+</ul>
+<p><span class="math display">\[
+P(y,z,u|do(x)) = P(u)P(z|x)P(y|z,u)
+\]</span></p>
+<ul>
+<li>ここで、<span class="math inline">\(z\)</span>と<span class="math inline">\(u\)</span>について和を取る(周辺化)</li>
+</ul>
+<p><span class="math display">\[
+P(y|do(x)) = \sum_z P(z|x) \sum_u P(y|z,u)P(u)
+\]</span></p>
+</section><section id="frontdoor_2" class="slide level2">
+<h2>フロントドア基準(つづき)</h2>
+<ul>
+<li>グラフから得られる2つの条件付き独立関係</li>
+</ul>
+<p><span class="math display">\[
+P(u|z,x) = P(u|x) \\
+P(y|x,z,u) = P(y|z,u)
+\]</span></p>
+<ul>
+<li>上記の独立関係を利用して、<span class="math inline">\(u\)</span>を取り除く</li>
+</ul>
+<p><span class="math display">\[
+\begin{align*}
+\sum_u P(y|z,u)P(u) &amp;= \sum_x \sum_u P(y|z,u)P(u|x)P(x) \\
+                    &amp;= \sum_x \sum_u P(y|x,z,u)P(u|x,z)P(x) \\
+                    &amp;= \sum_x P(y|x,z)P(x)
+\end{align*}
+\]</span></p>
+</section><section id="frontdoor_3" class="slide level2">
+<h2>フロントドア基準(つづき)</h2>
+<ul>
+<li>よって、観察可能な量だけを含む式を得る</li>
+</ul>
+<p><span class="math display">\[
+P(y|do(x)) = \sum_z P(z|x) \sum_{x&#39;} P(y|x&#39;,z)P(x&#39;)
+\]</span></p>
+<ul>
+<li>上記の独立関係が成り立つ中間変数<span class="math inline">\(Z\)</span>を見つけられれば、<span class="math inline">\(X \rightarrow Y\)</span>の因果効果に対する識別可能なノンパラメトリック推定量を得られる</li>
+<li>上式の解釈：バックドア基準の2段階適用
+<ul>
+<li><span class="math inline">\(X\)</span>から<span class="math inline">\(Z\)</span>へのブロックされないバックドアパスがないので、<span class="math inline">\(P(z|do(x)) = P(z|x)\)</span></li>
+<li><span class="math inline">\(X\)</span>はバックドアパス <span class="math inline">\(Z \leftarrow X \leftarrow U \rightarrow Y\)</span> を有向分離するので、 <span class="math inline">\(P(y|do(z)) = \Sigma_{x&#39;}P(y|x&#39;,z)P(x&#39;)\)</span></li>
+<li>2つの因果効果を結合 <span class="math inline">\(P(y|do(x))=\sum_zP(y|do(z))P(z|do(x))\)</span></li>
+</ul></li>
+</ul>
+</section><section id="def_frontdoor" class="slide level2">
+<h2>フロントドア基準</h2>
+<div class="box">
+<p>定義3.3.3</p>
+<p>次の条件を満たす変数集合<span class="math inline">\(Z\)</span>は順序対<span class="math inline">\((X,Y)\)</span>についてフロントドア基準を満たすという</p>
+<ol type="1">
+<li><span class="math inline">\(Z\)</span>は<span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>へのすべての有向道を切断する</li>
+<li><span class="math inline">\(X\)</span>から<span class="math inline">\(Z\)</span>へのブロックされないバックドアパスはない</li>
+<li><span class="math inline">\(Z\)</span>から<span class="math inline">\(Y\)</span>へのバックドアパスは、全て<span class="math inline">\(X\)</span>によってブロックされる</li>
+</ol>
+</div>
+<ul>
+<li>実際の応用場面を想定した場合、条件2,3は非常に厳しい</li>
+</ul>
+</section><section id="theo_frontdoor" class="slide level2">
+<h2>フロントドア調整</h2>
+<div class="box">
+<p>定理3.3.4</p>
+<p>変数集合<span class="math inline">\(Z\)</span>が<span class="math inline">\((X,Y)\)</span>についてフロントドア基準を満たし、かつ<span class="math inline">\(P(x,z)&gt;0\)</span>とする。 この時、<span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>への因果効果は識別可能であり、以下で与えられる。</p>
+<p><span class="math display">\[
+P(y|do(x)) = \sum_z P(z|x) \sum_x&#39; P(y|x&#39;,z)P(x&#39;)
+\]</span></p>
+</div>
+<ul>
+<li>数頁前で証明済</li>
+</ul>
+</section><section id="eg_frontdoor_1" class="slide level2">
+<h2>例)喫煙と遺伝子型の理論</h2>
+<div class="column3">
+<div id="htmlwidget-76c2edddc0ab9dfd68ef" style="width:300px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-76c2edddc0ab9dfd68ef">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\"]\n  \n  node[shape = box]\n  遺伝子\n  喫煙X\n  タール蓄積Z\n  肺ガンY\n\n  edge[]\n  遺伝子 -> 喫煙X -> タール蓄積Z -> 肺ガンY\n  遺伝子 -> 肺ガンY\n\n  {rank = same; 喫煙X; タール蓄積Z; 肺ガンY}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+<div class="column4">
+<p>仮定</p>
+<ul>
+<li>喫煙はタールの蓄積量を通してのみ肺ガンに影響</li>
+<li>遺伝子は肺ガンの発症を促進するが、タールの蓄積量には間接的にのみ影響</li>
+<li>タールの蓄積量と喫煙の両方に影響を与える要因はない</li>
+<li>タールの蓄積量は喫煙以外の要因によっても高くなる一方で、タールが蓄積されない喫煙者もいる<span class="math inline">\((P(x,z)&gt;0)\)</span></li>
+</ul>
+</div>
+</section><section id="eg_frontdoor_2" class="slide level2">
+<h2>例)喫煙と遺伝子型の理論</h2>
+<div id="htmlwidget-72245d37009a44913f2d" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-72245d37009a44913f2d">{"x":{"filter":"none","extensions":["FixedColumns"],"data":[["1","2","3","4"],["非喫煙","喫煙","非喫煙","喫煙"],["無し","無し","あり","あり"],[47.5,2.5,2.5,47.5],[10,90,5,85]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>喫煙有無<\/th>\n      <th>タール蓄積<\/th>\n      <th>各群の割合(%)<\/th>\n      <th>各群内の肺ガン(%)<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","scrollX":true,"scrollCollapse":true,"columnDefs":[{"className":"dt-right","targets":[3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<ul>
+<li>タバコ業界は喫煙は肺ガンのリスクを減少させると主張
+<ul>
+<li>喫煙した場合にタールの蓄積量が増加する可能性は、非喫煙の場合より高い</li>
+<li>喫煙者グループでも非喫煙者グループでも、タール蓄積量が多いほうが肺ガンリスクが低い</li>
+</ul></li>
+<li>次頁でフロントドア基準を適用して、喫煙の肺ガンリスクへの因果効果を計算</li>
+</ul>
+</section><section id="eg_frontdoor_3" class="slide level2">
+<h2>例)喫煙と遺伝子型の理論</h2>
+<p><span class="math display">\[
+P(y|do(x)) = \sum_z P(z|x) \sum_{x&#39;} P(y|x&#39;,z)P(x&#39;)
+\]</span></p>
+<p><span class="math display">\[
+\begin{align*}
+P(Y=1|do(X=1)) &amp;=  0.05 (0.1 \times 0.5 + 0.9 \times 0.5) \\
+               &amp;\quad + 0.95 (0.05 \times 0.5 + 0.85 \times 0.5) \\
+               &amp;=  0.05 \times 0.5 + 0.95 \times 0.45 \\
+               &amp;=  0.4525 \\
+\\
+P(Y=1|do(X=0)) &amp;= 0.95 (0.1 \times 0.5 + 0.9 \times 0.5) \\
+               &amp;\quad + 0.05 (0.05 \times 0.5 + 0.85 \times 0.5) \\
+               &amp;= 0.95 \times 0.5 + 0.05 \times 0.45 \\
+               &amp;= 0.4975
+\end{align*}
+\]</span></p>
+</section><section id="backdoor_frontdoor" class="slide level2">
+<h2>識別可能条件の選択問題</h2>
+<ul>
+<li><span class="math inline">\(U\)</span>も<span class="math inline">\(Z\)</span>も観測できる場合、バックドア基準とフロントドア基準のどちらを用いるべきか？</li>
+<li>バックドア基準を用いた場合、処理変数と反応変数の間に<strong>直接的な因果関係</strong>があっても無くても因果効果は識別可能</li>
+<li>処理変数と反応変数の間に<strong>直接的な因果関係</strong>がある場合、フロントドア調整で因果効果を推定しようとするとバイアスが生じる
+<ul>
+<li>なぜなら条件1を満たしていない</li>
+<li>条件1：<span class="math inline">\(Z\)</span>は<span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>へのすべての有向道を切断する</li>
+</ul></li>
+<li>「直接的な因果関係がない」と主張するためには強い根拠が必要になる</li>
+<li>できればバックドア基準を用いたほうが良い</li>
+</ul>
+</section><section id="frontdoor_like" class="slide level2">
+<h2>擬フロントドア基準</h2>
+<ul>
+<li>フロントドア基準の条件2,3は非常に厳しい</li>
+<li>しかし、条件2,3を以下に置き換えることで、フロントドア基準を一般化できる</li>
+</ul>
+<div class="box">
+<ol start="2" type="1">
+<li><span class="math inline">\(X\)</span>から出る矢線をすべて取り除いたグラフにおいて、<span class="math inline">\(X\)</span>の非子孫からなる集合<span class="math inline">\(Z\)</span>は<span class="math inline">\(X\)</span>と<span class="math inline">\(S\)</span>の任意の要素を有向分離する</li>
+<li><span class="math inline">\(S\)</span>の任意の要素から出る矢線をすべて取り除いたグラフにおいて、<span class="math inline">\(S\)</span>の非子孫からなる集合<span class="math inline">\(X \cup Z\)</span>は<span class="math inline">\(S\)</span>の任意の要素と<span class="math inline">\(Y\)</span>を有向分離する</li>
+</ol>
+</div>
+<div class="column3">
+<div id="htmlwidget-e342b266b9f3d9145c7f" style="width:300px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e342b266b9f3d9145c7f">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\",rankdir = LR]\n  \n  node[shape = box]\n  X\n  S\n  Y\n  Z_1[shape = oval]\n  Z_2\n  Z_3[shape = oval]\n\n  edge[]\n  Z_1 -> X\n  Z_1 -> Z_2\n  Z_2 -> S\n  Z_2 -> X\n  Z_2 -> Y\n  Z_3 -> Z_2\n  Z_3 -> Y\n  X -> S\n  S -> Y\n\n  {rank = same; Z_1; X}\n  {rank = same; Z_2; S}\n  {rank = same; Z_3; Y}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+<div class="column4">
+<ul>
+<li><span class="math inline">\(Z_1\)</span>と<span class="math inline">\(Z_3\)</span>は非観測</li>
+<li><span class="math inline">\(S\)</span>はフロントドア基準もバックドア基準も満たしていない</li>
+<li>置き換え後の条件2,3の<span class="math inline">\(Z\)</span>に<span class="math inline">\(Z_2\)</span>を対応させると、擬フロントドア基準を満たす</li>
+<li>つまり、<span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>への因果効果は識別可能</li>
+</ul>
+</div>
+</section></section>
+<section><section id="general_identifiability" class="title-slide slide level1"><h1>一般的識別可能条件 <a href="https://www.amazon.co.jp/dp/4320113179">黒木本</a></h1></section><section id="def_confounding_path" class="slide level2">
+<h2>交絡道(定義)</h2>
+<ul>
+<li>チェックするのが比較的簡単でかつバックドア基準やフロントドア基準を包括する識別可能条件を紹介</li>
+<li>その前に<strong>交絡道</strong>を定義する必要がある</li>
+</ul>
+<div class="box">
+<p>因果ダイアグラム<span class="math inline">\(G\)</span>上の頂点の列<span class="math inline">\(\alpha_0, \alpha_1,\cdots ,\alpha_n\)</span>から構成される<span class="math inline">\(\alpha_0\)</span>と<span class="math inline">\(\alpha_n\)</span>の間の道で、</p>
+<p><span class="math display">\[
+\alpha_0 \leftrightarrow \alpha_1 \leftrightarrow \cdots \leftrightarrow \alpha_{n-1} \leftrightarrow \alpha_n
+\]</span></p>
+<p>のように、<span class="math inline">\(i = 1,\cdots,n\)</span>に対して、<span class="math inline">\(\alpha_{i-1}\)</span>と<span class="math inline">\(\alpha_i\)</span>の間の道が双方向矢線 （あるいは、非観測変数で構成される双方向道で、観測変数によって有向分離されないもの） となっているものを<strong>交絡道</strong>という</p>
+</div>
+</section><section id="eg_confounding_path" class="slide level2">
+<h2>交絡道(例)</h2>
+<p><img data-src="pics/Fig_kuroki_1.jpg" alt="黒木本図" /></p>
+</section><section id="theo_general_identifiability" class="slide level2">
+<h2>一般的識別可能性(定理)</h2>
+<div class="box">
+<p>因果ダイアグラム<span class="math inline">\(G\)</span>において、<span class="math inline">\(X\)</span>は<span class="math inline">\(Y\)</span>の非子孫とする</p>
+<p><span class="math inline">\(\{X,Y \}\)</span>の最小祖先集合<span class="math inline">\(\text{An}(\{X ,Y\})\)</span>から生成される<span class="math inline">\(G\)</span>の部分グラフにおいて、 <span class="math inline">\(X\)</span>と<span class="math inline">\(X\)</span>の子のそれぞれとの間に交絡道が存在しないならば、<span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>への因果効果は識別可能である</p>
+</div>
+<ul>
+<li><span class="math inline">\(\text{An}(\{X ,Y\})\)</span>から生成される<span class="math inline">\(G\)</span>の部分グラフを構成する際、双方向矢線<span class="math inline">\(\leftrightarrow\)</span>については、 その端点の少なくとも1つが<span class="math inline">\(\text{An}(\{X ,Y\})\)</span>に含まれなければ双方向矢線そのものを取り除く</li>
+<li>証明は省略(<a href="https://ftp.cs.ucla.edu/pub/stat_ser/R290-A.pdf">Tian and Pearl(2002)</a>)</li>
+<li>(直感的解釈)<span class="math inline">\(X\)</span>とその子の間に未観測交絡因子が存在しなければ、<span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>への因果効果は識別可能</li>
+<li>識別可能であることがわかっても、どのような変数を用いれば因果効果が識別可能となるかは分からない
+<ul>
+<li>識別可能であることを確認できた場合、後述する<strong>do計算法</strong>で因果効果を定式化できる</li>
+<li>因果効果が識別可能であるための十分条件だが、必要条件ではない(逆は成り立たない)</li>
+</ul></li>
+</ul>
+</section><section id="eg_general_identifiability" class="slide level2">
+<h2>一般的識別可能性(例)</h2>
+<div class="column3">
+<p><div id="htmlwidget-679fa46fe57b6071819a" style="width:300px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-679fa46fe57b6071819a">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\",rankdir = LR]\n  \n  node[shape = box]\n  X\n  S\n  Y\n  Z_1[shape = oval]\n  Z_2\n  Z_3[shape = oval]\n\n  edge[]\n  Z_1 -> X\n  Z_1 -> Z_2\n  Z_2 -> S\n  Z_2 -> X\n  Z_2 -> Y\n  Z_3 -> Z_2\n  Z_3 -> Y\n  X -> S\n  S -> Y\n\n  {rank = same; Z_1; X}\n  {rank = same; Z_2; S}\n  {rank = same; Z_3; Y}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script> <img data-src="pics/Fig_kuroki_1.jpg" alt="黒木本図" /></p>
+</div>
+<div class="column4">
+<ul>
+<li>上のグラフは、2つの双方向道があるが、どちらも<span class="math inline">\(Z_2\)</span>によって有向分離されている
+<ul>
+<li>つまり、<span class="math inline">\(Z_2\)</span>が観測可能なら、<span class="math inline">\(X\)</span>と<span class="math inline">\(S\)</span>の間に交絡道が無いことになり、<span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>への因果効果は識別可能</li>
+</ul></li>
+<li>下の(a)〜(c)は識別不能</li>
+<li>下の(d)は<span class="math inline">\(\{X,Y\}\)</span>の最小祖先集合<span class="math inline">\(\{X,Y\}\)</span>から生成される部分グラフは<span class="math inline">\(X \rightarrow Y\)</span>のみとなり、交絡道は存在しない
+<ul>
+<li>つまり、<span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>への因果効果は識別可能</li>
+</ul></li>
+</ul>
+</div>
+</section><section id="theo_nonidentification_condition" class="slide level2">
+<h2>識別不能条件(定理)</h2>
+<div class="box">
+<p>因果ダイアグラム<span class="math inline">\(G\)</span>において、<span class="math inline">\(X\)</span>は<span class="math inline">\(Y\)</span>の祖先とし、<span class="math inline">\(Y\)</span>の最小祖先集合を<span class="math inline">\(\text{An}(Y)\)</span>とおく</p>
+<p><span class="math inline">\(\text{An}(Y)\)</span>から生成される<span class="math inline">\(G\)</span>の部分グラフにおいて、<span class="math inline">\(X\)</span>との間に双方向矢線が存在するような<span class="math inline">\(X\)</span>の子が存在するならば、 <span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>への因果効果は識別可能ではない</p>
+</div>
+<ul>
+<li>証明は省略(<a href="https://ftp.cs.ucla.edu/pub/stat_ser/R290-A.pdf">Tian and Pearl(2002)</a>)</li>
+</ul>
+</section></section>
+<section><section id="calc_intervention" class="title-slide slide level1"><h1>3.4. 介入の計算</h1></section><section id="do_calculus" class="slide level2">
+<h2>do計算法</h2>
+<ul>
+<li>観測頂点と非観測頂点が混在した因果グラフ<span class="math inline">\(G\)</span>が与えられていると仮定</li>
+<li>因果効果<span class="math inline">\(P(y|do(x))\)</span>を導出する構文論的方法論を与える
+<ul>
+<li>導出とは、<span class="math inline">\(P(y|do(x))\)</span>を段階的に変形することで、観測確率による同値表現を得ること</li>
+<li><span class="math inline">\(do(\cdot)\)</span>をモデルに含まれる関数集合を修正するという介入と解釈</li>
+<li>この解釈から得られる推論規則を<strong><span class="math inline">\(do\)</span>計算法</strong>という</li>
+</ul></li>
+<li>このような変形ができる時、<span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>への因果効果は識別可能である</li>
+</ul>
+</section><section id="notation" class="slide level2">
+<h2>記号</h2>
+<ul>
+<li><span class="math inline">\(X,Y,Z\)</span>をDAG <span class="math inline">\(G\)</span>の互いに排反な任意の頂点集合</li>
+<li><span class="math inline">\(X\)</span>に向かう矢線をすべて取り除いたグラフを<span class="math inline">\(G_{\overline X}\)</span>と記す</li>
+<li><span class="math inline">\(X\)</span>から出る矢線をすべて取り除いたグラフを<span class="math inline">\(G_{\underline X}\)</span>と記す</li>
+<li><span class="math inline">\(X\)</span>に向かう矢線すべてと<span class="math inline">\(Z\)</span>から出る矢線すべてを除いたグラフを<span class="math inline">\(G_{\overline X \underline Z}\)</span>と記す</li>
+</ul>
+<p><img data-src="pics/Fig3_6.png" alt="図3.6" /></p>
+<ul>
+<li><span class="math inline">\(X=x\)</span>と固定し、かつ<span class="math inline">\(Z=z\)</span>が観測された時の<span class="math inline">\(Y=y\)</span>の確率を以下と定義 <span class="math display">\[
+P(y|do(x),z) \triangleq \frac{P(y,z|do(x))}{P(z|do(x))}
+\]</span></li>
+</ul>
+</section><section id="theo_do_calc_1" class="slide level2">
+<h2>do計算法 規則1：観測値の挿入・削除</h2>
+<p><span class="math inline">\(G\)</span>を因果モデルに関するDAGとし、<span class="math inline">\(P(\cdot)\)</span>をそのモデルで得られる確率分布とする。 互いに排反な任意の変数集合<span class="math inline">\(X,Y,Z,W\)</span>に対して、次の規則が成り立つ</p>
+<p><span class="math display">\[
+(Y \mathop{\,\perp\!\!\!\!\!\perp\,}Z| X,W)_{G_{\overline X}} \\
+\Rightarrow P(y|do(x),z,w) = P(y|do(x),w)
+\]</span></p>
+<ul>
+<li>介入<span class="math inline">\(do(x)\)</span>は、<span class="math inline">\(X\)</span>とその親とを結ぶ矢線<span class="math inline">\((\rightarrow X)\)</span>を取り除く
+<ul>
+<li>部分グラフ<span class="math inline">\(G_{\overline X}\)</span>から得られる分布になる</li>
+</ul></li>
+<li>有向分離性と条件付き独立性の関係と同様
+<ul>
+<li><span class="math inline">\(W\)</span>が<span class="math inline">\(Y\)</span>と<span class="math inline">\(Z\)</span>を有向分離するなら、<span class="math inline">\(G\)</span>と整合する確率分布において<span class="math inline">\(W\)</span>を与えた時<span class="math inline">\(Y\)</span>と<span class="math inline">\(Z\)</span>は条件付き独立</li>
+<li><span class="math inline">\((Y \mathop{\,\perp\!\!\!\!\!\perp\,}Z|W)_G \Rightarrow P(y|z,w) = P(y|w)\)</span></li>
+</ul></li>
+</ul>
+</section><section id="theo_do_calc_2" class="slide level2">
+<h2>do計算法 規則2：行動・観測値の交換</h2>
+<p><span class="math display">\[
+(Y \mathop{\,\perp\!\!\!\!\!\perp\,}Z |X,W)_{G_{\overline X \underline Z}} \\
+\Rightarrow P(y|do(x),do(z),w) = P(y|do(x),z,w)
+\]</span></p>
+<ul>
+<li><span class="math inline">\(Z\)</span>から出る矢線<span class="math inline">\((Z \rightarrow)\)</span>をすべて取り除いたグラフにおいて、 <span class="math inline">\(W\)</span>が<span class="math inline">\(Z\)</span>と<span class="math inline">\(Y\)</span>を有向分離するなら、介入<span class="math inline">\(do(z)\)</span>と観測<span class="math inline">\(Z=z\)</span>が<span class="math inline">\(Y\)</span>に対して同じ効果を持つ</li>
+<li><span class="math inline">\(W\)</span>が<span class="math inline">\(Z\)</span>の非子孫であれば、バックドア基準と同様
+<ul>
+<li><span class="math inline">\((Y \mathop{\,\perp\!\!\!\!\!\perp\,}Z|W)_{G_{\underline Z}} \Rightarrow P(y|do(z),w) = P(y|z,w)\)</span></li>
+</ul></li>
+</ul>
+</section><section id="theo_do_calc_3" class="slide level2">
+<h2>do計算法 規則3：行動の挿入・削除</h2>
+<p><span class="math display">\[
+(Y \mathop{\,\perp\!\!\!\!\!\perp\,}Z |X,W)_{G_{\overline X, \overline{Z(W)}}} \\ 
+\Rightarrow P(y|do(x),do(z),w) = P(y|do(x),w)
+\]</span></p>
+<ul>
+<li><span class="math inline">\(Z(W)\)</span>は、<span class="math inline">\(G_{\overline X}\)</span>において<span class="math inline">\(Z\)</span>に含まれる頂点のうち、<span class="math inline">\(W\)</span>に含まれる頂点の非祖先からなる集合</li>
+<li><span class="math inline">\(Z(W)\)</span>の頂点に向かう矢線<span class="math inline">\((\rightarrow Z(W))\)</span>をすべて取り除いたグラフにおいて、 <span class="math inline">\(W\)</span>が<span class="math inline">\(Z\)</span>と<span class="math inline">\(Y\)</span>を有向分離するなら、介入<span class="math inline">\(do(z)\)</span>は<span class="math inline">\(Y=y\)</span>の確率に影響を与えない</li>
+</ul>
+</section><section id="eg_do_calc_3" class="slide level2">
+<h2>規則3の例</h2>
+<div class="column3">
+<ul>
+<li><p>操作前のグラフ <div id="htmlwidget-9cf384b78892fc4722ec" style="width:300px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-9cf384b78892fc4722ec">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\"]\n  \n  node[shape = box]\n  W\n  Y\n  Z_1\n  Z_2\n  Z_3\n\n  edge[]\n  Z_1 -> Z_2 [dir = both]\n  W -> Z_1\n  Z_2 -> W\n  W -> Z_3 [dir = both]\n  W -> Y\n  Z_3 -> Y [dir = both]\n\n  {rank = min; Z_2; Z_3}\n  {rank = same; W}\n  {rank = max; Z_1; Y}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script></p></li>
+<li><p>操作後のグラフ <div id="htmlwidget-a845cafd3d0e99346a70" style="width:300px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-a845cafd3d0e99346a70">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\"]\n  \n  node[shape = box]\n  W\n  Y\n  Z_1\n  Z_2\n  Z_3\n\n  edge[]\n#  Z_1 -> Z_2 [dir = both]\n#  W -> Z_1\n  Z_2 -> W\n#  W -> Z_3 [dir = both]\n  W -> Y\n#  Z_3 -> Y [dir = both]\n\n  {rank = min; Z_2; Z_3}\n  {rank = same; W}\n  {rank = max; Z_1; Y}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script></p></li>
+</ul>
+</div>
+<div class="column4">
+<ul>
+<li><span class="math inline">\(W\)</span>の先祖でない頂点は<span class="math inline">\(Z\_1\)</span>と<span class="math inline">\(Z\_3\)</span></li>
+<li><p>これらに向かう矢線を取り除く</p></li>
+<li>操作後のグラフで、<span class="math inline">\(W\)</span>は<span class="math inline">\(\{Z\_1,Z\_2,Z\_3\}\)</span>と<span class="math inline">\(Y\)</span>を有向分離している</li>
+<li><p>つまり、</p></li>
+</ul>
+<p><span class="math display">\[
+P(y|do(z_1),do(z_2),do(z_3),w) \\
+= P(y|w)
+\]</span></p>
+</div>
+</section><section id="do計算法の定理から導かれる系系3.4.2" class="slide level2">
+<h2>do計算法の定理から導かれる系(系3.4.2)</h2>
+<p>do計算法の推論規則に基づく有限回の変換を行うことによって、</p>
+<p><span class="math display">\[
+q = P(y_1,\cdots,y_k|do(x_1),\cdots,do(x_m))
+\]</span></p>
+<p>を観測量からなる標準的確率表現(<span class="math inline">\(do\)</span>がない表現)へ変換できるならば、 グラフ<span class="math inline">\(G\)</span>によって表現されるモデルにおいて、因果効果<span class="math inline">\(q\)</span>は識別可能である</p>
+<ul>
+<li>逆も成り立つ</li>
+</ul>
+</section></section>
+<section><section id="example_do_calc" class="title-slide slide level1"><h1>3.4.3. 記号論に基づく因果効果の導出法：例</h1></section><section id="purpose_eg" class="slide level2">
+<h2>本節の目標</h2>
+<ul>
+<li>因果効果の推定量を得るために、規則1〜3をどのように利用すればよいかを以下の図を用いて説明する</li>
+</ul>
+<p><img data-src="pics/Fig3_5.png" alt="図3.5" /></p>
+<ul>
+<li>本節の例に必要な部分グラフは以下の通り(先述)</li>
+</ul>
+<p><img data-src="pics/Fig3_6.png" alt="図3.6" /></p>
+</section><section id="eg_do_1" class="slide level2">
+<h2>作業1：<span class="math inline">\(P(z|do(x))\)</span>の計算</h2>
+<ul>
+<li>規則2の条件を満たしている
+<ul>
+<li>道<span class="math inline">\(X \leftarrow U \rightarrow Y \leftarrow Z\)</span>は合流点<span class="math inline">\(Y\)</span>によってブロックされている</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[
+(Z \mathop{\,\perp\!\!\!\!\!\perp\,}X)_{G_{\underline X}}
+\]</span></p>
+<ul>
+<li>よって、以下が成り立つ</li>
+</ul>
+<p><span class="math display">\[
+P(z|do(x)) = P(z|x)
+\]</span></p>
+<ul>
+<li>参考:規則2</li>
+</ul>
+<p><span class="math display">\[
+(Y \mathop{\,\perp\!\!\!\!\!\perp\,}Z |X,W)_{G_{\overline X \underline Z}} \\
+\Rightarrow P(y|do(x),do(z),w) = P(y|do(x),z,w)
+\]</span></p>
+</section><section id="eg_do_2" class="slide level2">
+<h2>作業2：<span class="math inline">\(P(y|do(z))\)</span>の計算</h2>
+<ul>
+<li><span class="math inline">\(G_{\underline Z}\)</span>には、<span class="math inline">\(Z\)</span>から<span class="math inline">\(Y\)</span>へのバックドアパスがある
+<ul>
+<li>規則2では<span class="math inline">\(do(z)\)</span>を<span class="math inline">\(z\)</span>へ変換できない</li>
+</ul></li>
+<li>そこで、<span class="math inline">\(Z\)</span>から<span class="math inline">\(Y\)</span>へのバックドアパス上にある変数<span class="math inline">\(X\)</span>で調整する</li>
+</ul>
+<p><span class="math display">\[
+P(y|do(z)) = \sum_x P(y|x, do(z))P(x|do(z))
+\]</span></p>
+<ul>
+<li>右辺の各項にdo計算の規則を適用する</li>
+</ul>
+</section><section id="eg_do_2_2" class="slide level2">
+<h2>作業2：<span class="math inline">\(P(y|do(z))\)</span>の計算(つづき)</h2>
+<p><span class="math display">\[
+P(y|do(z)) = \sum_x P(y|x, do(z))P(x|do(z))
+\]</span></p>
+<ul>
+<li>前者は、<span class="math inline">\(G_{\underline Z}\)</span>において<span class="math inline">\(X\)</span>が<span class="math inline">\(Z\)</span>と<span class="math inline">\(Y\)</span>を有向分離しているので、規則2より以下が成り立つ</li>
+</ul>
+<p><span class="math display">\[
+(Z \mathop{\,\perp\!\!\!\!\!\perp\,}Y |X)_{G_{\underline Z}} \Rightarrow P(y|x,do(z)) = P(y|x,z)
+\]</span></p>
+<ul>
+<li>後者は、<span class="math inline">\(G_{\overline Z}\)</span>において<span class="math inline">\(X\)</span>と<span class="math inline">\(Z\)</span>は有向分離されているので規則3より以下が成り立つ
+<ul>
+<li><span class="math inline">\(G\)</span>において<span class="math inline">\(Z\)</span>は<span class="math inline">\(X\)</span>の子孫なので、<span class="math inline">\(Z\)</span>を操作しても<span class="math inline">\(X\)</span>への影響はない</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[
+(Z \mathop{\,\perp\!\!\!\!\!\perp\,}X)_{G_{\overline Z}} \Rightarrow P(x|do(z)) = P(x)
+\]</span></p>
+<ul>
+<li>参考:規則3</li>
+</ul>
+<p><span class="math display">\[
+(Y \mathop{\,\perp\!\!\!\!\!\perp\,}Z |X,W)_{G_{\overline X, \overline{Z(W)}}} \\ 
+\Rightarrow P(y|do(x),do(z),w) = P(y|do(x),w)
+\]</span></p>
+<ul>
+<li>よって<span class="math inline">\(P(y|do(z))\)</span>は、以下のようになる</li>
+</ul>
+<p><span class="math display">\[
+\begin{align*}
+P(y|do(z)) &amp;= \sum_x P(y|x,z)P(x) \\
+           &amp;= E_x P(y|x,z)
+\end{align*}
+\]</span></p>
+</section><section id="eg_do_3" class="slide level2">
+<h2>作業3：<span class="math inline">\(P(y|do(x))\)</span>の計算</h2>
+<p><span class="math display">\[
+P(y|do(x)) = \sum_z P(y|z, do(x))P(z|do(x))
+\]</span></p>
+<ul>
+<li>この時、<span class="math inline">\(P(z|do(x)) = P(z|x)\)</span> が成り立つ(作業1)</li>
+<li><span class="math inline">\(P(y|z,do(x))\)</span>の<span class="math inline">\(do\)</span>を取り除く規則は無い</li>
+<li>しかし、<span class="math inline">\((Y \mathop{\,\perp\!\!\!\!\!\perp\,}Z |X)_{G_{\overline X \underline Z}}\)</span>が成り立つので、規則2で以下のように変換できる</li>
+</ul>
+<p><span class="math display">\[
+P(y|z,do(x)) = P(y|do(x),do(z))
+\]</span></p>
+<ul>
+<li>この時、<span class="math inline">\((Y \mathop{\,\perp\!\!\!\!\!\perp\,}X|Z)_{G_{\overline X \overline Z}}\)</span>が成り立つので、規則3で以下を得る</li>
+</ul>
+<p><span class="math display">\[
+P(y|do(z),do(x)) = P(y|do(z))
+\]</span></p>
+<ul>
+<li>よって、以下を得る(フロントドア調整)</li>
+</ul>
+<p><span class="math display">\[
+\begin{align*}
+P(y|do(x)) &amp;= \sum_z P(y|z, do(x))P(z|x) \\
+           &amp;= \sum_z P(y|do(z))P(z|x) \\
+           &amp;= \sum_z P(z|x) \sum_x&#39; P(y|x&#39;,z)P(x&#39;)
+\end{align*}
+\]</span></p>
+</section><section id="eg_do_4_5" class="slide level2">
+<h2>作業4,5</h2>
+<p><span class="math display">\[
+\begin{align*}
+P(y,z|do(x)) &amp;= P(y|z,do(x))P(z|do(x)) \\
+             &amp;= P(y|do(z))P(z|x) \\
+             &amp;= P(z|x)\sum_x&#39; P(y|x&#39;,z)P(x&#39;)
+\end{align*}
+\]</span></p>
+<ul>
+<li>1行目→2行目：作業1と、作業3の途中式の変形</li>
+<li>2行目→3行目：作業2の変形</li>
+</ul>
+<p><span class="math display">\[
+\begin{align*}
+P(x,y|do(z)) &amp;= P(y|x,do(z))P(x|do(z)) \\
+             &amp;= P(y|x,z)P(x)
+\end{align*}
+\]</span></p>
+<ul>
+<li>第1項：規則2の変形 (作業2の途中式)</li>
+<li>第2項：規則3の変形 (作業2の途中式)</li>
+</ul>
+</section></section>
+<section><section id="surrogate_experiments" class="title-slide slide level1"><h1>3.4.4. 代替実験による因果推論</h1></section><section id="problem" class="slide level2">
+<h2>問題意識</h2>
+<ul>
+<li><p><span class="math inline">\(P(y|do(x))\)</span>が識別可能ではなく、ランダム化実験で<span class="math inline">\(X\)</span>の制御も行うことができない状況で、 <span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>への因果効果を評価する方法はあるか？</p></li>
+<li>例
+<ul>
+<li>コレステロールのレベル<span class="math inline">\(X\)</span>から心臓疾患<span class="math inline">\(Y\)</span>への因果効果</li>
+<li>血中コレステロール値を直接制御することはできない</li>
+<li>食事制限を行うことならできる</li>
+</ul></li>
+<li><p>形式的には、<span class="math inline">\(P(y|do(x))\)</span>を変形して、代替変数<span class="math inline">\(Z\)</span>に含まれる要素だけに<span class="math inline">\(do(*)\)</span>をつけるようにする問題</p></li>
+</ul>
+</section><section id="condition" class="slide level2">
+<h2>代替変数を用いて因果効果を評価する条件</h2>
+<ol type="1">
+<li><span class="math inline">\(X\)</span>は、<span class="math inline">\(Z\)</span>から<span class="math inline">\(Y\)</span>へのすべての有向道を切断する</li>
+<li><span class="math inline">\(P(y|do(x))\)</span>は、<span class="math inline">\(G_{\overline Z}\)</span>において識別可能である</li>
+</ol>
+<ul>
+<li>条件1が成立するならば、<span class="math inline">\((Y \mathop{\,\perp\!\!\!\!\!\perp\,}Z | X)_{G_{\overline X \overline Z}}\)</span>が成立するので、 規則3より、<span class="math inline">\(P(y|do(x)) = P(y|do(x),do(z))\)</span>と書ける</li>
+<li><span class="math inline">\(P(y|do(x)) = P(y|do(x),do(z))\)</span>は、<span class="math inline">\(G_{\overline Z}\)</span>のモデルにおける、<span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>への因果効果を表しており、 条件2が成立するならば識別可能である</li>
+</ul>
+<p><img data-src="pics/Fig3_7.png" alt="図3.7" /></p>
+</section><section id="shikihenkei" class="slide level2">
+<h2><span class="math inline">\(P(y|do(x))\)</span>の導出</h2>
+<ul>
+<li><span class="math inline">\((Y \mathop{\,\perp\!\!\!\!\!\perp\,}Z | X)_{G_{\overline X \overline Z}}\)</span>が成立するので、規則3より、</li>
+</ul>
+<p><span class="math display">\[
+P(y|do(x)) = P(y|do(x),do(z))
+\]</span></p>
+<ul>
+<li><span class="math inline">\((Y \mathop{\,\perp\!\!\!\!\!\perp\,}X | Z)_{G_{\underline X \overline Z}}\)</span>が成立するので、規則2より、</li>
+</ul>
+<p><span class="math display">\[
+P(y|do(x),do(z)) = P(y |x, do(z))
+\]</span></p>
+<ul>
+<li>よって、以下が成立する</li>
+</ul>
+<p><span class="math display">\[
+\begin{align*}
+  P(y|do(x)) &amp;= P(y|x, do(z)) \\
+             &amp;= \frac{P(y,x|do(z))}{P(x|do(z))}
+\end{align*}
+\]</span></p>
+<ul>
+<li>つまり、任意の<span class="math inline">\(x\)</span>と<span class="math inline">\(y\)</span>に対して<span class="math inline">\(P(y|do(x))\)</span>を識別するためには、<span class="math inline">\(Z\)</span>を固定すれば十分</li>
+<li>介入により<span class="math inline">\(Z\)</span>を簡単に固定することができ、前頁の仮定が成り立つならば、 固定された<span class="math inline">\(Z\)</span>のレベルとは関係なく同じ値を取る
+<ul>
+<li>しかし、実際には、<span class="math inline">\(X\)</span>の興味ある値に対して十分な標本を得るために、<span class="math inline">\(Z\)</span>のレベルが複数必要</li>
+<li><span class="math inline">\(E(Y|do(x))-E(Y|do(x&#39;))\)</span>に関心があるなら、<span class="math inline">\(x,x&#39;\)</span>の標本を十分に確保できる<span class="math inline">\(z,z&#39;\)</span>を選択して、以下で推定</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[
+E(Y|x,do(z)) - E(Y|x&#39;,do(z&#39;))
+\]</span></p>
+</section></section>
+<section><section id="do計算を計算機で" class="title-slide slide level1"><h1>do計算を計算機で</h1></section><section id="rパッケージによる因果効果の識別" class="slide level2">
+<h2>Rパッケージによる因果効果の識別</h2>
+<ul>
+<li><a href="https://cran.r-project.org/web/packages/causaleffect/vignettes/causaleffect.pdf">論文</a>がある</li>
+<li>因果効果の識別だと、{causaleffect}が良さそう
+<ul>
+<li>{causaleffect} is the only R package that implements a complete algorithm for the identification of causal effects.</li>
+</ul></li>
+</ul>
+</section><section id="causaleffectパッケージ" class="slide level2">
+<h2>causaleffectパッケージ</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">library</span>(<span class="st">&quot;causaleffect&quot;</span>)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="kw">library</span>(<span class="st">&quot;igraph&quot;</span>)</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co"># グラフの指定</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5">fig1 &lt;-<span class="st"> </span><span class="kw">graph.formula</span>(</a>
+<a class="sourceLine" id="cb4-6" data-line-number="6">  x <span class="op">-+</span><span class="st"> </span>y, </a>
+<a class="sourceLine" id="cb4-7" data-line-number="7">  z <span class="op">-+</span><span class="st"> </span>x, </a>
+<a class="sourceLine" id="cb4-8" data-line-number="8">  z <span class="op">-+</span><span class="st"> </span>y, <span class="co"># 観測変数による矢線を先に</span></a>
+<a class="sourceLine" id="cb4-9" data-line-number="9">  x <span class="op">-+</span><span class="st"> </span>z, </a>
+<a class="sourceLine" id="cb4-10" data-line-number="10">  z <span class="op">-+</span><span class="st"> </span>x, <span class="co"># 非観測変数による矢線を後に</span></a>
+<a class="sourceLine" id="cb4-11" data-line-number="11">  <span class="dt">simplify =</span> <span class="ot">FALSE</span>) <span class="co"># 双方向矢線を許容</span></a>
+<a class="sourceLine" id="cb4-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb4-13" data-line-number="13"><span class="co"># グラフ構造から情報を取り出す</span></a>
+<a class="sourceLine" id="cb4-14" data-line-number="14">fig1 &lt;-<span class="st"> </span><span class="kw">set.edge.attribute</span>(</a>
+<a class="sourceLine" id="cb4-15" data-line-number="15">  <span class="dt">graph =</span> fig1, </a>
+<a class="sourceLine" id="cb4-16" data-line-number="16">  <span class="dt">name =</span> <span class="st">&quot;description&quot;</span>, </a>
+<a class="sourceLine" id="cb4-17" data-line-number="17">  <span class="dt">index =</span> <span class="kw">c</span>(<span class="dv">4</span>,<span class="dv">5</span>), <span class="co"># 非観測変数によるエッジ</span></a>
+<a class="sourceLine" id="cb4-18" data-line-number="18">  <span class="dt">value =</span> <span class="st">&quot;U&quot;</span>)</a>
+<a class="sourceLine" id="cb4-19" data-line-number="19"></a>
+<a class="sourceLine" id="cb4-20" data-line-number="20">ce1 &lt;-<span class="st"> </span><span class="kw">causal.effect</span>(</a>
+<a class="sourceLine" id="cb4-21" data-line-number="21">  <span class="dt">y =</span> <span class="st">&quot;y&quot;</span>,</a>
+<a class="sourceLine" id="cb4-22" data-line-number="22">  <span class="dt">x =</span> <span class="st">&quot;x&quot;</span>, </a>
+<a class="sourceLine" id="cb4-23" data-line-number="23">  <span class="dt">G =</span> fig1, </a>
+<a class="sourceLine" id="cb4-24" data-line-number="24">  <span class="dt">expr =</span> <span class="ot">TRUE</span>) <span class="co"># TeXで出力 </span></a></code></pre></div>
+</section><section id="出力" class="slide level2">
+<h2>出力</h2>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">cat</span>(ce1)</a></code></pre></div>
+<pre><code>\sum_{z}P(y|z,x)P(z)</code></pre>
+</section><section id="eg_other1" class="slide level2">
+<h2>他のグラフの例も</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">fig2 &lt;-<span class="st"> </span><span class="kw">graph.formula</span>(</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">  x <span class="op">-+</span><span class="st"> </span>z, </a>
+<a class="sourceLine" id="cb7-3" data-line-number="3">  z <span class="op">-+</span><span class="st"> </span>y, <span class="co"># 観測変数による矢線を先に</span></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4">  u <span class="op">-+</span><span class="st"> </span>x, </a>
+<a class="sourceLine" id="cb7-5" data-line-number="5">  u <span class="op">-+</span><span class="st"> </span>y, <span class="co"># 非観測変数による矢線を後に</span></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6">  <span class="dt">simplify =</span> <span class="ot">FALSE</span>) <span class="co"># 双方向矢線を許容</span></a>
+<a class="sourceLine" id="cb7-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co"># グラフ構造から情報を取り出す</span></a>
+<a class="sourceLine" id="cb7-9" data-line-number="9">fig2 &lt;-<span class="st"> </span><span class="kw">set.edge.attribute</span>(</a>
+<a class="sourceLine" id="cb7-10" data-line-number="10">  <span class="dt">graph =</span> fig2, </a>
+<a class="sourceLine" id="cb7-11" data-line-number="11">  <span class="dt">name =</span> <span class="st">&quot;description&quot;</span>, </a>
+<a class="sourceLine" id="cb7-12" data-line-number="12">  <span class="dt">index =</span> <span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">4</span>), <span class="co"># 非観測変数によるエッジ</span></a>
+<a class="sourceLine" id="cb7-13" data-line-number="13">  <span class="dt">value =</span> <span class="st">&quot;U&quot;</span>)</a></code></pre></div>
+</section><section id="eg_other2" class="slide level2">
+<h2>他のグラフの例も(つづき)</h2>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">ce2 &lt;-<span class="st"> </span><span class="kw">causal.effect</span>(</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">  <span class="dt">y =</span> <span class="st">&quot;z&quot;</span>,</a>
+<a class="sourceLine" id="cb8-3" data-line-number="3">  <span class="dt">x =</span> <span class="st">&quot;x&quot;</span>, </a>
+<a class="sourceLine" id="cb8-4" data-line-number="4">  <span class="dt">G =</span> fig2, </a>
+<a class="sourceLine" id="cb8-5" data-line-number="5">  <span class="dt">expr =</span> <span class="ot">TRUE</span>) <span class="co"># TeXで出力</span></a>
+<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="kw">cat</span>(ce2)</a></code></pre></div>
+<pre><code>P(z|x)</code></pre>
+</section><section id="eg_other3" class="slide level2">
+<h2>他のグラフの例も(つづき)</h2>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">ce2 &lt;-<span class="st"> </span><span class="kw">causal.effect</span>(</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">  <span class="dt">y =</span> <span class="st">&quot;y&quot;</span>,</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">  <span class="dt">x =</span> <span class="st">&quot;z&quot;</span>, </a>
+<a class="sourceLine" id="cb10-4" data-line-number="4">  <span class="dt">G =</span> fig2, </a>
+<a class="sourceLine" id="cb10-5" data-line-number="5">  <span class="dt">expr =</span> <span class="ot">TRUE</span>) <span class="co"># TeXで出力</span></a>
+<a class="sourceLine" id="cb10-6" data-line-number="6"><span class="kw">cat</span>(ce2)</a></code></pre></div>
+<pre><code>P(y|x,z)</code></pre>
+</section><section id="eg_other4" class="slide level2">
+<h2>他のグラフの例も(つづき)</h2>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">ce2 &lt;-<span class="st"> </span><span class="kw">causal.effect</span>(</a>
+<a class="sourceLine" id="cb12-2" data-line-number="2">  <span class="dt">y =</span> <span class="st">&quot;y&quot;</span>,</a>
+<a class="sourceLine" id="cb12-3" data-line-number="3">  <span class="dt">x =</span> <span class="st">&quot;x&quot;</span>, </a>
+<a class="sourceLine" id="cb12-4" data-line-number="4">  <span class="dt">G =</span> fig2, </a>
+<a class="sourceLine" id="cb12-5" data-line-number="5">  <span class="dt">expr =</span> <span class="ot">TRUE</span>) <span class="co"># TeXで出力</span></a>
+<a class="sourceLine" id="cb12-6" data-line-number="6"><span class="kw">cat</span>(ce2)</a></code></pre></div>
+<pre><code>\sum_{z}P(y|x,z)P(z|x)</code></pre>
+</section></section>
+    </div>
+  </div>
+
+  <script src="Pearl_3_files/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="Pearl_3_files/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: true,
+        // Transition style
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+
+
+        chalkboard: {
+          theme: 'whiteboard',
+        },
+
+        keyboard: {
+          67: function() { RevealChalkboard.toggleNotesCanvas() },    // toggle notes canvas when 'c' is pressed
+          66: function() { RevealChalkboard.toggleChalkboard() }, // toggle chalkboard when 'b' is pressed
+          46: function() { RevealChalkboard.clear() },    // clear chalkboard when 'DEL' is pressed
+           8: function() { RevealChalkboard.reset() },    // reset chalkboard data on current slide when 'BACKSPACE' is pressed
+          68: function() { RevealChalkboard.download() }, // downlad recorded chalkboard drawing when 'd' is pressed
+        },
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'Pearl_3_files/reveal.js-3.3.0.1/plugin/chalkboard/chalkboard.js', async: true },
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>

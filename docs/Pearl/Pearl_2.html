@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="小西伶児" />
+  <title>統計的因果推論 輪読 ＃3</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="Pearl_2_files/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+
+<link rel="stylesheet" href="Pearl_2_files/reveal.js-3.3.0.1/css/theme/sky.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="for_revealjs.css"/>
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}  
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+    
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+    <link href="Pearl_2_files/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+    <link href="Pearl_2_files/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+    <script src="Pearl_2_files/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+    <script src="Pearl_2_files/viz-0.3/viz.js"></script>
+    <link href="Pearl_2_files/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
+    <script src="Pearl_2_files/grViz-binding-1.0.1/grViz.js"></script>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">統計的因果推論 輪読 ＃3</h1>
+  <h1 class="subtitle">第2章 因果関係を推測するための理論</h1>
+    <h2 class="author">小西伶児</h2>
+    <h3 class="date">2019/11/08</h3>
+</section>
+
+<section id="first" class="slide level2">
+<h2>2章のまとめ</h2>
+
+<ul>
+<li>統計解析を用いたからといって、<strong>本質的な原因</strong>と<strong>疑似的な共変動</strong>を完全に区別することは難しいが、多くの場合において区別できる
+<ul>
+<li><strong>極小性&amp;定常性</strong>を仮定することで、非観測変数も含んだデータを生成できる因果モデルの候補を構築するアルゴリズムが存在</li>
+<li>10個の変数からなるネットワークに対して、5,000以下のサンプルでも構造が復元できる</li>
+</ul></li>
+<li>データを学習して因果構造を導く方法は、機械学習と類似しているが<strong>実際は異なる</strong>
+<ul>
+<li>観察的同値な因果モデルが数多くあるから</li>
+<li>データに対する適合度は因果構造を実証する基準としては不十分</li>
+</ul></li>
+</ul>
+</section>
+<section><section id="はじめに" class="title-slide slide level1"><h1>2.1 はじめに</h1></section><section id="基本的な直感" class="slide level2">
+<h2>基本的な直感</h2>
+<ul>
+<li>観察された結果から因果関係を知りたい</li>
+<li><p>しかし、統計学では共変動に基づいて解析が行われている(not 因果関係)</p></li>
+<li>因果の定義の必要条件
+<ul>
+<li>時間的順序</li>
+<li>時間情報だけでは、擬似相関と因果関係を区別できない
+<ul>
+<li>因果的に重要な要因が事前にすべてわかっているわけではない</li>
+<li>うまく操作できない変数がある</li>
+</ul></li>
+</ul></li>
+</ul>
+</section><section id="因果構造を探索する手がかり" class="slide level2">
+<h2>因果構造を探索する手がかり</h2>
+<ul>
+<li>因果構造の特徴を示す統計的関連性のパターン</li>
+<li>例）AとB、BとCは従属だが、AとCは独立
+<ul>
+<li>数学的には左右どっちでもOK</li>
+<li>しかし、右側は非常に不自然に感じる</li>
+</ul></li>
+<li>時間情報がなくても、概念的に因果的方向を表す従属パターンが存在
+<ul>
+<li>従属関係を区別すれば、因果的方向の解明に利用できる</li>
+<li>Rebane-Pearlの回復アルゴリズム</li>
+<li>非観測変数を含む一般的なグラフに拡張可能</li>
+</ul></li>
+</ul>
+<div class="column1">
+<div id="htmlwidget-f35750f49095dd4aafb0" style="width:768px;height:576px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-f35750f49095dd4aafb0">{"x":{"diagram":"digraph example1 {\n  graph[\n    bgcolor = \"#00000000\"\n    , dpi = \"30\"]\n  node[width=0.5, height=0.3]\n  A -> B\n  C -> B\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+<div class="column2">
+<div id="htmlwidget-59b2748d38fd6e89dab4" style="width:768px;height:576px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-59b2748d38fd6e89dab4">{"x":{"diagram":"digraph example1 {\n  graph[\n    bgcolor = \"#00000000\"\n    , dpi = \"30\"]\n  node[width=0.5, height=0.3]\n  B -> A\n  B -> C\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+</section></section>
+<section><section id="因果モデリングのフレームワーク" class="title-slide slide level1"><h1>2.2 因果モデリングのフレームワーク</h1></section><section id="因果構造定義" class="slide level2">
+<h2>因果構造(定義)</h2>
+<div class="box">
+<p>非巡回有向グラフ(DAG)と変数集合<span class="math inline">\(V\)</span>が与えられている。 グラフ上の頂点がそれぞれ<span class="math inline">\(V\)</span>の異なる要素に対応し、 矢線のそれぞれが対応する変数間の直接的な関数関係を表す時、 このグラフを変数集合<span class="math inline">\(V\)</span>の因果構造という。</p>
+</div>
+<ul>
+<li>どの変数とどの変数が直接的な原因か？をグラフで書き表したもの
+<ul>
+<li>モデルの係数とかは不明でOK</li>
+</ul></li>
+<li>因果モデルの設計図的に利用できる
+<ul>
+<li><span class="math inline">\(x_i = f_i(pa_i, u_i), \quad i = 1,...,n\)</span></li>
+<li>独立な誤差項が含まれていて、関数関係は錯乱させられている</li>
+<li>誤差項は「隠れた」「測定できない」条件のこと</li>
+</ul></li>
+</ul>
+</section><section id="因果モデル定義" class="slide level2">
+<h2>因果モデル(定義)</h2>
+<div class="box">
+<p>因果構造<span class="math inline">\(D\)</span>と、<span class="math inline">\(D\)</span>と整合するパラメータ集合<span class="math inline">\(\Theta_D\)</span>の組 <span class="math inline">\(M=\langle D, \Theta_D \rangle\)</span> を因果モデルという。</p>
+<ul>
+<li>パラメータ集合<span class="math inline">\(\Theta_D\)</span>は、関数<span class="math inline">\(x_i = f_i(pa_i, u_i)\)</span>と、確率<span class="math inline">\(P(u_i)\)</span>からなる</li>
+<li>誤差項<span class="math inline">\(U_i\)</span>は互いに独立に確率分布<span class="math inline">\(P(u_i)\)</span>に従う</li>
+</ul>
+</div>
+<ul>
+<li>すべての変数間の関係が詳しく記述されており、マルコフ条件が必ず成り立つ前提</li>
+<li>親変数以外の原因のいくつかが除外されていてもOKだが、モデルに含まれている他の変数の親は除外NG</li>
+<li>仮に親集合が限定され過ぎていると、いくつかの変数に同時に影響を与える誤差が存在する</li>
+</ul>
+</section></section>
+<section><section id="モデルの優位性オッカムの剃刀" class="title-slide slide level1"><h1>2.3 モデルの優位性(オッカムの剃刀)</h1></section><section id="考えられる因果モデルは複数存在" class="slide level2">
+<h2>考えられる因果モデルは複数存在</h2>
+<ul>
+<li>得られた分布と適合するモデルは複数存在
+<ul>
+<li>因果構造に含まれる変数集合<span class="math inline">\(V\)</span>を知ることはできないから</li>
+<li>モデルに何らかの制約を課す必要がある</li>
+</ul></li>
+<li>そこで、データと整合するモデルの中から、余計なものは排除したい
+<ul>
+<li>選択過程を通して得られたモデルを<b>極小である</b>という</li>
+</ul></li>
+</ul>
+</section><section id="潜在構造と構造の優位性" class="slide level2">
+<h2>潜在構造と構造の優位性</h2>
+<div class="box">
+<p>変数集合<span class="math inline">\(V\)</span>の因果構造<span class="math inline">\(D\)</span>と、観測変数集合<span class="math inline">\(O \subseteq V\)</span>の組を潜在構造という。 潜在構造<span class="math inline">\(L = \langle D, O \rangle\)</span>と<span class="math inline">\(L&#39; = \langle D&#39;, O \rangle\)</span>に対して、因果構造<span class="math inline">\(D&#39;\)</span>が観測変数集合<span class="math inline">\(O\)</span>の因果構造<span class="math inline">\(D\)</span>を表現できるとき、 <span class="math inline">\(L\)</span>は<span class="math inline">\(L&#39;\)</span>よりも優位であるといい、<span class="math inline">\(L \preceq L&#39;\)</span>と記す</p>
+</div>
+<ul>
+<li>余計なものが表現できる必要はなく、目の前のものをより単純に表現できる方が良い</li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th><span class="math inline">\(L_1\)</span></th>
+<th><span class="math inline">\(L_2\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>パラメータ</td>
+<td>多</td>
+<td>少</td>
+</tr>
+<tr class="even">
+<td>表現できる分布</td>
+<td>小</td>
+<td>多</td>
+</tr>
+<tr class="odd">
+<td>優位かどうか</td>
+<td>優位</td>
+<td>劣位</td>
+</tr>
+</tbody>
+</table>
+</section><section id="推測された因果関係" class="slide level2">
+<h2>推測された因果関係</h2>
+<div class="box">
+<p>分布<span class="math inline">\(\hat P\)</span>が与えられた時、<span class="math inline">\(\hat P\)</span>と一致する極小的潜在構造の全てにおいて、 変数<span class="math inline">\(C\)</span>から変数<span class="math inline">\(E\)</span>への有向道が存在する時、<span class="math inline">\(C\)</span>は<span class="math inline">\(E\)</span>に対して因果的な影響を与えるという。</p>
+</div>
+<ul>
+<li><span class="math inline">\(\hat P\)</span>と一致する極小構造は複数存在する</li>
+<li>すべての極小構造で同じ有向道があれば、その変数間の因果関係を認める
+<ul>
+<li>道はあるが、向きが異なる場合は無向道</li>
+</ul></li>
+</ul>
+</section><section id="識別される因果関係の例" class="slide level2">
+<h2>識別される因果関係の例</h2>
+<div class="box">
+<p>変数<span class="math inline">\(\{ a,b,c,d \}\)</span>の観察データから</p>
+<ul>
+<li><span class="math inline">\(a\)</span>は<span class="math inline">\(b\)</span>と独立である <span class="math inline">\((a \mathop{\,\perp\!\!\!\!\!\perp\,}b)\)</span></li>
+<li><span class="math inline">\(d\)</span>は<span class="math inline">\(c\)</span>を与えた時、<span class="math inline">\(\{ a,b \}\)</span>と条件付き独立である <span class="math inline">\((d \mathop{\,\perp\!\!\!\!\!/\!\!\!\!\!\perp\,}\{a,b\} | c)\)</span></li>
+<li>上記の関係から論理的に導かれる独立関係を除くいかなる独立関係も、このデータから得られない</li>
+</ul>
+</div>
+</section><section id="続き極小構造" class="slide level2">
+<h2>続き:極小構造</h2>
+<p><img data-src="pics/Fig2_1.png" alt="図1" /></p>
+<ul>
+<li>a,bのみが極小</li>
+<li>つまり、<span class="math inline">\(c \rightarrow d\)</span>の因果関係が、潜在変数の有無に関係なく成り立つ</li>
+</ul>
+</section></section>
+<section><section id="定常分布" class="title-slide slide level1"><h1>2.4 定常分布</h1></section><section id="定常性" class="slide level2">
+<h2>定常性</h2>
+<ul>
+<li>実際のデータ生成モデルが極小であることや、極小構造を見つけ出すことは難しい</li>
+<li>特殊なパラメータ設定をすることで、異なる構造の極小モデルと区別できなくなる構造もある</li>
+<li>2つのコイン(A,B)を投げて同じ結果の場合1、異なる場合0となる二値の確率変数Cを考える
+<ul>
+<li>以下のどれでも、上記の従属パターンを生成可能</li>
+</ul></li>
+</ul>
+<p><img data-src="pics/Fig2_2.png" alt="図2" /></p>
+</section><section id="定常性原則定義" class="slide level2">
+<h2>定常性原則(定義)</h2>
+<div class="box">
+<p><span class="math inline">\(I(P)\)</span>を<span class="math inline">\(P\)</span>に含まれるすべての条件付き独立関係の集合とする。</p>
+<p><span class="math inline">\(P(\langle D, \Theta_D \rangle)\)</span>が<span class="math inline">\(I(P)\)</span>以外の独立関係を含まない時、 因果モデル<span class="math inline">\(M= \langle D, \Theta_D \rangle\)</span>は定常分布を生成する <span class="math inline">\(I(P( \langle D, \Theta_D \rangle)) \subseteq I(P( \langle D, \Theta&#39;_D \rangle))\)</span></p>
+</div>
+<ul>
+<li>パラメータが変化しても、<span class="math inline">\(P\)</span>における独立関係は崩れない
+<ul>
+<li>独立関係が増える場合はある(部分集合なので)</li>
+</ul></li>
+<li><span class="math inline">\((X \mathop{\,\perp\!\!\!\!\!\perp\,}Y|Z)_P \Leftrightarrow (X \mathop{\,\perp\!\!\!\!\!\perp\,}Y|Z)_D\)</span>であるならば、<span class="math inline">\(P\)</span>は<span class="math inline">\(M\)</span>の定常分布(忠実性の仮定)</li>
+</ul>
+</section><section id="忠実性と定常性" class="slide level2">
+<h2>忠実性と定常性</h2>
+<ul>
+<li>データから得た確率分布<span class="math inline">\(P\)</span>で<span class="math inline">\((X \mathop{\,\perp\!\!\!\!\!\perp\,}Y|Z)\)</span>が成立している</li>
+<li>仮に、<span class="math inline">\(P\)</span>を生成した因果構造が、下図のような非忠実な因果グラフだったとする(定理1.2.5参照)
+<ul>
+<li><span class="math inline">\(X\)</span>も<span class="math inline">\(Y\)</span>に対して因果的影響を与えるが、相殺されて、データでは<span class="math inline">\(X \rightarrow Y\)</span>が見えなくなっている</li>
+<li>係数が特異的な時にのみ起こる</li>
+</ul></li>
+<li>もし<span class="math inline">\(P\)</span>が忠実な因果構造から生成されているなら、<span class="math inline">\(X \rightarrow Y\)</span>は削除され、<span class="math inline">\((X \mathop{\,\perp\!\!\!\!\!\perp\,}Y|Z)\)</span>は定常的に成立
+<ul>
+<li>定常性の制約を課すことで、因果関係を絞り込める</li>
+</ul></li>
+</ul>
+<div id="htmlwidget-86e78359f972aa1e3893" style="width:768px;height:576px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-86e78359f972aa1e3893">{"x":{"diagram":"digraph example1 {\n  graph[\n    bgcolor = \"#00000000\"\n    , dpi=\"30\"\n    , layout = circo]\n    \n    X -> Y\n    Z -> X\n    Z -> Y\n    \n    {rank = max; X}\n    {rank = same; Z}\n    {rank = min; Y}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</section></section>
+<section><section id="dag構造の復元" class="title-slide slide level1"><h1>2.5 DAG構造の復元</h1></section><section id="定常性と因果構造" class="slide level2">
+<h2>定常性と因果構造</h2>
+<ul>
+<li>定常性を仮定した場合、潜在変数が存在しない限り、任意の分布は唯一で極小な因果構造を持つ
+<ul>
+<li>有向分離基準に基づく同等性</li>
+<li>2つの因果構造が同等であることと、それらの因果構造が同じ従属情報を持つことは同値</li>
+</ul></li>
+<li>条件付き独立関係を調べることで、DAG <span class="math inline">\(D\)</span>の構造を再構築できる</li>
+<li>同値な構造がいくつか存在しているため、復元されたDAGは一意ではない
+<ul>
+<li>矢線と無向辺からなるグラフで表現(パターン)</li>
+<li>無向辺は矢線の向きが決まらないという意味</li>
+</ul></li>
+</ul>
+</section><section id="IC_1" class="slide level2">
+<h2>ICアルゴリズム</h2>
+<ol type="1">
+<li><p><span class="math inline">\(V\)</span>から任意の変数組<span class="math inline">\((a,b)\)</span>を取り出し、<span class="math inline">\(a \mathop{\,\perp\!\!\!\!\!\perp\,}b|S_{ab}\)</span>となる集合<span class="math inline">\(S_{ab}\)</span>を探索する。 このような<span class="math inline">\(S_{ab}\)</span>が見つからない場合、<span class="math inline">\(a\)</span>と<span class="math inline">\(b\)</span>を無向辺で結び、無向グラフを構築する</p></li>
+<li><p><span class="math inline">\(S_{ab}\)</span>が存在する時、互いに隣接しない<span class="math inline">\(a\)</span>と<span class="math inline">\(b\)</span>が共通の隣接点として<span class="math inline">\(c\)</span>を保つ場合、<span class="math inline">\(c\in S_{ab}\)</span>であるかどうかを調べる</p>
+<ol type="1">
+<li><span class="math inline">\(c \in S_{ab}\)</span>であれば、矢印は加えない</li>
+<li><span class="math inline">\(c \notin S_{ab}\)</span>であれば、<span class="math inline">\(a \rightarrow c \leftarrow b\)</span>を加える</li>
+</ol></li>
+<li><p>次の規則に従って、ステップ2で得られた部分的有向グラフの無向辺にできるだけ多く矢印を加える</p>
+<ol type="1">
+<li>新しいv字合流を作るような矢印は加えない</li>
+<li>巡回道を作るような矢印を加えない</li>
+</ol></li>
+</ol>
+</section><section id="IC_2" class="slide level2">
+<h2>ICアルゴリズム(つづき)</h2>
+<p>ステップ3はいくつかの規則により構成されている</p>
+<ol type="1">
+<li><span class="math inline">\(a\)</span>と<span class="math inline">\(c\)</span>が隣接しないが、<span class="math inline">\(a \rightarrow b\)</span>がある場合は、<span class="math inline">\(b - c\)</span>に<span class="math inline">\(b \rightarrow c\)</span>と矢印をつける</li>
+<li>連鎖経路<span class="math inline">\(a \rightarrow c \rightarrow b\)</span>がある場合は、無向辺<span class="math inline">\(a - b\)</span>に<span class="math inline">\(a \rightarrow b\)</span>と矢印をつける</li>
+<li><span class="math inline">\(c\)</span>と<span class="math inline">\(d\)</span>が隣接しないような2つの連鎖経路<span class="math inline">\(a-c \rightarrow b\)</span> と<span class="math inline">\(a-d \rightarrow b\)</span>が存在する場合には、<span class="math inline">\(a-b\)</span>に<span class="math inline">\(a \rightarrow b\)</span>と矢印をつける</li>
+<li><span class="math inline">\(b\)</span>と<span class="math inline">\(c\)</span>は隣接しないが、<span class="math inline">\(a\)</span>と<span class="math inline">\(d\)</span>は隣接するような2つの連鎖経路<span class="math inline">\(a-c \rightarrow d\)</span>と<span class="math inline">\(c \rightarrow d \rightarrow b\)</span>が存在する場合には、<span class="math inline">\(a-b\)</span>に<span class="math inline">\(a \rightarrow b\)</span>と矢印をつける</li>
+</ol>
+</section></section>
+<section><section id="潜在構造の復元" class="title-slide slide level1"><h1>2.6 潜在構造の復元</h1></section><section id="潜在構造" class="slide level2">
+<h2>潜在構造</h2>
+<ul>
+<li>定常性を仮定した場合、潜在変数がなければ、任意の分布は唯一で極小な因果構造を持つ(前項)</li>
+<li>しかし、潜在変数がある場合、観測分布<span class="math inline">\(\hat P\)</span>は観測可能な変数集合<span class="math inline">\(O\)</span>に対して定常でなくてもよい
+<ul>
+<li><span class="math inline">\(\hat P\)</span>と整合する極小潜在構造の中に、DAG構造をもつとは限らない</li>
+</ul></li>
+<li>適切に定義された構造をもつグラフの中から探索すれば、潜在構造を復元することも可能
+<ul>
+<li>すべての潜在構造<span class="math inline">\(L\)</span>に対して、<span class="math inline">\(O\)</span>について<span class="math inline">\(L\)</span>と従属的同値な潜在構造(射影)が存在することを利用</li>
+<li>このような潜在構造では、非観測頂点が2つの観測された子を持つルートとなっている</li>
+</ul></li>
+</ul>
+</section><section id="def_2_6_1" class="slide level2">
+<h2>射影(定義2.6.1)</h2>
+<div class="box">
+<p>潜在構造<span class="math inline">\(L_{[o]} = \langle D_{[O]}, O \rangle\)</span>が次の2つの条件を満たす時、<span class="math inline">\(L_{[o]}\)</span>は潜在構造<span class="math inline">\(L\)</span>の射影であるという</p>
+<ol type="1">
+<li><span class="math inline">\(D_{[o]}\)</span>に表現されている任意の非観測変数は親を持たず、かつ隣接しない2つの観測変数の共通原因である</li>
+<li><span class="math inline">\(L\)</span>によって生成される任意の定常分布<span class="math inline">\(P\)</span>に対して、<span class="math inline">\(L_{[O]}\)</span>によって生成される定常分布<span class="math inline">\(P&#39;\)</span>が存在し、<span class="math inline">\(I(P_{[O]})=I(P&#39;_{[O]})\)</span>を満たす</li>
+</ol>
+</div>
+<ul>
+<li>任意の潜在構造は少なくとも1つの射影を持つ(定理2.6.2)
+<ul>
+<li><span class="math inline">\(\hat P\)</span>に対する任意の極小モデルについて最良な射影に辺が存在する場合、因果的な道が存在する</li>
+</ul></li>
+</ul>
+</section><section id="icアルゴリズム" class="slide level2">
+<h2>IC*アルゴリズム</h2>
+<ul>
+<li><span class="math inline">\(\hat P\)</span>に対する任意の極小モデルの最良な射影を見つけ出し、矢線を適切に識別すればよい
+<ul>
+<li>ICアルゴリズムを少し変形したIC*アルゴリズムで、識別可能</li>
+</ul></li>
+</ul>
+<ol type="1">
+<li><span class="math inline">\(a\)</span>から<span class="math inline">\(b\)</span>に有向道があることを示すマーク付き矢線<span class="math inline">\(a \xrightarrow{*} b\)</span></li>
+<li><span class="math inline">\(a\)</span>から<span class="math inline">\(b\)</span>への有向道or潜在共通原因<span class="math inline">\(a \leftarrow L \rightarrow b\)</span>のどちらかを示すマークなし矢線<span class="math inline">\(a \rightarrow b\)</span></li>
+<li>潜在共通原因<span class="math inline">\(a \leftarrow L \rightarrow b\)</span>があることを示す双方向矢線<span class="math inline">\(a \leftrightarrow b\)</span></li>
+<li><span class="math inline">\(a \leftarrow b, a \rightarrow b, a \leftarrow L \rightarrow b\)</span>のどれかを示す無向辺<span class="math inline">\(a - b\)</span></li>
+</ol>
+</section><section id="icアルゴリズムつづき" class="slide level2">
+<h2>IC*アルゴリズム(つづき)</h2>
+<ul>
+<li>ステップ1とステップ2は、ICアルゴリズムと同じ</li>
+<li>ステップ3
+<ul>
+<li>次の規則に従って、ステップ2までに得られたパターンの無向辺に、できる限り多くの矢印を加える</li>
+<li>できる限り多くの矢線にマーク(*)をつける</li>
+</ul>
+<ol type="1">
+<li>互いに隣接しない<span class="math inline">\(a\)</span>と<span class="math inline">\(b\)</span>が共通の隣接点として<span class="math inline">\(c\)</span>を持つ時、<span class="math inline">\(a\)</span>と<span class="math inline">\(c\)</span>を結ぶ辺に<span class="math inline">\(c\)</span>への矢印があり、 <span class="math inline">\(b\)</span>と<span class="math inline">\(c\)</span>を結ぶ辺に矢印がない場合、<span class="math inline">\(b\)</span>に向かうマークつき矢線<span class="math inline">\(c \xrightarrow{*} b\)</span>にする</li>
+<li><span class="math inline">\(a\)</span>と<span class="math inline">\(b\)</span>が隣接し、かつ<span class="math inline">\(a\)</span>から<span class="math inline">\(b\)</span>へむかう有向道がすべてマーク付き矢線で構成されている場合、<span class="math inline">\(a\)</span>と<span class="math inline">\(b\)</span>を結ぶ無向辺に<span class="math inline">\(b\)</span>にむかう矢印を加える</li>
+</ol></li>
+</ul>
+</section><section id="スプリンクラーの例" class="slide level2">
+<h2>スプリンクラーの例</h2>
+<p><img data-src="pics/Fig2_3.png" alt="図3" /></p>
+</section></section>
+<section><section id="因果関係に関する局所的な判定基準" class="title-slide slide level1"><h1>2.7 因果関係に関する局所的な判定基準</h1></section><section id="first2" class="slide level2">
+<h2>はじめに</h2>
+<ul>
+<li>IC*アルゴリズムに定常分布を入力すればパターンが出力される
+<ul>
+<li>マーク付き矢線・マークなし矢線・双方向矢線(擬似相関)・無向辺</li>
+</ul></li>
+<li>この節では、ICアルゴリズムから得られる <strong>潜在的な因果関係</strong> と <strong>本質的な因果関係</strong> の明確な定義を与える</li>
+</ul>
+</section><section id="def2_7_1" class="slide level2">
+<h2>潜在的原因(定義2.7.1)</h2>
+<div class="box">
+<p>次の条件を満たす時、<span class="math inline">\(X\)</span>は<span class="math inline">\(Y\)</span>に対して潜在的で因果的な影響を与えるという</p>
+<ol type="1">
+<li>すべての背景(具体的な値を取る変数集合)において、<span class="math inline">\(X\)</span>と<span class="math inline">\(Y\)</span>は従属する</li>
+<li>次の条件を満たす変数<span class="math inline">\(Z\)</span>と背景<span class="math inline">\(S\)</span>が存在する
+<ol type="1">
+<li><span class="math inline">\(X\)</span>と<span class="math inline">\(Z\)</span>は<span class="math inline">\(S\)</span>を与えたとき条件付き独立<span class="math inline">\((X \mathop{\,\perp\!\!\!\!\!\perp\,}Z |S)\)</span></li>
+<li><span class="math inline">\(Y\)</span>と<span class="math inline">\(Z\)</span>は<span class="math inline">\(S\)</span>を与えたとき従属<span class="math inline">\((Z \mathop{\,\perp\!\!\!\!\!/\!\!\!\!\!\perp\,}Y |S)\)</span></li>
+</ol></li>
+</ol>
+</div>
+<ul>
+<li>スプリンクラーの例
+<ul>
+<li><span class="math inline">\(S=a\)</span>という背景では、<span class="math inline">\(Z=c\)</span>は<span class="math inline">\(d\)</span>と従属、かつ<span class="math inline">\(b\)</span>と独立。つまり、<span class="math inline">\(b\)</span>は<span class="math inline">\(d\)</span>の潜在的原因</li>
+<li><span class="math inline">\(c\)</span>も<span class="math inline">\(S=a\)</span>と<span class="math inline">\(Z=b\)</span>の下で<span class="math inline">\(d\)</span>の潜在的原因</li>
+</ul></li>
+</ul>
+</section><section id="def2_7_2" class="slide level2">
+<h2>本質的な原因(定義2.7.2)</h2>
+<div class="box">
+<p>次の<strong>いずれか</strong>の条件を満たす時、<span class="math inline">\(X\)</span>は<span class="math inline">\(Y\)</span>に対して本質的で因果的な影響を与えるという</p>
+<ol type="1">
+<li>すべての背景において<span class="math inline">\(X\)</span>と<span class="math inline">\(Y\)</span>は従属であり、次の条件を満たす<span class="math inline">\(S\)</span>が存在する
+<ol type="1">
+<li><span class="math inline">\(Z\)</span>は<span class="math inline">\(X\)</span>の潜在的原因である(定義2.7.1)</li>
+<li><span class="math inline">\(Z\)</span>と<span class="math inline">\(Y\)</span>は<span class="math inline">\(S\)</span>を与えた時に従属<span class="math inline">\((Z \mathop{\,\perp\!\!\!\!\!/\!\!\!\!\!\perp\,}Y|S)\)</span></li>
+<li><span class="math inline">\(Z\)</span>と<span class="math inline">\(Y\)</span>は<span class="math inline">\(S \cup X\)</span>を与えたときに独立<span class="math inline">\((Z \mathop{\,\perp\!\!\!\!\!\perp\,}Y | S\cup X)\)</span></li>
+</ol></li>
+<li><span class="math inline">\(X\)</span>と<span class="math inline">\(Y\)</span>は基準1で定義された関係の推移的閉包に含まれる</li>
+</ol>
+</div>
+</section><section id="推移的閉包補足" class="slide level2">
+<h2>推移的閉包(補足)</h2>
+<ul>
+<li><span class="math inline">\(R\)</span>を集合<span class="math inline">\(A\)</span>上の二項関係とする (<span class="math inline">\(R \subset A \times A\)</span>)</li>
+<li><p><span class="math inline">\(R\)</span>が推移的(transitive) <span class="math display">\[
+\forall x ,\forall y, \forall z ((xRy \wedge yRz) \Rightarrow xRz)
+\]</span></p></li>
+<li>閉包とは、「何らかの性質に関して閉じたもの」という意味</li>
+<li><span class="math inline">\(p\)</span>を関係に関する性質とする
+<ul>
+<li>例えば、「推移的である」とか</li>
+</ul></li>
+<li>関係<span class="math inline">\(R\)</span>の<span class="math inline">\(p\)</span>に関する閉包とは、<span class="math inline">\(R\)</span>を含み<span class="math inline">\(p\)</span>の性質を満たす最小の関係
+<ul>
+<li><span class="math inline">\(R\)</span>の推移的閉包とは、<span class="math inline">\(R\)</span>を含み、推移的である最小の関係</li>
+</ul></li>
+<li><p>詳細は<a href="http://www.cs.tsukuba.ac.jp/~kam/lecture/discrete2017/text/3.pdf">こちら</a></p></li>
+</ul>
+</section><section id="def2_7_3" class="slide level2">
+<h2>疑似相関(定義2.7.3)</h2>
+<div class="box">
+<p>2つの変数<span class="math inline">\(X\)</span>と<span class="math inline">\(Y\)</span>がある背景において従属しているとする。 次の条件を満たす変数<span class="math inline">\(Z_1\)</span>と<span class="math inline">\(Z_2\)</span>と2つの背景が存在する時、<span class="math inline">\(X\)</span>と<span class="math inline">\(Y\)</span>は疑似相関を持つという</p>
+<ol type="1">
+<li><span class="math inline">\(Z_1 \mathop{\,\perp\!\!\!\!\!/\!\!\!\!\!\perp\,}X |S_1\)</span></li>
+<li><span class="math inline">\(Z_1 \mathop{\,\perp\!\!\!\!\!\perp\,}Y |S_1\)</span></li>
+<li><span class="math inline">\(Z_2 \mathop{\,\perp\!\!\!\!\!/\!\!\!\!\!\perp\,}Y |S_2\)</span></li>
+<li><span class="math inline">\(Z_2 \mathop{\,\perp\!\!\!\!\!\perp\,}X |S_2\)</span></li>
+</ol>
+</div>
+<ul>
+<li>条件1,2から、<span class="math inline">\(Y\)</span>が<span class="math inline">\(X\)</span>の潜在的な原因ではない
+<ul>
+<li>(<span class="math inline">\(X\)</span>が<span class="math inline">\(Y\)</span>の潜在的原因)</li>
+</ul></li>
+<li>条件3,4から、<span class="math inline">\(X\)</span>が<span class="math inline">\(Y\)</span>の潜在的な原因ではない
+<ul>
+<li>(<span class="math inline">\(Y\)</span>が<span class="math inline">\(X\)</span>の潜在的原因)</li>
+</ul></li>
+</ul>
+</section><section id="時間情報をもつ本質的な原因" class="slide level2">
+<h2>時間情報をもつ本質的な原因</h2>
+<ul>
+<li>時間情報があれば、<span class="math inline">\(X\)</span>に先行する変数と隣接する変数はすべて<span class="math inline">\(X\)</span>の潜在的な原因とみなすことができる</li>
+<li>背景<span class="math inline">\(S\)</span>が<span class="math inline">\(X\)</span>より先に起こるという情報がある場合には、隣接関係(定義2.7.1の条件1)は必要ではない</li>
+</ul>
+<div class="box">
+<p><span class="math inline">\(X\)</span>に先行する<span class="math inline">\(S\)</span>と<span class="math inline">\(Z\)</span>が次の条件を満たす時、<span class="math inline">\(X\)</span>は<span class="math inline">\(Y\)</span>に対して因果的な影響を与える</p>
+<ol type="1">
+<li><span class="math inline">\(Z \mathop{\,\perp\!\!\!\!\!/\!\!\!\!\!\perp\,}Y |S\)</span></li>
+<li><span class="math inline">\(Z \mathop{\,\perp\!\!\!\!\!\perp\,}Y |S \cup X\)</span></li>
+</ol>
+</div>
+<ul>
+<li><span class="math inline">\(X\)</span>を条件付けることによって、従属関係にある<span class="math inline">\(Z\)</span>と<span class="math inline">\(Y\)</span>が独立となるならば、<span class="math inline">\(Z\)</span>と<span class="math inline">\(Y\)</span>の従属関係は<span class="math inline">\(X\)</span>を経由して生成されたものでなければならない</li>
+<li>すなわち、<span class="math inline">\(Z\)</span>が<span class="math inline">\(X\)</span>に先行する時、このような条件が成り立つなら、<span class="math inline">\(X\)</span>が<span class="math inline">\(Y\)</span>に対して因果的な影響を与える</li>
+</ul>
+</section><section id="時間情報をもつ疑似相関" class="slide level2">
+<h2>時間情報をもつ疑似相関</h2>
+<div class="box">
+<p><span class="math inline">\(X\)</span>が<span class="math inline">\(Y\)</span>に先行し、<span class="math inline">\(X\)</span>と<span class="math inline">\(Y\)</span>が背景<span class="math inline">\(S\)</span>において従属しているとする。 <span class="math inline">\(Z\)</span>が次の条件を満たす時、<span class="math inline">\(X\)</span>と<span class="math inline">\(Y\)</span>は疑似相関を持つという</p>
+<ol type="1">
+<li><span class="math inline">\(Z \mathop{\,\perp\!\!\!\!\!\perp\,}Y | S\)</span></li>
+<li><span class="math inline">\(Z \mathop{\,\perp\!\!\!\!\!/\!\!\!\!\!\perp\,}X | S\)</span></li>
+</ol>
+</div>
+<ul>
+<li><span class="math inline">\(X\)</span>と<span class="math inline">\(Y\)</span>の間に因果的な関係があるならば、<span class="math inline">\(Z\)</span>と<span class="math inline">\(Y\)</span>に従属関係が生じることになる</li>
+</ul>
+<p><img data-src="pics/Fig2_4.png" alt="図4" /></p>
+</section><section id="因果関係の定義まとめ" class="slide level2">
+<h2>因果関係の定義まとめ</h2>
+<ul>
+<li>因果関係は少なくとも3つの変数によって推測されている</li>
+<li>特に、ある変数が他の変数の因果的な結果でないことを示すための情報は、非推移的な3つの変数の組によって表現されている
+<ul>
+<li><span class="math inline">\((a \mathop{\,\perp\!\!\!\!\!\perp\,}b),(a \mathop{\,\perp\!\!\!\!\!/\!\!\!\!\!\perp\,}b), (b \mathop{\,\perp\!\!\!\!\!/\!\!\!\!\!\perp\,}c)\)</span>を満たす場合、<span class="math inline">\(c\)</span>は<span class="math inline">\(a\)</span>や<span class="math inline">\(b\)</span>の原因ではなく、 共通の結果or共通原因を経由するパターンのどちらか</li>
+<li>擬似相関の定義では、2種類の非推移的な3つの変数の組が存在することで、 <span class="math inline">\(X\)</span>と<span class="math inline">\(Y\)</span>の間の因果関係が取り除かれ、共通原因が従属関係を説明する唯一の理由</li>
+</ul></li>
+</ul>
+</section></section>
+<section><section id="非時間的因果関係と統計的時間" class="title-slide slide level1"><h1>2.8 非時間的因果関係と統計的時間</h1></section><section id="基本的な先入観" class="slide level2">
+<h2>基本的な先入観</h2>
+<ul>
+<li>非時間データから因果関係の方向を決定する際、時間と因果的解釈の関係に関する疑問が生じる
+<ul>
+<li>矢線<span class="math inline">\(X \rightarrow Y\)</span>に割り当てられた方向は、時間情報と矛盾しないのか？</li>
+<li>統計的従属関係だけから決定される方向性が時間の流れと関係するのか？</li>
+</ul></li>
+<li>人間の思考過程では、2つの期待(先入観)に基づいて因果的解釈が行われている
+<ul>
+<li>時間的側面
+<ul>
+<li>原因は結果の前に生じるという理解</li>
+</ul></li>
+<li>統計的側面
+<ul>
+<li>原因が結果を条件付き独立にする</li>
+</ul></li>
+</ul></li>
+<li>長年の科学的な考察を振り返ってみても、2つの側面が矛盾なく共存している
+<ul>
+<li>つまり、自然現象を記述する統計学が時間的な基本的先入観を明らかにするものであることを暗に示している</li>
+</ul></li>
+<li>現在の状況が将来を示す変数どうしを条件付き独立にする現象はあるが、逆はほとんどみかけない</li>
+<li>これらの先入観を定式化するために、統計的時間の概念を導入する</li>
+</ul>
+</section><section id="def2_8_1" class="slide level2">
+<h2>統計的時間(定義2.8.1)</h2>
+<div class="box">
+<p>経験分布<span class="math inline">\(P\)</span>に対して、<span class="math inline">\(P\)</span>と一致する極小因果構造の少なくとも1つと矛盾しない変数順序を<span class="math inline">\(P\)</span>の統計的時間という</p>
+</div>
+<ul>
+<li>1次元マルコフ・チェーンモデルでは、複数の統計的時間が存在している</li>
+<li>2次元マルコフ・チェーンモデルでは、物理時間と一致する統計的時間を持つ
+<ul>
+<li>ICアルゴリズムを実行すると、時間情報が無くても、<span class="math inline">\(X_t\)</span>と<span class="math inline">\(Y_t\)</span>に対する本質的な原因として、<span class="math inline">\(X_{t-1}\)</span>と<span class="math inline">\(Y_{t-1}\)</span>を識別できる</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[
+X_t = \alpha X_{t-1} + \beta Y_{t-1} + \xi_t \\
+Y_t = \gamma X_{t-1} + \delta Y_{t-1} + \eta_t
+\]</span></p>
+</section><section id="time" class="slide level2">
+<h2>統計的時間</h2>
+<ul>
+<li>時間的先入観(予想2.8.2)
+<ul>
+<li>多くの自然現象では、物理的時間は少なくとも1つの統計的時間と一致する</li>
+</ul></li>
+<li>時間的先入観は使用する記述言語に依存する
+<ul>
+<li>以下の線形変換を用いると、物理時間とは異なる統計的時間を表現する<span class="math inline">\((X&#39;, Y&#39;)\)</span>を作ることができる</li>
+<li>将来の値<span class="math inline">\((X_{t+1}&#39; , Y_{t+1}&#39;)\)</span>を与えた時に独立になる <span class="math display">\[
+X_t&#39; = aX_t + bY_t \\
+Y_t&#39; = cX_t + dY_t
+\]</span></li>
+</ul></li>
+<li>つまり、物理的時間と統計的時間の一致性は人間が基本言語を選択した際の副産物</li>
+</ul>
+</section><section id="time_2" class="slide level2">
+<h2>統計的時間</h2>
+<p><span class="math display">\[\begin{align}
+\begin{pmatrix} X&#39;_t \\ Y&#39;_t \end{pmatrix} &amp;= \begin{pmatrix} a &amp; b \\ c &amp; d \end{pmatrix} \begin{pmatrix} X_t \\ Y_t \end{pmatrix} \\
+                   &amp;= \begin{pmatrix} a &amp; b \\ c &amp; d \end{pmatrix} \begin{pmatrix} \alpha &amp; \beta \\ \gamma &amp; \delta \end{pmatrix} \begin{pmatrix} X_{t-1} \\ Y_{t-1} \end{pmatrix} \\
+                   &amp;= \begin{pmatrix} \theta_1 &amp; \theta_2 \\ \theta_3 &amp; \theta_4 \end{pmatrix} \begin{pmatrix} X_{t-1} \\ Y_{t-1} \end{pmatrix} \\
+
+\begin{pmatrix} X&#39;_{t+1} \\ Y&#39;_{t+1} \end{pmatrix} &amp;= \begin{pmatrix} \theta_1 &amp; \theta_2 \\ \theta_3 &amp; \theta_4 \end{pmatrix} \begin{pmatrix} X_{t} \\ Y_{t} \end{pmatrix}
+\end{align}\]</span></p>
+<p><span class="math display">\[\begin{align}
+\begin{pmatrix} \theta_1 &amp; \theta_2 \\ \theta_3 &amp; \theta_4 \end{pmatrix}^{-1} \begin{pmatrix} X&#39;_{t+1} \\ Y&#39;_{t+1} \end{pmatrix} = \begin{pmatrix} X_{t} \\ Y_{t} \end{pmatrix}
+\end{align}\]</span></p>
+</section></section>
+<section><section id="結論" class="title-slide slide level1"><h1>2.9 結論</h1></section><section id="last" class="slide level2">
+<h2>2章のまとめ</h2>
+<ul>
+<li>統計解析を用いたからといって、<strong>本質的な原因</strong>と<strong>疑似的な共変動</strong>を完全に区別することは難しいが、多くの場合において区別できる
+<ul>
+<li><strong>極小性&amp;定常性</strong>を仮定することで、非観測変数も含んだデータを生成できる因果モデルの候補を構築するアルゴリズムが存在</li>
+<li>10個の変数からなるネットワークに対して、5,000以下のサンプルでも構造が復元できる</li>
+</ul></li>
+<li>データを学習して因果構造を導く方法は、機械学習と類似しているが<strong>実際は異なる</strong>
+<ul>
+<li>観察的同値な因果モデルが数多くあるから</li>
+<li>データに対する適合度は因果構造を実証する基準としては不十分</li>
+</ul></li>
+</ul>
+</section><section id="その他" class="slide level2">
+<h2>その他</h2>
+<ul>
+<li>マルコフ条件の仮定に対する批判への回答</li>
+<li>定常性の仮定に対する批判への回答</li>
+<li>自律性の重要性</li>
+<li>ベイジアンアプローチでも、極小性と定常性が基本</li>
+<li>因果探索の研究はTETRADグループで精力的に進められている</li>
+<li>経済分野では、因果ベイジアンネットワークを用いて、子供が観察と行動からどのように因果的知識を獲得するのかを説明している</li>
+<li>関数構造に基づいて因果的な方向を発見する新たなフレームワーク(LiNGAM)</li>
+<li>自然環境で自発的に発生した局所的な変化に基づく方法論もあるらしい</li>
+</ul>
+</section></section>
+    </div>
+  </div>
+
+  <script src="Pearl_2_files/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="Pearl_2_files/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: true,
+        // Transition style
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+
+
+        chalkboard: {
+          theme: 'whiteboard',
+        },
+
+        keyboard: {
+          67: function() { RevealChalkboard.toggleNotesCanvas() },    // toggle notes canvas when 'c' is pressed
+          66: function() { RevealChalkboard.toggleChalkboard() }, // toggle chalkboard when 'b' is pressed
+          46: function() { RevealChalkboard.clear() },    // clear chalkboard when 'DEL' is pressed
+           8: function() { RevealChalkboard.reset() },    // reset chalkboard data on current slide when 'BACKSPACE' is pressed
+          68: function() { RevealChalkboard.download() }, // downlad recorded chalkboard drawing when 'd' is pressed
+        },
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'Pearl_2_files/reveal.js-3.3.0.1/plugin/chalkboard/chalkboard.js', async: true },
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
