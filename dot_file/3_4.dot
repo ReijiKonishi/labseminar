@@ -1,0 +1,15 @@
+digraph example1 {
+  graph[bgcolor = "#00000000"]
+  
+  node[shape = box]
+  遺伝子
+  喫煙X
+  タール蓄積Z
+  肺ガンY
+
+  edge[]
+  遺伝子 -> 喫煙X -> タール蓄積Z -> 肺ガンY
+  遺伝子 -> 肺ガンY
+
+  {rank = same; 喫煙X; タール蓄積Z; 肺ガンY}
+}

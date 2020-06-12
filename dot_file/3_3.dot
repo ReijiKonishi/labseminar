@@ -1,0 +1,18 @@
+digraph example1 {
+  graph[bgcolor = "#00000000"]
+  
+  node[shape = box]
+  X
+  Y
+  Z_1
+  Z_2
+
+  edge[]
+  Z_1 -> Z_2
+  Z_1 -> Y
+  Z_2 -> X
+  Z_2 -> Y
+  X -> Y
+
+  {rank = same; X; Y}
+}

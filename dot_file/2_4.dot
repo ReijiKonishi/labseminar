@@ -1,0 +1,10 @@
+digraph example1 {
+  graph[
+    bgcolor = "#00000000"
+    , dpi = "50"]
+  node[width=0.5, height=0.3]
+  "*" -> a
+  "*" -> c
+  b -> c
+  c -> d
+}

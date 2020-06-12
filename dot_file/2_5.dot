@@ -1,0 +1,15 @@
+digraph example1 {
+  graph[
+    bgcolor = "#00000000"
+    , dpi="30"
+    , layout = circo]
+    
+    X -> Y
+    Z -> X
+    Z -> Y
+    
+    {rank = max; X}
+    {rank = same; Z}
+    {rank = min; Y}
+}
+

@@ -1,0 +1,16 @@
+name: "サイトタイトル"
+navbar:
+  title: "notebook"
+  left:
+    - text: "R package"
+      href: R_package.html
+output:
+  html_document:
+    theme: cosmo
+    highlight: textmate
+    toc: true
+    toc_float:
+      collapse: false
+    df_print: "kable"
+    css: site_style.css
+output_dir: "docs"
