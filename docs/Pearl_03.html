@@ -537,7 +537,7 @@ document.getElementsByTagName('head')[0].appendChild(style);
     <h1 class="title">統計的因果推論 輪読</h1>
   <h1 class="subtitle">第3章 因果ダイアグラムと因果効果の識別可能条件</h1>
     <h2 class="author">小西伶児</h2>
-    <h3 class="date">2020/06/13</h3>
+    <h3 class="date">2020/06/22</h3>
 </section>
 
 <section><section id="first_of_all" class="title-slide slide level1"><h1>3.1. はじめに</h1></section><section id="puropose" class="slide level2">
@@ -579,8 +579,8 @@ document.getElementsByTagName('head')[0].appendChild(style);
 </ul>
 </div>
 <div class="column2">
-<div id="htmlwidget-82939bfa1f0744563434" style="width:300px;height:300px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-82939bfa1f0744563434">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\"]\n  \n  node[shape = box]\n  X\n  Y\n  Z_0[shape = oval]\n  Z_1\n  Z_2\n  Z_3\n  B[shape = oval]\n  \n  edge[]\n  X -> Z_2\n  X -> Y\n  Z_2 -> Y\n  Z_2 -> Z_3\n  Z_3 -> Y\n  Z_1 -> Z_2\n  Z_0 -> X[style = dashed]\n  Z_0 -> Z_1[style = dashed]\n  Z_0 -> B[style = dashed]\n  B -> Z_3[style = dashed]\n  \n  {rank = same; Z_1; B}\n  {rank = same; X; Z_2; Z_3}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-386549f862f1c45f4f50" style="width:300px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-386549f862f1c45f4f50">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\"]\n  \n  node[shape = box]\n  X\n  Y\n  Z_0[shape = oval]\n  Z_1\n  Z_2\n  Z_3\n  B[shape = oval]\n  \n  edge[]\n  X -> Z_2\n  X -> Y\n  Z_2 -> Y\n  Z_2 -> Z_3\n  Z_3 -> Y\n  Z_1 -> Z_2\n  Z_0 -> X[style = dashed]\n  Z_0 -> Z_1[style = dashed]\n  Z_0 -> B[style = dashed]\n  B -> Z_3[style = dashed]\n  \n  {rank = same; Z_1; B}\n  {rank = same; X; Z_2; Z_3}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </section><section id="本章でわかること" class="slide level2">
 <h2>本章でわかること</h2>
@@ -637,8 +637,8 @@ Y = f_Y(X, Z_2, Z_3, \epsilon_Y)
 \]</span></p>
 </div>
 <div class="column2">
-<div id="htmlwidget-169627a47ce1af6232b0" style="width:300px;height:300px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-169627a47ce1af6232b0">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\"]\n  \n  node[shape = box]\n  X\n  Y\n  Z_0[shape = oval]\n  Z_1\n  Z_2\n  Z_3\n  B[shape = oval]\n  \n  edge[]\n  X -> Z_2\n  X -> Y\n  Z_2 -> Y\n  Z_2 -> Z_3\n  Z_3 -> Y\n  Z_1 -> Z_2\n  Z_0 -> X[style = dashed]\n  Z_0 -> Z_1[style = dashed]\n  Z_0 -> B[style = dashed]\n  B -> Z_3[style = dashed]\n  \n  {rank = same; Z_1; B}\n  {rank = same; X; Z_2; Z_3}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-e6c4e213eeb5a77a3fb3" style="width:300px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e6c4e213eeb5a77a3fb3">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\"]\n  \n  node[shape = box]\n  X\n  Y\n  Z_0[shape = oval]\n  Z_1\n  Z_2\n  Z_3\n  B[shape = oval]\n  \n  edge[]\n  X -> Z_2\n  X -> Y\n  Z_2 -> Y\n  Z_2 -> Z_3\n  Z_3 -> Y\n  Z_1 -> Z_2\n  Z_0 -> X[style = dashed]\n  Z_0 -> Z_1[style = dashed]\n  Z_0 -> B[style = dashed]\n  B -> Z_3[style = dashed]\n  \n  {rank = same; Z_1; B}\n  {rank = same; X; Z_2; Z_3}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </section><section id="原子的な介入" class="slide level2">
 <h2>原子的な介入</h2>
@@ -743,9 +743,9 @@ P(x_1,\ldots ,x_n|do(x_i&#39;)) = \begin{cases}
 </section><section id="interventin_graph_equ" class="slide level2">
 <h2>例：介入のグラフと式の関係</h2>
 <div class="column1">
-<p><div id="htmlwidget-35b0be6d909b42a39e1e" style="width:300px;height:300px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-35b0be6d909b42a39e1e">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\"]\n  \n  node[shape = box]\n  X\n  Y\n  Z_0[shape = oval]\n  Z_1\n  Z_2\n  Z_3\n  B[shape = oval]\n  \n  edge[]\n  X -> Z_2\n  X -> Y\n  Z_2 -> Y\n  Z_2 -> Z_3\n  Z_3 -> Y\n  Z_1 -> Z_2\n  Z_0 -> X[style = dashed]\n  Z_0 -> Z_1[style = dashed]\n  Z_0 -> B[style = dashed]\n  B -> Z_3[style = dashed]\n  \n  {rank = same; Z_1; B}\n  {rank = same; X; Z_2; Z_3}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script><div id="htmlwidget-f4767528d866649ac8d0" style="width:300px;height:300px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-f4767528d866649ac8d0">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\"]\n  \n  node[shape = box]\n  X\n  Y\n  Z_0[shape = oval]\n  Z_1\n  Z_2\n  Z_3\n  B[shape = oval]\n  \n  edge[]\n  X -> Z_2\n  X -> Y\n  Z_2 -> Y\n  Z_2 -> Z_3\n  Z_3 -> Y\n  Z_1 -> Z_2\n#  Z_0 -> X[style = dashed]\n  Z_0 -> Z_1[style = dashed]\n  Z_0 -> B[style = dashed]\n  B -> Z_3[style = dashed]\n  \n  {rank = same; Z_1; B}\n  {rank = same; X; Z_2; Z_3}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script></p>
+<p><div id="htmlwidget-bdbb2c3fc56d1c701636" style="width:300px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-bdbb2c3fc56d1c701636">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\"]\n  \n  node[shape = box]\n  X\n  Y\n  Z_0[shape = oval]\n  Z_1\n  Z_2\n  Z_3\n  B[shape = oval]\n  \n  edge[]\n  X -> Z_2\n  X -> Y\n  Z_2 -> Y\n  Z_2 -> Z_3\n  Z_3 -> Y\n  Z_1 -> Z_2\n  Z_0 -> X[style = dashed]\n  Z_0 -> Z_1[style = dashed]\n  Z_0 -> B[style = dashed]\n  B -> Z_3[style = dashed]\n  \n  {rank = same; Z_1; B}\n  {rank = same; X; Z_2; Z_3}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script><div id="htmlwidget-da2947f841b11dbd8133" style="width:300px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-da2947f841b11dbd8133">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\"]\n  \n  node[shape = box]\n  X\n  Y\n  Z_0[shape = oval]\n  Z_1\n  Z_2\n  Z_3\n  B[shape = oval]\n  \n  edge[]\n  X -> Z_2\n  X -> Y\n  Z_2 -> Y\n  Z_2 -> Z_3\n  Z_3 -> Y\n  Z_1 -> Z_2\n#  Z_0 -> X[style = dashed]\n  Z_0 -> Z_1[style = dashed]\n  Z_0 -> B[style = dashed]\n  B -> Z_3[style = dashed]\n  \n  {rank = same; Z_1; B}\n  {rank = same; X; Z_2; Z_3}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script></p>
 </div>
 <div class="column2">
 <ul>
@@ -810,8 +810,8 @@ P(y|do(x_i&#39;)) = \sum_{pa_i} P(y|x_i&#39;, pa_i)P(pa_i)
 </section><section id="intervention_example1" class="slide level2">
 <h2>ここまでの具体例</h2>
 <div class="column3">
-<div id="htmlwidget-f62a1dd4ff42c2d7de93" style="width:300px;height:300px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-f62a1dd4ff42c2d7de93">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\"]\n  \n  node[shape = box]\n  X\n  Y\n  Z_1\n  Z_2\n\n  edge[]\n  Z_1 -> Z_2\n  Z_1 -> Y\n  Z_2 -> X\n  Z_2 -> Y\n  X -> Y\n\n  {rank = same; X; Y}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-2c83cd254313975502c4" style="width:300px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2c83cd254313975502c4">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\"]\n  \n  node[shape = box]\n  X\n  Y\n  Z_1\n  Z_2\n\n  edge[]\n  Z_1 -> Z_2\n  Z_1 -> Y\n  Z_2 -> X\n  Z_2 -> Y\n  X -> Y\n\n  {rank = same; X; Y}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="column4">
 <ul>
@@ -1338,8 +1338,8 @@ P(y|do(x)) = \sum_z P(z|x) \sum_x&#39; P(y|x&#39;,z)P(x&#39;)
 </section><section id="eg_frontdoor_1" class="slide level2">
 <h2>例)喫煙と遺伝子型の理論</h2>
 <div class="column3">
-<div id="htmlwidget-285e2039015753d11636" style="width:300px;height:300px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-285e2039015753d11636">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\"]\n  \n  node[shape = box]\n  遺伝子\n  喫煙X\n  タール蓄積Z\n  肺ガンY\n\n  edge[]\n  遺伝子 -> 喫煙X -> タール蓄積Z -> 肺ガンY\n  遺伝子 -> 肺ガンY\n\n  {rank = same; 喫煙X; タール蓄積Z; 肺ガンY}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-1bb66bc761d4cb99b4ad" style="width:300px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1bb66bc761d4cb99b4ad">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\"]\n  \n  node[shape = box]\n  遺伝子\n  喫煙X\n  タール蓄積Z\n  肺ガンY\n\n  edge[]\n  遺伝子 -> 喫煙X -> タール蓄積Z -> 肺ガンY\n  遺伝子 -> 肺ガンY\n\n  {rank = same; 喫煙X; タール蓄積Z; 肺ガンY}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="column4">
 <p>仮定</p>
@@ -1352,8 +1352,8 @@ P(y|do(x)) = \sum_z P(z|x) \sum_x&#39; P(y|x&#39;,z)P(x&#39;)
 </div>
 </section><section id="eg_frontdoor_2" class="slide level2">
 <h2>例)喫煙と遺伝子型の理論</h2>
-<div id="htmlwidget-369a14235f973a1bb549" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-369a14235f973a1bb549">{"x":{"filter":"none","extensions":["FixedColumns"],"data":[["1","2","3","4"],["非喫煙","喫煙","非喫煙","喫煙"],["無し","無し","あり","あり"],[47.5,2.5,2.5,47.5],[10,90,5,85]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>喫煙有無<\/th>\n      <th>タール蓄積<\/th>\n      <th>各群の割合(%)<\/th>\n      <th>各群内の肺ガン(%)<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","scrollX":true,"scrollCollapse":true,"columnDefs":[{"className":"dt-right","targets":[3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-7799e6e82b18c657cc58" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-7799e6e82b18c657cc58">{"x":{"filter":"none","extensions":["FixedColumns"],"data":[["1","2","3","4"],["非喫煙","喫煙","非喫煙","喫煙"],["無し","無し","あり","あり"],[47.5,2.5,2.5,47.5],[10,90,5,85]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>喫煙有無<\/th>\n      <th>タール蓄積<\/th>\n      <th>各群の割合(%)<\/th>\n      <th>各群内の肺ガン(%)<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","scrollX":true,"scrollCollapse":true,"columnDefs":[{"className":"dt-right","targets":[3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 <ul>
 <li>タバコ業界は喫煙は肺ガンのリスクを減少させると主張
 <ul>
@@ -1406,8 +1406,8 @@ P(Y=1|do(X=0)) &amp;= 0.95 (0.1 \times 0.5 + 0.9 \times 0.5) \\
 </ol>
 </div>
 <div class="column3">
-<div id="htmlwidget-77a9a0059fb510cf509f" style="width:300px;height:300px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-77a9a0059fb510cf509f">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\",rankdir = LR]\n  \n  node[shape = box]\n  X\n  S\n  Y\n  Z_1[shape = oval]\n  Z_2\n  Z_3[shape = oval]\n\n  edge[]\n  Z_1 -> X\n  Z_1 -> Z_2\n  Z_2 -> S\n  Z_2 -> X\n  Z_2 -> Y\n  Z_3 -> Z_2\n  Z_3 -> Y\n  X -> S\n  S -> Y\n\n  {rank = same; Z_1; X}\n  {rank = same; Z_2; S}\n  {rank = same; Z_3; Y}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-4e0e8b11c1a5ae9ae76c" style="width:300px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4e0e8b11c1a5ae9ae76c">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\",rankdir = LR]\n  \n  node[shape = box]\n  X\n  S\n  Y\n  Z_1[shape = oval]\n  Z_2\n  Z_3[shape = oval]\n\n  edge[]\n  Z_1 -> X\n  Z_1 -> Z_2\n  Z_2 -> S\n  Z_2 -> X\n  Z_2 -> Y\n  Z_3 -> Z_2\n  Z_3 -> Y\n  X -> S\n  S -> Y\n\n  {rank = same; Z_1; X}\n  {rank = same; Z_2; S}\n  {rank = same; Z_3; Y}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="column4">
 <ul>
@@ -1453,8 +1453,8 @@ P(Y=1|do(X=0)) &amp;= 0.95 (0.1 \times 0.5 + 0.9 \times 0.5) \\
 </section><section id="eg_general_identifiability" class="slide level2">
 <h2>一般的識別可能性(例)</h2>
 <div class="column3">
-<p><div id="htmlwidget-e148f0bddb114a505ddf" style="width:300px;height:300px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-e148f0bddb114a505ddf">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\",rankdir = LR]\n  \n  node[shape = box]\n  X\n  S\n  Y\n  Z_1[shape = oval]\n  Z_2\n  Z_3[shape = oval]\n\n  edge[]\n  Z_1 -> X\n  Z_1 -> Z_2\n  Z_2 -> S\n  Z_2 -> X\n  Z_2 -> Y\n  Z_3 -> Z_2\n  Z_3 -> Y\n  X -> S\n  S -> Y\n\n  {rank = same; Z_1; X}\n  {rank = same; Z_2; S}\n  {rank = same; Z_3; Y}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script> <img data-src="pics/Fig_kuroki_1.jpg" alt="黒木本図" /></p>
+<p><div id="htmlwidget-40c678412a62e4530aef" style="width:300px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-40c678412a62e4530aef">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\",rankdir = LR]\n  \n  node[shape = box]\n  X\n  S\n  Y\n  Z_1[shape = oval]\n  Z_2\n  Z_3[shape = oval]\n\n  edge[]\n  Z_1 -> X\n  Z_1 -> Z_2\n  Z_2 -> S\n  Z_2 -> X\n  Z_2 -> Y\n  Z_3 -> Z_2\n  Z_3 -> Y\n  X -> S\n  S -> Y\n\n  {rank = same; Z_1; X}\n  {rank = same; Z_2; S}\n  {rank = same; Z_3; Y}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script> <img data-src="pics/Fig_kuroki_1.jpg" alt="黒木本図" /></p>
 </div>
 <div class="column4">
 <ul>
@@ -1550,10 +1550,10 @@ P(y|do(x),z) \triangleq \frac{P(y,z|do(x))}{P(z|do(x))}
 <h2>規則3の例</h2>
 <div class="column3">
 <ul>
-<li><p>操作前のグラフ <div id="htmlwidget-fb746a95a0e85ddb7f03" style="width:300px;height:300px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-fb746a95a0e85ddb7f03">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\"]\n  \n  node[shape = box]\n  W\n  Y\n  Z_1\n  Z_2\n  Z_3\n\n  edge[]\n  Z_1 -> Z_2 [dir = both]\n  W -> Z_1\n  Z_2 -> W\n  W -> Z_3 [dir = both]\n  W -> Y\n  Z_3 -> Y [dir = both]\n\n  {rank = min; Z_2; Z_3}\n  {rank = same; W}\n  {rank = max; Z_1; Y}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script></p></li>
-<li><p>操作後のグラフ <div id="htmlwidget-793a6b1d006bc1697f86" style="width:300px;height:300px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-793a6b1d006bc1697f86">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\"]\n  \n  node[shape = box]\n  W\n  Y\n  Z_1\n  Z_2\n  Z_3\n\n  edge[]\n#  Z_1 -> Z_2 [dir = both]\n#  W -> Z_1\n  Z_2 -> W\n#  W -> Z_3 [dir = both]\n  W -> Y\n#  Z_3 -> Y [dir = both]\n\n  {rank = min; Z_2; Z_3}\n  {rank = same; W}\n  {rank = max; Z_1; Y}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script></p></li>
+<li><p>操作前のグラフ <div id="htmlwidget-509b7a391ddf5dd40e0f" style="width:300px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-509b7a391ddf5dd40e0f">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\"]\n  \n  node[shape = box]\n  W\n  Y\n  Z_1\n  Z_2\n  Z_3\n\n  edge[]\n  Z_1 -> Z_2 [dir = both]\n  W -> Z_1\n  Z_2 -> W\n  W -> Z_3 [dir = both]\n  W -> Y\n  Z_3 -> Y [dir = both]\n\n  {rank = min; Z_2; Z_3}\n  {rank = same; W}\n  {rank = max; Z_1; Y}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script></p></li>
+<li><p>操作後のグラフ <div id="htmlwidget-b227d117091948f8c308" style="width:300px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b227d117091948f8c308">{"x":{"diagram":"digraph example1 {\n  graph[bgcolor = \"#00000000\"]\n  \n  node[shape = box]\n  W\n  Y\n  Z_1\n  Z_2\n  Z_3\n\n  edge[]\n#  Z_1 -> Z_2 [dir = both]\n#  W -> Z_1\n  Z_2 -> W\n#  W -> Z_3 [dir = both]\n  W -> Y\n#  Z_3 -> Y [dir = both]\n\n  {rank = min; Z_2; Z_3}\n  {rank = same; W}\n  {rank = max; Z_1; Y}\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script></p></li>
 </ul>
 </div>
 <div class="column4">
