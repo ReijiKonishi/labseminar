@@ -1,0 +1,239 @@
+---
+title: "Causal Discovery from Heterogeneous/Nonstationary Data"
+author: "Reiji Konishi"
+date: "`r format(Sys.time(), '%Y/%m/%d')`"
+output:
+  html_document:
+    self_contained: TRUE
+    df_print: paged
+    toc: TRUE
+    toc_float: TRUE
+    toc_depth: 2
+    theme: "cerulean"
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r knitr_init, echo=FALSE, message=FALSE, warning=FALSE}
+# library
+library(knitr)
+library(rmdformats)
+
+# Global Options
+options(max.print = 100, stringsAsFactors = FALSE)
+knitr::opts_chunk$set(
+  echo = TRUE,
+  tidy = TRUE,
+  comment = NA,
+  warning = FALSE,
+  message = FALSE,
+  eval = TRUE
+)
+
+knitr::opts_knit$set(width = 75)
+```
+
+\newcommand{\indep}{\mathop{\,\perp\!\!\!\!\!\perp\,}}
+\newcommand{\notindep}{\mathop{\,\perp\!\!\!\!\!/\!\!\!\!\!\perp\,}}
+\newcommand{\mat}[1]{\begin{pmatrix} #1 \end{pmatrix}}
+\usepackage{color}
+\usepackage{amsmath}
+
+# CD-NOD
+
+[Biwei Huang, et al(2020) Causal Discovery from Heterogeneous/Nonstationary Data, *arXiv*](https://arxiv.org/abs/1903.01672)
+
+
+## 概要
+
+* 異質性や非定常なデータで因果探索するフレームワークを開発
+* causal skeletonと向き(directions)を見つけ、メカニズムの変化の特徴を推定する
+  * 局所的にメカニズムを変化させる変数を特定し(Changing Causal Module Detection)、
+    観測変数に関する因果構造を復元する方法を、制約ベースの手法を改善することで提案
+  * データの分布における独立性の変化を使って、因果の向きを同定する手法を提案
+* 特定のタイプの交絡があったとしても、因果構造を識別するのに、データの異質性が良い働きをすることを発見した
+
+
+この論文では、因果モデルに関するメカニズムやパラメータが、データセットや時間に依存して変化すると仮定して、
+CD-NODを開発する。そうすることで、以下のような疑問に答えられる
+
+* 局所的に変化するメカニズムを持つ変数を効率的に同定し、
+  観測された変数の上に**因果構造のスケルトン**を復元するにはどうすればよいか？
+  * 代理変数$C$を導入して、異質性を生む未観測な変数をを特徴づける
+  * $C$を与えると、観測データの条件付き独立関係が、真の因果構造によって得られるそれと同じになることを証明する
+* 因果関係のある方向性を見極めるために、分布シフト(distribution shifts)によって得られる情報をどのように活用すればよいか？
+  * 分布シフトによって得られた情報を使うと、関数型の制約を受けず、
+    非線形を含む一般的な関数因果モデルに適用できることを証明する
+* 因果関係のメカニズムを変化させる、
+  いわゆる「原動力」と呼ばれる変化について、低次元で解釈可能な表現をデータから抽出するにはどうすればよいか？
+  
+
+
+### 異質性による因果構造の変化を推定するために…
+
+* ドメインや時間によって変化する潜在的な量を特徴づけるために、**代理変数(surrogate variable)**$C$を導入
+* $C$を与えると、観測変数間の(条件付き)独立関係が、真の因果構造によって得られる独立関係と同じであることを証明する
+
+
+### With Changing Causal Models
+
+* $m$個の観測変数 $\mathbf{V} = \{ V_i \}_{i=1}^m$
+* DAG $G$で表される
+* $G$における変数$V_i$の親集合を$PA^i$とする
+
+各ドメインにおける、$\mathbf{V}$の同時確率分布は、以下
+
+$$
+P(\mathbf V) = \prod_{i=1}^m P(V_i | PA^i)
+$$
+
+* 因果メカニズム/因果モジュール:$P(V_i | PA^i)$
+
+分布シフト(例:$P(\mathbf V)$が時間やドメインによって異なる)があったら、
+因果モジュール$P(V_k|PA^k), k \in \mathcal N$が変化しているということ。(changing causal modules)
+
+
+* 仮定
+  * ドメイン間や時間によって変化する量は、ドメインや時間のindexの関数として書けて、そのindexを$C$で表す
+  
+Fig1(a)の構造のときに、PCやFCIをやっても(b)になってしまう
+
+
+
+## CD-NOD Phase1: Changing Causal Module Detection and Causal Skelton Estimation
+
+* 因果モジュールの変化を特定し、因果構造のスケルトンを識別する方法を提案
+* 未観測の変化院試が既知かのように、真のグラフを漸近的に復元することを保証
+
+### 仮定
+
+* 因果モジュールが変化することや、その変化が関連し合うことはOK
+  * 変化が関連し合うことは、偽交絡(Pseudo confounder)を仮定することで説明可能
+  * 直感的には、ハイレベルの背景因子
+
+そこで、観測変数に対して因果充足性(causal sufficiency)は仮定しない代わりに、
+擬似的な因果充足性(pseudo causal sufficiency)を仮定する
+
+---
+
+**仮定1:Pseudo Causal Sufficiency**
+
+交絡があるとしたら、domain indexの関数として書ける。
+つまり、各ドメインにおいて、その交絡因子は固定されている。
+
+---
+
+局所的な因果構造は、以下のようなSEMで書ける
+
+$$
+V_i = f_i (PA^i, \mathbf g^i(C), \theta_i(C), \epsilon_i)
+$$
+
+* $\{ g_l (C)\}_{l=1}^L$:偽交絡(pseudo confounders)の集合 
+* $\theta_i(C)$:$C$の関数として書けるモデルのパラメータ(effective parameter)
+* $\epsilon_i$:誤差項($C$と$PA^i$とは独立で、non-zeroの分散)
+
+---
+
+**仮定2**
+
+同時分布$\mathbf{V} \cup \{g_l(C) \}_{l=1}^L \cup \{ \theta_i(C) \}_{i=1}^m$は、
+拡張グラフ$G^{aug}$において**マルコフ性**と**忠実性**を満たす
+
+---
+
+* 拡張グラフ$G^{aug}$
+  * $\{g_l(C) \}_{l=1}^L \cup \{ \theta_i(C) \}_{i=1}^m$を観測変数のグラフ$G$に追加
+  * $\mathbf g^i(C)$から$V_i$に、$\theta_i(C)$から$V_i$に矢線を追加
+  
+* マルコフ性
+  * 任意の変数が、その親を与えたとき、グラフ$G$におけるその親以外の非子孫すべてと条件づき独立になること
+  
+* 忠実性
+  * 独自分布について、グラフ$G$によって規定される有向分離関係以外のいかなる統計的独立関係も付加的に成り立っていないこと
+
+
+ドメイン感の分布変化とはどういうことかと言うと…
+
+* $C$が一様分布に従っていて、$C$が生成された後にSEMに従って$\mathbf V$のデータが生成される
+* つまり、$P(\mathbf V | C)$が$C$によって変わるような、$P(\mathbf V | C)$を観測していている
+
+
+### Detection of Changing Modules and Recovery of Causal Skelton
+
+以下の手法を提案する
+
+* どの因果モジュールが変化しているのかを特定する
+* グラフ$G$のスケルトンを推定する
+
+基本的なアイデアは、
+
+* 非観測の$\{g_l(C) \}_{l=1}^L \cup \{ \theta_i(C) \}_{i=1}^m$の代理として、観測変数$C$を用いる
+* $C$自体は因果に関係ない変数だが、交絡やパラメータの変化は$C$の関数で書ける
+* 観測変数の集合$\mathbf V$に代理変数$C$を加えることで、
+  $\{g_l(C) \}_{l=1}^L \cup \{ \theta_i(C) \}_{i=1}^m$が既知かのように
+  変化する因果モジュールとグラフ$G$のスケルトンを推定できる
+  
+---
+
+**Algorithm 1**
+
+1. 変数集合$\mathbf V \cup C$による完全無向グラフ$U_{\mathcal G}$を構築する
+1. $V_i$と$C$の間の周辺独立性・条件付き独立性を確認する
+1. 変数の部分集合$\{V_k |k \neq i\}$による条件付き独立が見られたら、$V_i$と$C$の間のエッジを取り除く
+   (変化するモジュールの特定)
+1. $V_i$と$V_j$の周辺独立性・条件付き独立性を確認する
+1. 変数の部分集合$\{V_k |k \neq i, k \neq j\}\cup\{C\}$による条件付き独立が見られたら、$V_i$と$V_j$の間のエッジを取り除く
+   (スケルトンの復元)
+   
+---
+
+* $V_i$のモジュールが変化しないならば、$P(V_i|PA^i)$がすべての$C$で同じということなので、$V_i \indep C|PA^i$
+* ステップ5はSGSと似てる感じ
+
+
+---
+
+
+---
+
+**定理1 **
+
+仮定1と仮定2が与えられたとき、すべての$V_i,V_j \in \mathbf V$について、グラフ$G$で$V_i$と$V_j$が隣接していないならば、
+$\{ V_k | k \neq i, k \neq j\}\cup\{C\}$の部分集合で条件づけたときに独立になる。またその逆も成り立つ。
+
+---
+
+
+## CD-NOD Phase2:Distribution Shifts Benefit Causal Direction Determination
+
+### Causal Direction Identification by Generalization of Invariance
+
+アルゴリズム1の結果、$C$と隣接している変数をを**C-specific variables**と言う
+
+各C-specific variable $V_k$について、$V_k$に終点をもつすべてのエッジの向きを決めることができる
+
+
+---
+
+**アルゴリズム2**
+
+1. Input:アルゴリズム1の出力であるスケルトン
+1. $C$と隣接する変数とのエッジを$C \rightarrow V_k$とする
+1. $C \rightarrow V_k -V_l$を箇所を考える($V_l$は$C$と隣接していない)
+1. 条件付き独立性から、$V_k$と$V_l$の矢線の向きを決める(詳細は論文のアルゴリズム2を参照)
+1. 不変性の一般化によって矢線の一部が復元
+
+----
+
+* $V_l$が$C$と隣接していないときは、上記のアルゴリズムが適用できる
+
+
+### Causal Direction Identification by Independently Changing Modules
+
+ここらへんからカーネルヒルベルト空間とかでてきてさっぱり…
+
+
+## 所感
+
+* 結局、代理変数$C$ってどっからどう持ってくるんだろ？
