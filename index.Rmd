@@ -24,8 +24,11 @@ output:
 ## 論文レビュー
 
 * Judea Pearl(2015) [Causal Effect Heterogeneity](https://reijikonishi.github.io/labseminar/paper_review_Pearl_2015.html#/)
+* Biwei Huang et al.(2020) [Causal Discovery from Heterogeneous/Nnstationary Data](https://reijikonishi.github.io/labseminar/paper_review_Huang_2020.html)
 
 # 更新履歴
 
+* 2020/06/23
+  * Huang et al.(2020) 追加
 * 2020/06/13
   * 開設
