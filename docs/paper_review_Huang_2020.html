@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Reiji Konishi" />
+
+
+<title>Causal Discovery from Heterogeneous/Nonstationary Data</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="site_style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">labseminar</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Causal Discovery from Heterogeneous/Nonstationary Data</h1>
+<h4 class="author">Reiji Konishi</h4>
+<h4 class="date">2020/06/22</h4>
+
+</div>
+
+
+
+<div id="cd-nod" class="section level1">
+<h1>CD-NOD</h1>
+<p><a href="https://arxiv.org/abs/1903.01672">Biwei Huang, et al(2020) Causal Discovery from Heterogeneous/Nonstationary Data, <em>arXiv</em></a></p>
+<div id="概要" class="section level2">
+<h2>概要</h2>
+<ul>
+<li>異質性や非定常なデータで因果探索するフレームワークを開発</li>
+<li>causal skeletonと向き(directions)を見つけ、メカニズムの変化の特徴を推定する
+<ul>
+<li>局所的にメカニズムを変化させる変数を特定し(Changing Causal Module Detection)、 観測変数に関する因果構造を復元する方法を、制約ベースの手法を改善することで提案</li>
+<li>データの分布における独立性の変化を使って、因果の向きを同定する手法を提案</li>
+</ul></li>
+<li>特定のタイプの交絡があったとしても、因果構造を識別するのに、データの異質性が良い働きをすることを発見した</li>
+</ul>
+<p>この論文では、因果モデルに関するメカニズムやパラメータが、データセットや時間に依存して変化すると仮定して、 CD-NODを開発する。そうすることで、以下のような疑問に答えられる</p>
+<ul>
+<li>局所的に変化するメカニズムを持つ変数を効率的に同定し、 観測された変数の上に<strong>因果構造のスケルトン</strong>を復元するにはどうすればよいか？
+<ul>
+<li>代理変数<span class="math inline">\(C\)</span>を導入して、異質性を生む未観測な変数をを特徴づける</li>
+<li><span class="math inline">\(C\)</span>を与えると、観測データの条件付き独立関係が、真の因果構造によって得られるそれと同じになることを証明する</li>
+</ul></li>
+<li>因果関係のある方向性を見極めるために、分布シフト(distribution shifts)によって得られる情報をどのように活用すればよいか？
+<ul>
+<li>分布シフトによって得られた情報を使うと、関数型の制約を受けず、 非線形を含む一般的な関数因果モデルに適用できることを証明する</li>
+</ul></li>
+<li>因果関係のメカニズムを変化させる、 いわゆる「原動力」と呼ばれる変化について、低次元で解釈可能な表現をデータから抽出するにはどうすればよいか？</li>
+</ul>
+<div id="異質性による因果構造の変化を推定するために" class="section level3">
+<h3>異質性による因果構造の変化を推定するために…</h3>
+<ul>
+<li>ドメインや時間によって変化する潜在的な量を特徴づけるために、<strong>代理変数(surrogate variable)</strong><span class="math inline">\(C\)</span>を導入</li>
+<li><span class="math inline">\(C\)</span>を与えると、観測変数間の(条件付き)独立関係が、真の因果構造によって得られる独立関係と同じであることを証明する</li>
+</ul>
+</div>
+<div id="with-changing-causal-models" class="section level3">
+<h3>With Changing Causal Models</h3>
+<ul>
+<li><span class="math inline">\(m\)</span>個の観測変数 <span class="math inline">\(\mathbf{V} = \{ V_i \}_{i=1}^m\)</span></li>
+<li>DAG <span class="math inline">\(G\)</span>で表される</li>
+<li><span class="math inline">\(G\)</span>における変数<span class="math inline">\(V_i\)</span>の親集合を<span class="math inline">\(PA^i\)</span>とする</li>
+</ul>
+<p>各ドメインにおける、<span class="math inline">\(\mathbf{V}\)</span>の同時確率分布は、以下</p>
+<p><span class="math display">\[
+P(\mathbf V) = \prod_{i=1}^m P(V_i | PA^i)
+\]</span></p>
+<ul>
+<li>因果メカニズム/因果モジュール:<span class="math inline">\(P(V_i | PA^i)\)</span></li>
+</ul>
+<p>分布シフト(例:<span class="math inline">\(P(\mathbf V)\)</span>が時間やドメインによって異なる)があったら、 因果モジュール<span class="math inline">\(P(V_k|PA^k), k \in \mathcal N\)</span>が変化しているということ。(changing causal modules)</p>
+<ul>
+<li>仮定
+<ul>
+<li>ドメイン間や時間によって変化する量は、ドメインや時間のindexの関数として書けて、そのindexを<span class="math inline">\(C\)</span>で表す</li>
+</ul></li>
+</ul>
+<p>Fig1(a)の構造のときに、PCやFCIをやっても(b)になってしまう</p>
+</div>
+</div>
+<div id="cd-nod-phase1-changing-causal-module-detection-and-causal-skelton-estimation" class="section level2">
+<h2>CD-NOD Phase1: Changing Causal Module Detection and Causal Skelton Estimation</h2>
+<ul>
+<li>因果モジュールの変化を特定し、因果構造のスケルトンを識別する方法を提案</li>
+<li>未観測の変化院試が既知かのように、真のグラフを漸近的に復元することを保証</li>
+</ul>
+<div id="仮定" class="section level3">
+<h3>仮定</h3>
+<ul>
+<li>因果モジュールが変化することや、その変化が関連し合うことはOK
+<ul>
+<li>変化が関連し合うことは、偽交絡(Pseudo confounder)を仮定することで説明可能</li>
+<li>直感的には、ハイレベルの背景因子</li>
+</ul></li>
+</ul>
+<p>そこで、観測変数に対して因果充足性(causal sufficiency)は仮定しない代わりに、 擬似的な因果充足性(pseudo causal sufficiency)を仮定する</p>
+<hr />
+<p><strong>仮定1:Pseudo Causal Sufficiency</strong></p>
+<p>交絡があるとしたら、domain indexの関数として書ける。 つまり、各ドメインにおいて、その交絡因子は固定されている。</p>
+<hr />
+<p>局所的な因果構造は、以下のようなSEMで書ける</p>
+<p><span class="math display">\[
+V_i = f_i (PA^i, \mathbf g^i(C), \theta_i(C), \epsilon_i)
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\{ g_l (C)\}_{l=1}^L\)</span>:偽交絡(pseudo confounders)の集合</li>
+<li><span class="math inline">\(\theta_i(C)\)</span>:<span class="math inline">\(C\)</span>の関数として書けるモデルのパラメータ(effective parameter)</li>
+<li><span class="math inline">\(\epsilon_i\)</span>:誤差項(<span class="math inline">\(C\)</span>と<span class="math inline">\(PA^i\)</span>とは独立で、non-zeroの分散)</li>
+</ul>
+<hr />
+<p><strong>仮定2</strong></p>
+<p>同時分布<span class="math inline">\(\mathbf{V} \cup \{g_l(C) \}_{l=1}^L \cup \{ \theta_i(C) \}_{i=1}^m\)</span>は、 拡張グラフ<span class="math inline">\(G^{aug}\)</span>において<strong>マルコフ性</strong>と<strong>忠実性</strong>を満たす</p>
+<hr />
+<ul>
+<li>拡張グラフ<span class="math inline">\(G^{aug}\)</span>
+<ul>
+<li><span class="math inline">\(\{g_l(C) \}_{l=1}^L \cup \{ \theta_i(C) \}_{i=1}^m\)</span>を観測変数のグラフ<span class="math inline">\(G\)</span>に追加</li>
+<li><span class="math inline">\(\mathbf g^i(C)\)</span>から<span class="math inline">\(V_i\)</span>に、<span class="math inline">\(\theta_i(C)\)</span>から<span class="math inline">\(V_i\)</span>に矢線を追加</li>
+</ul></li>
+<li>マルコフ性
+<ul>
+<li>任意の変数が、その親を与えたとき、グラフ<span class="math inline">\(G\)</span>におけるその親以外の非子孫すべてと条件づき独立になること</li>
+</ul></li>
+<li>忠実性
+<ul>
+<li>独自分布について、グラフ<span class="math inline">\(G\)</span>によって規定される有向分離関係以外のいかなる統計的独立関係も付加的に成り立っていないこと</li>
+</ul></li>
+</ul>
+<p>ドメイン感の分布変化とはどういうことかと言うと…</p>
+<ul>
+<li><span class="math inline">\(C\)</span>が一様分布に従っていて、<span class="math inline">\(C\)</span>が生成された後にSEMに従って<span class="math inline">\(\mathbf V\)</span>のデータが生成される</li>
+<li>つまり、<span class="math inline">\(P(\mathbf V | C)\)</span>が<span class="math inline">\(C\)</span>によって変わるような、<span class="math inline">\(P(\mathbf V | C)\)</span>を観測していている</li>
+</ul>
+</div>
+<div id="detection-of-changing-modules-and-recovery-of-causal-skelton" class="section level3">
+<h3>Detection of Changing Modules and Recovery of Causal Skelton</h3>
+<p>以下の手法を提案する</p>
+<ul>
+<li>どの因果モジュールが変化しているのかを特定する</li>
+<li>グラフ<span class="math inline">\(G\)</span>のスケルトンを推定する</li>
+</ul>
+<p>基本的なアイデアは、</p>
+<ul>
+<li>非観測の<span class="math inline">\(\{g_l(C) \}_{l=1}^L \cup \{ \theta_i(C) \}_{i=1}^m\)</span>の代理として、観測変数<span class="math inline">\(C\)</span>を用いる</li>
+<li><span class="math inline">\(C\)</span>自体は因果に関係ない変数だが、交絡やパラメータの変化は<span class="math inline">\(C\)</span>の関数で書ける</li>
+<li>観測変数の集合<span class="math inline">\(\mathbf V\)</span>に代理変数<span class="math inline">\(C\)</span>を加えることで、 <span class="math inline">\(\{g_l(C) \}_{l=1}^L \cup \{ \theta_i(C) \}_{i=1}^m\)</span>が既知かのように 変化する因果モジュールとグラフ<span class="math inline">\(G\)</span>のスケルトンを推定できる</li>
+</ul>
+<hr />
+<p><strong>Algorithm 1</strong></p>
+<ol style="list-style-type: decimal">
+<li>変数集合<span class="math inline">\(\mathbf V \cup C\)</span>による完全無向グラフ<span class="math inline">\(U_{\mathcal G}\)</span>を構築する</li>
+<li><span class="math inline">\(V_i\)</span>と<span class="math inline">\(C\)</span>の間の周辺独立性・条件付き独立性を確認する</li>
+<li>変数の部分集合<span class="math inline">\(\{V_k |k \neq i\}\)</span>による条件付き独立が見られたら、<span class="math inline">\(V_i\)</span>と<span class="math inline">\(C\)</span>の間のエッジを取り除く (変化するモジュールの特定)</li>
+<li><span class="math inline">\(V_i\)</span>と<span class="math inline">\(V_j\)</span>の周辺独立性・条件付き独立性を確認する</li>
+<li>変数の部分集合<span class="math inline">\(\{V_k |k \neq i, k \neq j\}\cup\{C\}\)</span>による条件付き独立が見られたら、<span class="math inline">\(V_i\)</span>と<span class="math inline">\(V_j\)</span>の間のエッジを取り除く (スケルトンの復元)</li>
+</ol>
+<hr />
+<ul>
+<li><span class="math inline">\(V_i\)</span>のモジュールが変化しないならば、<span class="math inline">\(P(V_i|PA^i)\)</span>がすべての<span class="math inline">\(C\)</span>で同じということなので、<span class="math inline">\(V_i \mathop{\,\perp\!\!\!\!\!\perp\,}C|PA^i\)</span></li>
+<li>ステップ5はSGSと似てる感じ</li>
+</ul>
+<hr />
+<hr />
+<p><strong>定理1 </strong></p>
+<p>仮定1と仮定2が与えられたとき、すべての<span class="math inline">\(V_i,V_j \in \mathbf V\)</span>について、グラフ<span class="math inline">\(G\)</span>で<span class="math inline">\(V_i\)</span>と<span class="math inline">\(V_j\)</span>が隣接していないならば、 <span class="math inline">\(\{ V_k | k \neq i, k \neq j\}\cup\{C\}\)</span>の部分集合で条件づけたときに独立になる。またその逆も成り立つ。</p>
+<hr />
+</div>
+</div>
+<div id="cd-nod-phase2distribution-shifts-benefit-causal-direction-determination" class="section level2">
+<h2>CD-NOD Phase2:Distribution Shifts Benefit Causal Direction Determination</h2>
+<div id="causal-direction-identification-by-generalization-of-invariance" class="section level3">
+<h3>Causal Direction Identification by Generalization of Invariance</h3>
+<p>アルゴリズム1の結果、<span class="math inline">\(C\)</span>と隣接している変数をを<strong>C-specific variables</strong>と言う</p>
+<p>各C-specific variable <span class="math inline">\(V_k\)</span>について、<span class="math inline">\(V_k\)</span>に終点をもつすべてのエッジの向きを決めることができる</p>
+<hr />
+<p><strong>アルゴリズム2</strong></p>
+<ol style="list-style-type: decimal">
+<li>Input:アルゴリズム1の出力であるスケルトン</li>
+<li><span class="math inline">\(C\)</span>と隣接する変数とのエッジを<span class="math inline">\(C \rightarrow V_k\)</span>とする</li>
+<li><span class="math inline">\(C \rightarrow V_k -V_l\)</span>を箇所を考える(<span class="math inline">\(V_l\)</span>は<span class="math inline">\(C\)</span>と隣接していない)</li>
+<li>条件付き独立性から、<span class="math inline">\(V_k\)</span>と<span class="math inline">\(V_l\)</span>の矢線の向きを決める(詳細は論文のアルゴリズム2を参照)</li>
+<li>不変性の一般化によって矢線の一部が復元</li>
+</ol>
+<hr />
+<ul>
+<li><span class="math inline">\(V_l\)</span>が<span class="math inline">\(C\)</span>と隣接していないときは、上記のアルゴリズムが適用できる</li>
+</ul>
+</div>
+<div id="causal-direction-identification-by-independently-changing-modules" class="section level3">
+<h3>Causal Direction Identification by Independently Changing Modules</h3>
+<p>ここらへんからカーネルヒルベルト空間とかでてきてさっぱり…</p>
+</div>
+</div>
+<div id="所感" class="section level2">
+<h2>所感</h2>
+<ul>
+<li>結局、代理変数<span class="math inline">\(C\)</span>ってどっからどう持ってくるんだろ？</li>
+</ul>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
