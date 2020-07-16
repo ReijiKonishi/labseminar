@@ -1,7 +1,7 @@
 ---
 title: "Causal Discovery from Heterogeneous/Nonstationary Data"
 author: "Reiji Konishi"
-date: "`r format(Sys.time(), '%Y/%m/%d')`"
+date: "2020/6/23"
 output:
   html_document:
     self_contained: TRUE
