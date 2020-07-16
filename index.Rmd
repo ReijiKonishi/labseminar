@@ -1,11 +1,37 @@
 ---
 title: "labseminar"
-date: "`r format(Sys.time(),'%Y/%m/%d')`"
+author: "Reiji Konishi"
+date: ""
 output:
-  prettydoc::html_pretty:
-    theme: cayman
-    highlight: github
+  html_document:
+    self_contained: TRUE
+    df_print: paged
+    toc: TRUE
+    toc_float: TRUE
+    toc_depth: 2
+    theme: "cerulean"
+editor_options:
+  chunk_output_type: inline
 ---
+
+```{r knitr_init, echo=FALSE, message=FALSE, warning=FALSE}
+# library
+library(knitr)
+library(rmdformats)
+
+# Global Options
+options(max.print = 100, stringsAsFactors = FALSE)
+knitr::opts_chunk$set(
+  echo = TRUE,
+  tidy = TRUE,
+  comment = NA,
+  warning = FALSE,
+  message = FALSE,
+  eval = TRUE
+)
+
+knitr::opts_knit$set(width = 75)
+```
 
 # Contents
 
