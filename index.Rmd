@@ -9,7 +9,6 @@ output:
     toc: TRUE
     toc_float: TRUE
     toc_depth: 2
-    theme: "cerulean"
 editor_options:
   chunk_output_type: inline
 ---
