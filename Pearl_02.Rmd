@@ -2,7 +2,7 @@
 title: "統計的因果推論 輪読 ＃3"
 subtitle: "第2章 因果関係を推測するための理論"
 author: "小西伶児"
-date: "`r format(Sys.time(),'%Y/%m/%d')`"
+date: "2020/7/16"
 output:
   revealjs::revealjs_presentation:
     df_print: "paged"

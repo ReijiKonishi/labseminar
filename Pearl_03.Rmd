@@ -2,7 +2,7 @@
 title: "統計的因果推論 輪読"
 subtitle: "第3章 因果ダイアグラムと因果効果の識別可能条件"
 author: "小西伶児"
-date: "`r format(Sys.time(),'%Y/%m/%d')`"
+date: "2020/7/16"
 output:
   revealjs::revealjs_presentation:
     df_print: "paged"

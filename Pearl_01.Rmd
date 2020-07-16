@@ -2,7 +2,7 @@
 title: "統計的因果推論 輪読 ＃1"
 subtitle: "第1章 確率、グラフ、因果モデル入門"
 author: "小西伶児"
-date: "`r format(Sys.time(),'%Y/%m/%d')`"
+date: "2020/7/16"
 output:
   revealjs::revealjs_presentation:
     reveal_option:
