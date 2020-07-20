@@ -32,6 +32,7 @@ knitr::opts_chunk$set(
 knitr::opts_knit$set(width = 75)
 ```
 
+
 # Mixed Causal Model
 
 \newcommand{\indep}{\mathop{\,\perp\!\!\!\!\!\perp\,}}
