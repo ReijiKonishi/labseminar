@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Reiji Konishi" />
+
+<meta name="date" content="2020-07-21" />
+
+<title>Mixed Causal Structure Discovery with Application to Prescriptive Pricing</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="site_style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">labseminar</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Mixed Causal Structure Discovery with Application to Prescriptive Pricing</h1>
+<h4 class="author">Reiji Konishi</h4>
+<h4 class="date">2020-07-21</h4>
+
+</div>
+
+
+<div id="mixed-causal-model" class="section level1">
+<h1>Mixed Causal Model</h1>
+
+<p><a href="https://www.ijcai.org/Proceedings/2018/0711.pdf">Wei Wenjuan, et al(2018) Mixed Causal Structure Discovery with Application to Prescriptive Pricing, <em>IJCAI-18</em></a></p>
+<ul>
+<li>離散変数と連続変数の両方が入ったデータの因果モデルを構築し、2変数識別可能性を証明</li>
+<li>Mixed Information Criterion (MIC)というLocal Consistencyを満たすスコアを導入し、スコアベースの探索アルゴリズムを提案</li>
+</ul>
+</div>
+<div id="model" class="section level1">
+<h1>Model</h1>
+<ul>
+<li><p>データ <span class="math display">\[
+\mathbf{X} = \left[ X_1, \cdots, X_D \right]
+\]</span></p>
+<ul>
+<li>離散変数 <span class="math inline">\(X_i \in \{0,1\}^N\)</span></li>
+<li>連続変数 <span class="math inline">\(X_1 \in \mathbb R^N\)</span></li>
+</ul></li>
+<li><p>因果マルコフ条件と忠実性の仮定より、DAG <span class="math inline">\(G\)</span>によって定義された確率的グラフィカルモデルとして、データをモデル化する <span class="math display">\[
+\begin{align}
+ p&amp;(X_1, \cdots, X_D) \\
+= &amp;\prod_{i=1}^D p_b(X_i | Pa(X_i))^{z_i} p_c(X_i|PA(X_i))^{(1-z_i)}
+\end{align}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(z_i \in \{0,1\}\)</span>はindicator variable</li>
+<li>1項目が、離散変数の場合</li>
+<li>2項目が、連続変数の場合</li>
+</ul></li>
+<li><p>連続変数とその親変数との関係は以下の線形方程式 <span class="math display">\[
+X_i = \boldsymbol \beta ^T X_{-i} + \epsilon_i, \quad \epsilon_i \sim Laplace(0,b_i)
+\]</span></p></li>
+<li><p>離散変数とその親変数との関係は以下の線形方程式 <span class="math display">\[
+X_i = \left\{
+  \begin{array}{l}
+    1 \quad \boldsymbol \beta ^T X_{-i} + \epsilon_i &gt; 0 , \quad \epsilon_i \sim Logistic(0,1)\\
+    0 \quad \text{otherwise}
+  \end{array}
+\right.
+\]</span></p></li>
+</ul>
+<p>上記の仮定をモデル式に代入すると…</p>
+<p><span class="math display">\[
+\begin{align}
+ p&amp;(X_1, \cdots, X_D) \\
+  &amp;= \prod_{i=1}^D \prod_{n=1}^N \exp(\boldsymbol \beta_i^T X_{-i,n} x_{in}z_i)
+        (1 + \exp(\boldsymbol \beta_i^T X_{-i,n}))^{-z_i(1- x_{in})} \\
+  &amp; \qquad \prod_{n=1}^N b_i^{z_i-1} \exp\left(-\frac{|x_{in} - \boldsymbol \beta_i^T X_{-i,n}| \cdot (1-z_i)}{b_i} \right)
+\end{align}
+\]</span></p>
+<ul>
+<li><font color="Red">ロジスティック分布の式、ちょっと違う？</font></li>
+<li><font color="Red">ラプラス分布の分母がどっか行った？</font></li>
+</ul>
+<div id="参考" class="section level3">
+<h3>参考</h3>
+<div id="ロジスティック分布" class="section level4">
+<h4>ロジスティック分布</h4>
+<p><span class="math display">\[
+f(x; \mu, s) = \frac{\exp(-(x - \mu) / s)}{s(1 + \exp(-(x - \mu)/ s)) ^2}
+\]</span></p>
+<pre class="r"><code>d &lt;- data.frame(x = c(-5,5))
+library(ggplot2)
+ggplot(data = d, mapping = aes(x = x)) +
+  stat_function(fun = dnorm) +
+  stat_function(fun = dlogis, color = &quot;red&quot;) +
+  ylim(0, 0.5)</code></pre>
+<p><img src="paper_review_Wenjuan_2018_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+</div>
+<div id="ラプラス分布" class="section level4">
+<h4>ラプラス分布</h4>
+<p><span class="math display">\[
+f(x; \mu, b) = \frac{1}{2b} \exp\left( \frac{|x-\mu|}{b} \right)
+\]</span></p>
+<pre class="r"><code>library(rmutil)
+d &lt;- data.frame(x = c(-5,5))
+ggplot(data = d, mapping = aes(x = x)) +
+  stat_function(fun = dnorm) +
+  stat_function(fun = dlaplace, color = &quot;red&quot;)</code></pre>
+<p><img src="paper_review_Wenjuan_2018_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+</div>
+</div>
+<div id="identifiability-of-the-model" class="section level2">
+<h2>Identifiability of the model</h2>
+<div id="定義2変数識別可能性-peters-et-al.-2011" class="section level3">
+<h3>定義:2変数識別可能性 [Peters et al., 2011]</h3>
+<p><span class="math inline">\(\mathcal F = \{ f| f : \mathbb R^2 \rightarrow \mathbb R\}\)</span> を関数の集合とする。</p>
+<p><span class="math inline">\(\mathcal P_{\mathbb U} = \{ \mathcal P_{\mathbb R}, \mathcal P_{\{ 0, 1\}} \}\)</span>で、連続/離散確率変数の確率分布の集合を表す。</p>
+<p>以下が成り立つとき、関数<span class="math inline">\(f \in \mathcal F\)</span>と、<span class="math inline">\(\mathbf X\)</span>の分布と、誤差<span class="math inline">\(\varepsilon\)</span>を含む 集合<span class="math inline">\(\mathcal B \subseteq \mathcal F \times \mathcal P_{\mathbb U} \times \mathcal P_{\mathbb U}\)</span>は、<span class="math inline">\(\mathcal F\)</span> において2変数識別可能であると言う。</p>
+<p><span class="math display">\[\begin{align}
+(&amp;f, P_X, P_{\varepsilon_Y}) \in \mathcal B \quad \textit{and} \quad Y = f(X, \varepsilon_Y), X \mathop{\,\perp\!\!\!\!\!\perp\,}\varepsilon_Y \\
+
+&amp;\Longrightarrow \nexists (g, P_Y, P_{\varepsilon_Y}) \in \mathcal B \quad \textit{and} \quad X = g(Y, \varepsilon_Y), Y \mathop{\,\perp\!\!\!\!\!\perp\,}\varepsilon_X 
+\end{align}\]</span></p>
+<p>更に加えて、</p>
+<p><span class="math display">\[
+f(X, \varepsilon_Y) \mathop{\,\perp\!\!\!\!\!/\!\!\!\!\!\perp\,}X \quad \textit{for all} \quad 
+(f, P_X, P_{\varepsilon_Y}) \in \mathcal B \quad \textit{with} \quad X \mathop{\,\perp\!\!\!\!\!\perp\,}\varepsilon_Y
+\]</span></p>
+</div>
+<div id="定理1" class="section level3">
+<h3>定理1</h3>
+<p>上記のmixed causal modelにおいて、<span class="math inline">\(\mathcal P_{\mathbb U}\)</span>は非ガウス分布の集合。</p>
+<p>このモデルは、2変数識別可能である</p>
+</div>
+<div id="定理1の証明" class="section level3">
+<h3>定理1の証明</h3>
+<p><strong>概要</strong></p>
+<ul>
+<li>両方とも連続変数の場合、既に識別可能性が証明されているAdditive Noise Modelに変形できる(LiNGAM)</li>
+<li>両方とも離散変数の場合、確率変数の周辺分布が同じでないという条件を満たしているなら、識別可能である</li>
+<li>連続・離散混合の場合、条件付き分布の違いによって、識別可能である</li>
+</ul>
+<hr />
+<p><strong>証明(両方とも離散変数の場合)</strong></p>
+<p>(背理法) mixed causal modelが2変数識別可能でないとしたら、モデルの定義と識別可能性の定義より、 同時分布が等しい以下の2つのモデルが存在する</p>
+<p><span class="math display">\[\begin{align}
+\mathcal{M}_1 = \{&amp;Y=f_b(X, \varepsilon_Y) = \left\{
+    \begin{array}{l}
+      1 \quad \beta_1 X + \varepsilon_Y &gt; 0\\
+      0 \quad \text{otherwise}
+    \end{array}
+    ,
+  \right. \\
+  &amp;P_X(X=1)=k_1, \\
+  &amp;P_{\varepsilon_Y} = logistic(0,1) \} \\
+\end{align}\]</span></p>
+<p><span class="math display">\[\begin{align}
+\mathcal{M}_2 = \{&amp;X=f_b(Y, \varepsilon_X) = \left\{
+    \begin{array}{l}
+      1 \quad \beta_2 Y + \varepsilon_X &gt; 0\\
+      0 \quad \text{otherwise}
+    \end{array}
+    ,
+  \right. \\
+  &amp;P_X(X=1)=k_2, \\
+  &amp;P_{\varepsilon_X} = logistic(0,1) \}
+\end{align}\]</span></p>
+<p>これら2つのモデルは同じ同時分布を持つ。</p>
+<p>ここで、それぞれの同時分布について考える。</p>
+<p><span class="math display">\[\begin{align}
+P_{\mathcal M_1}(X,Y) &amp;= P_X(X)P_{\varepsilon_Y}(Y|X) \\
+                      &amp;= k_1^X(1-k_1)^{1-X} \left( \frac{1}{1+\exp(-\beta_1 X)} \right)^Y 
+                          \left( 1 - \frac{1}{1+\exp(-\beta_1 X)} \right)^{1-Y}
+\end{align}\]</span></p>
+<p><span class="math display">\[\begin{align}
+P_{\mathcal M_2}(X,Y) &amp;= P_Y(Y)P_{\varepsilon_X}(X|Y) \\
+                      &amp;= k_1^Y(1-k_2)^{1-Y} \left( \frac{1}{1+\exp(-\beta_2 Y)} \right)^X 
+                          \left( 1 - \frac{1}{1+\exp(-\beta_2 Y)} \right)^{1-X}
+\end{align}\]</span></p>
+<p>ここで、<span class="math inline">\(P_{\mathcal M_1}(X,Y) = P_{\mathcal M_2}(X,Y)\)</span>が成立しているとしたら、 <span class="math inline">\(\frac{P_{\mathcal M_1}(X=0,Y=0)}{P_{\mathcal M_2}(X=0,Y=0)} = 1\)</span>となり、<span class="math inline">\(k_1 = k_2\)</span>も成立していることになる。</p>
+<p>これは、<span class="math inline">\(X\)</span>と<span class="math inline">\(Y\)</span>の周辺分布が異なるという仮定と矛盾する。</p>
+<hr />
+<p><strong>証明2(Xが連続、Yが離散の場合)</strong></p>
+<p>(背理法) mixed causal modelが2変数識別可能でないとしたら、モデルの定義と識別可能性の定義より、 同時分布が等しい以下の2つのモデルが存在する</p>
+<p><span class="math display">\[\begin{align}
+\mathcal{M}_1 = \{&amp;Y = \left\{
+    \begin{array}{l}
+      1 \quad \beta_1 X + \varepsilon_Y &gt; 0\\
+      0 \quad \text{otherwise}
+    \end{array}
+    ,
+  \right. \\
+  &amp;P_{\varepsilon_Y} = logistic(0,1) \}
+\end{align}\]</span></p>
+<p><span class="math display">\[\begin{align}
+\mathcal{M}_2 = \{ &amp;X= \beta_2 Y + \varepsilon_X, \\
+                   &amp;P_{\varepsilon_X} = Laplace(0,b) \}
+\end{align}\]</span></p>
+<p>しかし、モデル<span class="math inline">\(\mathcal M_1\)</span>では、 <span class="math inline">\(P(Y=1|X=x)=P_{\varepsilon_Y}(\varepsilon_Y &gt; -\beta_1X)\)</span>かつ <span class="math inline">\(P_{\varepsilon_XY} = logistic(0,1)\)</span>なので、</p>
+<p><span class="math display">\[\begin{align}
+\lim_{x \to +\infty} P(Y=1|X=x) = \left \{
+  \begin{array}{l}
+    1, \quad \text{if} \quad \beta_1 &gt; 0 \\
+    0, \quad \text{if} \quad \beta_1 &lt; 0
+  \end{array}
+  \quad ,
+  \right.
+\end{align}\]</span></p>
+<p><span class="math display">\[\begin{align}
+\lim_{x \to -\infty} P(Y=1|X=x) = \left \{
+  \begin{array}{l}
+    0, \quad \text{if} \quad \beta_1 &gt; 0 \\
+    1, \quad \text{if} \quad \beta_1 &lt; 0
+  \end{array}
+   \quad ,
+  \right.
+\end{align}\]</span></p>
+<p>一方で、モデル<span class="math inline">\(\mathcal M_2\)</span>では、 <span class="math inline">\(P_{\varepsilon_X} = Laplace(0,b)\)</span>であり、</p>
+<p><span class="math display">\[\begin{align}
+P(Y=1|X=x) &amp;= \frac{P(Y=1, X=x)}{P_X(X=x)} \\
+           &amp;= \frac{P_Y(Y=1) P_{\varepsilon_X}(X=x|Y=1)}
+                   {P_Y(Y=0)P_{\varepsilon_X}(X=x|Y=0) + P_Y(Y=1)P_{\varepsilon_X}(X=x|Y=1)}
+\end{align}\]</span></p>
+<p>より、</p>
+<p><span class="math display">\[
+\lim_{x \to \pm \infty} P(Y=1|X=x) = P_Y(Y=1)
+\]</span></p>
+<p>よって、<span class="math inline">\(\mathcal M_1\)</span>と<span class="math inline">\(\mathcal M_2\)</span>とで分布が異なる。</p>
+<hr />
+<p><font color="Red">上記と同じ調子でやったら、<a href="https://arxiv.org/abs/1802.05889">Li and Shimizu(2018)</a> の2変数識別可能性も証明できそう…？</font></p>
+</div>
+</div>
+</div>
+<div id="causal-inference" class="section level1">
+<h1>Causal Inference</h1>
+<div id="mixed-information-criterion-mic" class="section level2">
+<h2>Mixed Information Criterion (MIC)</h2>
+<p>スコアベースの手法でDAGを推定する</p>
+<p>Mixed Information criterion (MIC)を提案</p>
+<p><span class="math display">\[
+\begin{align}
+MIC(G) &amp;= \sum_{i=1}^D MIC(X_i, Pa(X_i)) \\
+       &amp;= \sum_{i=1}^D \left( \frac{1}{w_i} LL(X_i|Pa(X_i)) + Pen(X_i, Pa(X_i)) \right)
+\end{align}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(LL(X_i|Pa(X_i))\)</span>
+<ul>
+<li>負の対数尤度</li>
+</ul></li>
+<li><span class="math inline">\(Pen(X_i, Pa(X_i))\)</span>
+<ul>
+<li><span class="math inline">\(l_0\)</span>罰則項(pnealty)</li>
+</ul></li>
+<li><span class="math inline">\(w_i\)</span>
+<ul>
+<li>scale parameter</li>
+<li>異なる変数の負の対数尤度の大きさを比較可能にするもの</li>
+<li>データの標準化がよく行われるが、説明変数の確率分布を変えてしまって、DAGの推定精度を落としてしまう</li>
+<li>これのscale parameterでデータの分布を変えることなく、スケールを調整できる</li>
+<li><span class="math inline">\(w_i\)</span>の決め方は以下</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[
+Pa_c(X_i) = \text{arg min}_{X&#39; \subseteq X_{-i}} LL(X_i|X&#39;) \\
+w_i = LL(X_i|Pa_c(X_i))
+\]</span></p>
+<ul>
+<li><span class="math inline">\(Pa_x(X_i)\)</span>
+<ul>
+<li><span class="math inline">\(X_i\)</span>の最適な可能性のある親集合(optimal potential parent set)</li>
+<li><span class="math inline">\(Pa(X_i) \subseteq Pa_c(X_i)\)</span></li>
+</ul></li>
+<li>よって、MICの1項目は、<span class="math inline">\(\frac{LL(X_i|Pa(X_i))}{w_i} = \frac{LL(X_i|Pa(X_i))}{LL(X_i|Pa_c(X_i))}\)</span>
+<ul>
+<li><span class="math inline">\(X_i\)</span>の親が最適じゃなかったら値が大きくなる</li>
+</ul></li>
+</ul>
+</div>
+<div id="local-consistency-局所一致性" class="section level2">
+<h2>Local Consistency (局所一致性)</h2>
+<p>モデル選択基準を最適化することで、 データ生成分布を表現できるグラフが選択され、 データ生成分布を表現するために冗長な辺を含まないグラフになること</p>
+<p>これをMICが満たしていると、MIC最小のモデルを選択すれば良いということ</p>
+<hr />
+<p><strong>定義(Local Consistency)</strong></p>
+<p>データ<span class="math inline">\(\mathbf{X}\)</span>が、確率分布<span class="math inline">\(p(\cdot)\)</span>から得られた<span class="math inline">\(N\)</span>個の<span class="math inline">\(iid\)</span>サンプルだとする。</p>
+<p><span class="math inline">\(\mathcal G\)</span>を任意のDAG、<span class="math inline">\(\mathcal G&#39;\)</span>を<span class="math inline">\(X_i \rightarrow X_j\)</span>という矢線を加えたDAGだとする。</p>
+<p>このとき、スコア規準<span class="math inline">\(S(\mathcal G, \mathbf X)\)</span>が、Local Consistentとは、以下を満たすこと</p>
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(X_j \mathop{\,\perp\!\!\!\!\!/\!\!\!\!\!\perp\,}_p X_i | Pa_j^{\mathcal G} \Longrightarrow S(\mathcal G&#39;, \mathbf X) &gt; S(\mathcal G, \mathbf X)\)</span></li>
+<li><span class="math inline">\(X_j \mathop{\,\perp\!\!\!\!\!\perp\,}_p X_i | Pa_j^{\mathcal G} \Longrightarrow S(\mathcal G&#39;, \mathbf X) &lt; S(\mathcal G, \mathbf X)\)</span></li>
+</ol>
+<ul>
+<li><font color="Red">不等号の向き合ってる？</font></li>
+</ul>
+<hr />
+<p><strong>定理</strong></p>
+<p>MICはLocal consistentである</p>
+<hr />
+<p><strong>証明</strong></p>
+<p>まだ追えてない…。</p>
+<p>けど、やっぱり証明を見ると、不等号反対な気がする？</p>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

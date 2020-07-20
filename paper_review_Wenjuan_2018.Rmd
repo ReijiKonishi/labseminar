@@ -1,0 +1,372 @@
+---
+title: "Mixed Causal Structure Discovery with Application to Prescriptive Pricing"
+author: "Reiji Konishi"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    self_contained: TRUE
+    df_print: paged
+    toc: TRUE
+    toc_float: TRUE
+    toc_depth: 2
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r knitr_init, echo=FALSE, message=FALSE, warning=FALSE}
+# library
+library(knitr)
+library(rmdformats)
+
+# Global Options
+options(max.print = 100, stringsAsFactors = FALSE)
+knitr::opts_chunk$set(
+  echo = TRUE,
+  tidy = TRUE,
+  comment = NA,
+  warning = FALSE,
+  message = FALSE,
+  eval = TRUE
+)
+
+knitr::opts_knit$set(width = 75)
+```
+
+# Mixed Causal Model
+
+\newcommand{\indep}{\mathop{\,\perp\!\!\!\!\!\perp\,}}
+\newcommand{\notindep}{\mathop{\,\perp\!\!\!\!\!/\!\!\!\!\!\perp\,}}
+\newcommand{\mat}[1]{\begin{pmatrix} #1 \end{pmatrix}}
+\usepackage{color}
+\usepackage{amsmath}
+
+
+[Wei Wenjuan, et al(2018) Mixed Causal Structure Discovery with Application to Prescriptive Pricing, *IJCAI-18*](https://www.ijcai.org/Proceedings/2018/0711.pdf)
+
+* 離散変数と連続変数の両方が入ったデータの因果モデルを構築し、2変数識別可能性を証明
+* Mixed Information Criterion (MIC)というLocal Consistencyを満たすスコアを導入し、スコアベースの探索アルゴリズムを提案
+
+# Model
+
+* データ
+$$
+\mathbf{X} = \left[ X_1, \cdots, X_D \right]
+$$
+  * 離散変数 $X_i \in \{0,1\}^N$
+  * 連続変数 $X_1 \in \mathbb R^N$
+
+* 因果マルコフ条件と忠実性の仮定より、DAG $G$によって定義された確率的グラフィカルモデルとして、データをモデル化する
+$$
+\begin{align}
+ p&(X_1, \cdots, X_D) \\
+= &\prod_{i=1}^D p_b(X_i | Pa(X_i))^{z_i} p_c(X_i|PA(X_i))^{(1-z_i)}
+\end{align}
+$$
+  * $z_i \in \{0,1\}$はindicator variable
+  * 1項目が、離散変数の場合
+  * 2項目が、連続変数の場合
+  
+* 連続変数とその親変数との関係は以下の線形方程式
+$$
+X_i = \boldsymbol \beta ^T X_{-i} + \epsilon_i, \quad \epsilon_i \sim Laplace(0,b_i)
+$$
+
+* 離散変数とその親変数との関係は以下の線形方程式
+$$
+X_i = \left\{
+    \begin{array}{l}
+      1 \quad \boldsymbol \beta ^T X_{-i} + \epsilon_i > 0 , \quad \epsilon_i \sim Logistic(0,1)\\
+      0 \quad \text{otherwise}
+    \end{array}
+  \right.
+$$
+
+上記の仮定をモデル式に代入すると…
+
+$$
+\begin{align}
+ p&(X_1, \cdots, X_D) \\
+  &= \prod_{i=1}^D \prod_{n=1}^N \exp(\boldsymbol \beta_i^T X_{-i,n} x_{in}z_i)
+        (1 + \exp(\boldsymbol \beta_i^T X_{-i,n}))^{-z_i(1- x_{in})} \\
+  & \qquad \prod_{n=1}^N b_i^{z_i-1} \exp\left(-\frac{|x_{in} - \boldsymbol \beta_i^T X_{-i,n}| \cdot (1-z_i)}{b_i} \right)
+\end{align}
+$$
+
+* <font color="Red">ロジスティック分布の式、ちょっと違う？</font>
+* <font color="Red">ラプラス分布の分母がどっか行った？</font>
+
+
+### 参考
+
+#### ロジスティック分布
+
+$$
+f(x; \mu, s) = \frac{\exp(-(x - \mu) / s)}{s(1 + \exp(-(x - \mu)/ s)) ^2}
+$$
+
+```{r}
+d <- data.frame(x = c(-5,5))
+library(ggplot2)
+ggplot(data = d, mapping = aes(x = x)) +
+  stat_function(fun = dnorm) +
+  stat_function(fun = dlogis, color = "red") +
+  ylim(0, 0.5)
+```
+
+
+#### ラプラス分布
+
+$$
+f(x; \mu, b) = \frac{1}{2b} \exp\left( \frac{|x-\mu|}{b} \right)
+$$
+
+```{r}
+library(rmutil)
+d <- data.frame(x = c(-5,5))
+ggplot(data = d, mapping = aes(x = x)) +
+  stat_function(fun = dnorm) +
+  stat_function(fun = dlaplace, color = "red")
+```
+
+
+
+## Identifiability of the model
+
+### 定義:2変数識別可能性 [Peters et al., 2011]
+
+$\mathcal F = \{ f| f : \mathbb R^2 \rightarrow \mathbb R\}$ を関数の集合とする。
+
+$\mathcal P_{\mathbb U} = \{ \mathcal P_{\mathbb R}, \mathcal P_{\{ 0, 1\}} \}$で、連続/離散確率変数の確率分布の集合を表す。
+
+以下が成り立つとき、関数$f \in \mathcal F$と、$\mathbf X$の分布と、誤差$\varepsilon$を含む
+集合$\mathcal B \subseteq \mathcal F \times \mathcal P_{\mathbb U} \times \mathcal P_{\mathbb U}$は、$\mathcal F$
+において2変数識別可能であると言う。
+
+
+\begin{align}
+(&f, P_X, P_{\varepsilon_Y}) \in \mathcal B \quad \textit{and} \quad Y = f(X, \varepsilon_Y), X \indep \varepsilon_Y \\
+
+&\Longrightarrow \nexists (g, P_Y, P_{\varepsilon_Y}) \in \mathcal B \quad \textit{and} \quad X = g(Y, \varepsilon_Y), Y \indep \varepsilon_X 
+\end{align}
+
+更に加えて、
+
+$$
+f(X, \varepsilon_Y) \notindep X \quad \textit{for all} \quad 
+(f, P_X, P_{\varepsilon_Y}) \in \mathcal B \quad \textit{with} \quad X \indep \varepsilon_Y
+$$
+
+
+### 定理1
+
+上記のmixed causal modelにおいて、$\mathcal P_{\mathbb U}$は非ガウス分布の集合。
+
+このモデルは、2変数識別可能である
+
+
+### 定理1の証明
+
+**概要**
+
+* 両方とも連続変数の場合、既に識別可能性が証明されているAdditive Noise Modelに変形できる(LiNGAM)
+* 両方とも離散変数の場合、確率変数の周辺分布が同じでないという条件を満たしているなら、識別可能である
+* 連続・離散混合の場合、条件付き分布の違いによって、識別可能である
+
+---
+
+**証明(両方とも離散変数の場合)**
+
+(背理法) mixed causal modelが2変数識別可能でないとしたら、モデルの定義と識別可能性の定義より、
+同時分布が等しい以下の2つのモデルが存在する
+
+\begin{align}
+\mathcal{M}_1 = \{&Y=f_b(X, \varepsilon_Y) = \left\{
+    \begin{array}{l}
+      1 \quad \beta_1 X + \varepsilon_Y > 0\\
+      0 \quad \text{otherwise}
+    \end{array}
+    ,
+  \right. \\
+  &P_X(X=1)=k_1, \\
+  &P_{\varepsilon_Y} = logistic(0,1) \} \\
+\end{align}
+
+\begin{align}
+\mathcal{M}_2 = \{&X=f_b(Y, \varepsilon_X) = \left\{
+    \begin{array}{l}
+      1 \quad \beta_2 Y + \varepsilon_X > 0\\
+      0 \quad \text{otherwise}
+    \end{array}
+    ,
+  \right. \\
+  &P_X(X=1)=k_2, \\
+  &P_{\varepsilon_X} = logistic(0,1) \}
+\end{align}
+
+これら2つのモデルは同じ同時分布を持つ。
+
+ここで、それぞれの同時分布について考える。
+
+\begin{align}
+P_{\mathcal M_1}(X,Y) &= P_X(X)P_{\varepsilon_Y}(Y|X) \\
+                      &= k_1^X(1-k_1)^{1-X} \left( \frac{1}{1+\exp(-\beta_1 X)} \right)^Y 
+                          \left( 1 - \frac{1}{1+\exp(-\beta_1 X)} \right)^{1-Y}
+\end{align}
+
+\begin{align}
+P_{\mathcal M_2}(X,Y) &= P_Y(Y)P_{\varepsilon_X}(X|Y) \\
+                      &= k_1^Y(1-k_2)^{1-Y} \left( \frac{1}{1+\exp(-\beta_2 Y)} \right)^X 
+                          \left( 1 - \frac{1}{1+\exp(-\beta_2 Y)} \right)^{1-X}
+\end{align}
+
+
+ここで、$P_{\mathcal M_1}(X,Y) = P_{\mathcal M_2}(X,Y)$が成立しているとしたら、
+$\frac{P_{\mathcal M_1}(X=0,Y=0)}{P_{\mathcal M_2}(X=0,Y=0)} = 1$となり、$k_1 = k_2$も成立していることになる。
+
+これは、$X$と$Y$の周辺分布が異なるという仮定と矛盾する。
+
+---
+
+**証明2(Xが連続、Yが離散の場合)**
+
+(背理法) mixed causal modelが2変数識別可能でないとしたら、モデルの定義と識別可能性の定義より、
+同時分布が等しい以下の2つのモデルが存在する
+
+\begin{align}
+\mathcal{M}_1 = \{&Y = \left\{
+    \begin{array}{l}
+      1 \quad \beta_1 X + \varepsilon_Y > 0\\
+      0 \quad \text{otherwise}
+    \end{array}
+    ,
+  \right. \\
+  &P_{\varepsilon_Y} = logistic(0,1) \}
+\end{align}
+
+\begin{align}
+\mathcal{M}_2 = \{ &X= \beta_2 Y + \varepsilon_X, \\
+                   &P_{\varepsilon_X} = Laplace(0,b) \}
+\end{align}
+
+
+しかし、モデル$\mathcal M_1$では、
+$P(Y=1|X=x)=P_{\varepsilon_Y}(\varepsilon_Y > -\beta_1X)$かつ
+$P_{\varepsilon_XY} = logistic(0,1)$なので、
+
+\begin{align}
+\lim_{x \to +\infty} P(Y=1|X=x) = \left \{
+  \begin{array}{l}
+    1, \quad \text{if} \quad \beta_1 > 0 \\
+    0, \quad \text{if} \quad \beta_1 < 0
+  \end{array}
+  \quad ,
+  \right.
+\end{align}
+
+\begin{align}
+\lim_{x \to -\infty} P(Y=1|X=x) = \left \{
+  \begin{array}{l}
+    0, \quad \text{if} \quad \beta_1 > 0 \\
+    1, \quad \text{if} \quad \beta_1 < 0
+  \end{array}
+   \quad ,
+  \right.
+\end{align}
+
+一方で、モデル$\mathcal M_2$では、
+$P_{\varepsilon_X} = Laplace(0,b)$であり、
+
+\begin{align}
+P(Y=1|X=x) &= \frac{P(Y=1, X=x)}{P_X(X=x)} \\
+           &= \frac{P_Y(Y=1) P_{\varepsilon_X}(X=x|Y=1)}
+                   {P_Y(Y=0)P_{\varepsilon_X}(X=x|Y=0) + P_Y(Y=1)P_{\varepsilon_X}(X=x|Y=1)}
+\end{align}
+
+より、
+
+$$
+\lim_{x \to \pm \infty} P(Y=1|X=x) = P_Y(Y=1)
+$$
+
+よって、$\mathcal M_1$と$\mathcal M_2$とで分布が異なる。
+
+---
+
+<font color="Red">上記と同じ調子でやったら、[Li and Shimizu(2018)](https://arxiv.org/abs/1802.05889) の2変数識別可能性も証明できそう…？</font>
+
+
+# Causal Inference
+
+## Mixed Information Criterion (MIC)
+
+スコアベースの手法でDAGを推定する
+
+Mixed Information criterion (MIC)を提案
+
+$$
+\begin{align}
+MIC(G) &= \sum_{i=1}^D MIC(X_i, Pa(X_i)) \\
+       &= \sum_{i=1}^D \left( \frac{1}{w_i} LL(X_i|Pa(X_i)) + Pen(X_i, Pa(X_i)) \right)
+\end{align}
+$$
+
+
+* $LL(X_i|Pa(X_i))$
+  * 負の対数尤度
+* $Pen(X_i, Pa(X_i))$
+  * $l_0$罰則項(pnealty)
+* $w_i$
+  * scale parameter
+  * 異なる変数の負の対数尤度の大きさを比較可能にするもの
+  * データの標準化がよく行われるが、説明変数の確率分布を変えてしまって、DAGの推定精度を落としてしまう
+  * これのscale parameterでデータの分布を変えることなく、スケールを調整できる
+  * $w_i$の決め方は以下
+  
+$$
+Pa_c(X_i) = \text{arg min}_{X' \subseteq X_{-i}} LL(X_i|X') \\
+w_i = LL(X_i|Pa_c(X_i))
+$$
+
+* $Pa_x(X_i)$
+  * $X_i$の最適な可能性のある親集合(optimal potential parent set)
+  * $Pa(X_i) \subseteq Pa_c(X_i)$
+* よって、MICの1項目は、$\frac{LL(X_i|Pa(X_i))}{w_i} = \frac{LL(X_i|Pa(X_i))}{LL(X_i|Pa_c(X_i))}$
+  * $X_i$の親が最適じゃなかったら値が大きくなる
+  
+  
+## Local Consistency (局所一致性)
+
+モデル選択基準を最適化することで、
+データ生成分布を表現できるグラフが選択され、
+データ生成分布を表現するために冗長な辺を含まないグラフになること
+
+これをMICが満たしていると、MIC最小のモデルを選択すれば良いということ
+
+---
+
+**定義(Local Consistency)**
+
+データ$\mathbf{X}$が、確率分布$p(\cdot)$から得られた$N$個の$iid$サンプルだとする。
+
+$\mathcal G$を任意のDAG、$\mathcal G'$を$X_i \rightarrow X_j$という矢線を加えたDAGだとする。
+
+このとき、スコア規準$S(\mathcal G, \mathbf X)$が、Local Consistentとは、以下を満たすこと
+
+1. $X_j \notindep _p X_i | Pa_j^{\mathcal G} \Longrightarrow S(\mathcal G', \mathbf X) > S(\mathcal G, \mathbf X)$
+1. $X_j \indep _p X_i | Pa_j^{\mathcal G} \Longrightarrow S(\mathcal G', \mathbf X) < S(\mathcal G, \mathbf X)$
+
+* <font color="Red">不等号の向き合ってる？</font>
+
+---
+
+**定理**
+
+MICはLocal consistentである
+
+---
+
+**証明**
+
+まだ追えてない…。
+
+けど、やっぱり証明を見ると、不等号反対な気がする？
