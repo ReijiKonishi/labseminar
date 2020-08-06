@@ -38,9 +38,176 @@ knitr::opts_knit$set(width = 75)
 \usepackage{color}
 \usepackage{amsmath}
 
-# L-LiNGAM
+# 概要
 
 [Mako Yamayoshi, et al(2020) , An estimation of causal structure based on Latent LiNGAM for mixed data *Behaviormetrika*](https://link.springer.com/article/10.1007%2Fs41237-019-00095-3)
 
+* 離散変数と連続変数の混ざったデータの因果モデルを提案(Latent LiNGAM)
+* 各観測変数は、潜在変数からone-to-oneで生成されていると仮定
+  * ポリコリック相関でも同じ仮定が使われてる
+* 観測変数間の因果関係を描いているのではなく、潜在変数間の因果関係を描いている
+* 既存研究
+  * Post NonLinear causal model:全部連続変数
+  * Hybrid Causal Model:連続とbinaryデータの混合
+* DAGの理論的な結果より、アルゴリズムや実際のデータでの話中心
 
-## 概要
+
+# L-LiNGAM
+
+## model
+
+$$
+\left\{
+    \begin{array}{l}
+      f_i = \sum_{j \neq i} b_{ij} f_i + e_i\\
+      x_i = g_i(f_i)
+    \end{array}
+  \right.
+$$
+
+* $x_i$:観測変数
+* $f_i$:潜在変数
+  * LiNGAMと同様の構造
+* $e_i$:誤差変数
+* $g_i$:リンク関数
+  * 微分可能な関数なら何でもOK
+  * 恒等関数ならLiNGAMと同様のモデルになる
+
+```{r, out.width = "50%", echo=FALSE}
+knitr::include_graphics(path = "pics/yamayoshi_2020_fig1.png")
+```
+
+
+ICAのフレームワークでL-LiNGAMを捉える
+
+$$
+\mathbf f = \mathbf{Bf} + \mathbf {e} \tag{2.3}
+$$
+
+$$
+\mathbf x = \mathbf {g(f)} \tag{2.4}
+$$
+
+$\mathbf{A=(I-B)^{-1}}$と置いて、式(2.3)を$f$について解くと
+
+$$
+\mathbf{(I - B)f} = \mathbf{e} \\
+\mathbf f = \mathbf{(I-B)}^{-1} \mathbf{e} = \mathbf{Ae} \\
+\mathbf x = \mathbf{g(Ae)}
+$$
+
+となる。これは、post non-linear ICAと同じモデル。
+
+LiNGAMとICAの関係と、L-LiNGAMとpost non-linear ICAの関係は同じだからたぶん識別可能(ちゃんと証明されてない)
+
+
+## 推定アルゴリズム
+
+DirectLiNGAMと同様に、回帰と独立性のチェックで。
+
+$$
+m(x_i, x_j) = NMI(x_j, r_i^{(j)}) - NMI(x_i, r_j^{(i)}) \\
+\text{where} \quad r_i^{(j)} = g_i(b_{ij}f_i + e_i) - x_i
+$$
+
+$r_i^{(j)}$は、$x_i$を目的変数、$x_j$を説明変数として回帰した時の残差
+
+---
+
+<font color="Red">残差の式は以下の間違い…？</font>
+
+$$
+r_i^{(j)} = x_i - g_j(b_{ij}f_i + e_j)
+$$
+
+---
+
+* $NMI(x_j, r_i^{(j)})$は、標準化した相互情報量
+  * 各変数が異なるリンク関数で出来てるから、相互情報量を比較できるように標準化する
+
+$$
+NMI(x_j, r_i^{(j)}) = \frac{I(x_j, r_i^{(j)})}{\sqrt{H(x_j)H(r_i^{(j)})}}
+$$
+
+
+* 観測変数のすべての組ごとに回帰分析を行ったときに、
+  どの組においても残差と独立になるような説明変数は、
+  因果的順序の最初の変数になれる
+* 以下の指標が最大になる$x_i$が因果的順序の最初
+
+$$
+M(x_i; \mathbf U) = - \sum_{j\in \mathbf U} \text{min} (0, min(x_i, x_j))^2
+$$
+
+
+---
+
+**アルゴリズム**
+
+---
+
+* Input
+  * データ行列$\mathbf X \in \mathbb R^{n \times p}$
+  * 観測変数の順序リストを入れる$K$
+
+* ステップ1
+  * 非ガウス分布から潜在変数$f_i$を独立に生成する(例:t分布)
+
+* ステップ2
+  * a
+    * $x_i$を目的変数、$f_i$を説明変数として回帰分析を行う($g_i$の関数に応じて使う回帰は異なる)
+  * b
+    * $f_i$の値をステップ(a)で予測された値に置き換える
+  * c
+    * $f_i$を$f_j$に回帰させて、残差$r_i^{(j)}$を得る
+  * d
+    * 残差$r_i^{(j)}$と$x_i$との独立性を評価する
+  * e
+    * $x_i$を説明変数として、他のすべての変数と回帰を行って残差行列を得る
+* ステップ3
+  * 最後に残った変数をリスト$K$の最後に追加
+* ステップ4
+  * 因果順序に従って回帰を行って、係数$b_{ij}$を推定する
+
+---
+
+<font color="Red">アルゴリズムのa,bで潜在変数を推定するのはこれでいいのか？</font>
+
+
+# Application
+## numerical study
+
+いくつかの設定で、サンプル数100、4変数のデータを100回繰り返して推定の誤差とかを評価
+
+* 設定1
+  * 変数1,3は連続、変数2,4はbinary
+
+* 設定2
+  * すべてbinary
+
+* 設定3
+  * すべて連続
+  
+* 設定4
+  * 変数1,3は5カテゴリの離散、変数2,4はbinary
+
+
+2値変数とかも全部2乗誤差で評価してるけど、いいのか…？
+
+2値変数の2乗誤差はHCMが良いけど、全体的に見たらL-LiNGAMのほうが安定的に性能が良いみたいな感じで、若干強引…？
+
+# Discussion
+
+* 心理学、疫学、社会学の領域で離散変数を扱う時、
+  潜在変数とリンク関数でデータ生成過程を描くことは自然な仮定で良いこと
+  
+* 一方、性別や人種など、連続的な潜在変数を想定しない真のカテゴリカル変数が存在する場合もある。
+  その場合は、真のカテゴリカル変数と他の変数との関係が線形であれば、提案手法をデータセットに適用することができる。
+
+* 潜在変数の生成やリンク関数の設定については任意になってしまっている。
+  * つまり、適切なリンク関数を自分で設定しなければならない
+  * 潜在変数の分布やリンク関数の設定の仕方を変えてシミュレーションしてみることなどが今後の課題
+
+* L-LiNGAMとPNL Causal Modelとの関係は解決済みだが、L-LiNGAMの識別可能性や一致性は未解決
+  * PNL Causal Modelが識別可能だから、L-LiNGAMも識別可能だろうという感じ(シミュレーションの結果も良好だし。)
+  * ただし、数値例は、誤差の等分散性や真のリンク関数を適切に選べているという暗黙の仮定が置かれているので、ちゃんと検証しないと要注意

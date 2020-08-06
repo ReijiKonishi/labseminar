@@ -372,12 +372,188 @@ div.tocify {
 
 
 
+<div id="概要" class="section level1">
+<h1>概要</h1>
+<p><a href="https://link.springer.com/article/10.1007%2Fs41237-019-00095-3">Mako Yamayoshi, et al(2020) , An estimation of causal structure based on Latent LiNGAM for mixed data <em>Behaviormetrika</em></a></p>
+<ul>
+<li>離散変数と連続変数の混ざったデータの因果モデルを提案(Latent LiNGAM)</li>
+<li>各観測変数は、潜在変数からone-to-oneで生成されていると仮定
+<ul>
+<li>ポリコリック相関でも同じ仮定が使われてる</li>
+</ul></li>
+<li>観測変数間の因果関係を描いているのではなく、潜在変数間の因果関係を描いている</li>
+<li>既存研究
+<ul>
+<li>Post NonLinear causal model:全部連続変数</li>
+<li>Hybrid Causal Model:連続とbinaryデータの混合</li>
+</ul></li>
+<li>DAGの理論的な結果より、アルゴリズムや実際のデータでの話中心</li>
+</ul>
+</div>
 <div id="l-lingam" class="section level1">
 <h1>L-LiNGAM</h1>
-<p><a href="https://link.springer.com/article/10.1007%2Fs41237-019-00095-3">Mako Yamayoshi, et al(2020) , An estimation of causal structure based on Latent LiNGAM for mixed data <em>Behaviormetrika</em></a></p>
-<div id="概要" class="section level2">
-<h2>概要</h2>
+<div id="model" class="section level2">
+<h2>model</h2>
+<p><span class="math display">\[
+\left\{
+    \begin{array}{l}
+      f_i = \sum_{j \neq i} b_{ij} f_i + e_i\\
+      x_i = g_i(f_i)
+    \end{array}
+  \right.
+\]</span></p>
+<ul>
+<li><span class="math inline">\(x_i\)</span>:観測変数</li>
+<li><span class="math inline">\(f_i\)</span>:潜在変数
+<ul>
+<li>LiNGAMと同様の構造</li>
+</ul></li>
+<li><span class="math inline">\(e_i\)</span>:誤差変数</li>
+<li><span class="math inline">\(g_i\)</span>:リンク関数
+<ul>
+<li>微分可能な関数なら何でもOK</li>
+<li>恒等関数ならLiNGAMと同様のモデルになる</li>
+</ul></li>
+</ul>
+<p><img src="pics/yamayoshi_2020_fig1.png" width="50%" /></p>
+<p>ICAのフレームワークでL-LiNGAMを捉える</p>
+<p><span class="math display">\[
+\mathbf f = \mathbf{Bf} + \mathbf {e} \tag{2.3}
+\]</span></p>
+<p><span class="math display">\[
+\mathbf x = \mathbf {g(f)} \tag{2.4}
+\]</span></p>
+<p><span class="math inline">\(\mathbf{A=(I-B)^{-1}}\)</span>と置いて、式(2.3)を<span class="math inline">\(f\)</span>について解くと</p>
+<p><span class="math display">\[
+\mathbf{(I - B)f} = \mathbf{e} \\
+\mathbf f = \mathbf{(I-B)}^{-1} \mathbf{e} = \mathbf{Ae} \\
+\mathbf x = \mathbf{g(Ae)}
+\]</span></p>
+<p>となる。これは、post non-linear ICAと同じモデル。</p>
+<p>LiNGAMとICAの関係と、L-LiNGAMとpost non-linear ICAの関係は同じだからたぶん識別可能(ちゃんと証明されてない)</p>
 </div>
+<div id="推定アルゴリズム" class="section level2">
+<h2>推定アルゴリズム</h2>
+<p>DirectLiNGAMと同様に、回帰と独立性のチェックで。</p>
+<p><span class="math display">\[
+m(x_i, x_j) = NMI(x_j, r_i^{(j)}) - NMI(x_i, r_j^{(i)}) \\
+\text{where} \quad r_i^{(j)} = g_i(b_{ij}f_i + e_i) - x_i
+\]</span></p>
+<p><span class="math inline">\(r_i^{(j)}\)</span>は、<span class="math inline">\(x_i\)</span>を目的変数、<span class="math inline">\(x_j\)</span>を説明変数として回帰した時の残差</p>
+<hr />
+<p><font color="Red">残差の式は以下の間違い…？</font></p>
+<p><span class="math display">\[
+r_i^{(j)} = x_i - g_j(b_{ij}f_i + e_j)
+\]</span></p>
+<hr />
+<ul>
+<li><span class="math inline">\(NMI(x_j, r_i^{(j)})\)</span>は、標準化した相互情報量
+<ul>
+<li>各変数が異なるリンク関数で出来てるから、相互情報量を比較できるように標準化する</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[
+NMI(x_j, r_i^{(j)}) = \frac{I(x_j, r_i^{(j)})}{\sqrt{H(x_j)H(r_i^{(j)})}}
+\]</span></p>
+<ul>
+<li>観測変数のすべての組ごとに回帰分析を行ったときに、 どの組においても残差と独立になるような説明変数は、 因果的順序の最初の変数になれる</li>
+<li>以下の指標が最大になる<span class="math inline">\(x_i\)</span>が因果的順序の最初</li>
+</ul>
+<p><span class="math display">\[
+M(x_i; \mathbf U) = - \sum_{j\in \mathbf U} \text{min} (0, min(x_i, x_j))^2
+\]</span></p>
+<hr />
+<p><strong>アルゴリズム</strong></p>
+<hr />
+<ul>
+<li>Input
+<ul>
+<li>データ行列<span class="math inline">\(\mathbf X \in \mathbb R^{n \times p}\)</span></li>
+<li>観測変数の順序リストを入れる<span class="math inline">\(K\)</span></li>
+</ul></li>
+<li>ステップ1
+<ul>
+<li>非ガウス分布から潜在変数<span class="math inline">\(f_i\)</span>を独立に生成する(例:t分布)</li>
+</ul></li>
+<li>ステップ2
+<ul>
+<li>a
+<ul>
+<li><span class="math inline">\(x_i\)</span>を目的変数、<span class="math inline">\(f_i\)</span>を説明変数として回帰分析を行う(<span class="math inline">\(g_i\)</span>の関数に応じて使う回帰は異なる)</li>
+</ul></li>
+<li>b
+<ul>
+<li><span class="math inline">\(f_i\)</span>の値をステップ(a)で予測された値に置き換える</li>
+</ul></li>
+<li>c
+<ul>
+<li><span class="math inline">\(f_i\)</span>を<span class="math inline">\(f_j\)</span>に回帰させて、残差<span class="math inline">\(r_i^{(j)}\)</span>を得る</li>
+</ul></li>
+<li>d
+<ul>
+<li>残差<span class="math inline">\(r_i^{(j)}\)</span>と<span class="math inline">\(x_i\)</span>との独立性を評価する</li>
+</ul></li>
+<li>e
+<ul>
+<li><span class="math inline">\(x_i\)</span>を説明変数として、他のすべての変数と回帰を行って残差行列を得る</li>
+</ul></li>
+</ul></li>
+<li>ステップ3
+<ul>
+<li>最後に残った変数をリスト<span class="math inline">\(K\)</span>の最後に追加</li>
+</ul></li>
+<li>ステップ4
+<ul>
+<li>因果順序に従って回帰を行って、係数<span class="math inline">\(b_{ij}\)</span>を推定する</li>
+</ul></li>
+</ul>
+<hr />
+<p><font color="Red">アルゴリズムのa,bで潜在変数を推定するのはこれでいいのか？</font></p>
+</div>
+</div>
+<div id="application" class="section level1">
+<h1>Application</h1>
+<div id="numerical-study" class="section level2">
+<h2>numerical study</h2>
+<p>いくつかの設定で、サンプル数100、4変数のデータを100回繰り返して推定の誤差とかを評価</p>
+<ul>
+<li>設定1
+<ul>
+<li>変数1,3は連続、変数2,4はbinary</li>
+</ul></li>
+<li>設定2
+<ul>
+<li>すべてbinary</li>
+</ul></li>
+<li>設定3
+<ul>
+<li>すべて連続</li>
+</ul></li>
+<li>設定4
+<ul>
+<li>変数1,3は5カテゴリの離散、変数2,4はbinary</li>
+</ul></li>
+</ul>
+<p>2値変数とかも全部2乗誤差で評価してるけど、いいのか…？</p>
+<p>2値変数の2乗誤差はHCMが良いけど、全体的に見たらL-LiNGAMのほうが安定的に性能が良いみたいな感じで、若干強引…？</p>
+</div>
+</div>
+<div id="discussion" class="section level1">
+<h1>Discussion</h1>
+<ul>
+<li><p>心理学、疫学、社会学の領域で離散変数を扱う時、 潜在変数とリンク関数でデータ生成過程を描くことは自然な仮定で良いこと</p></li>
+<li><p>一方、性別や人種など、連続的な潜在変数を想定しない真のカテゴリカル変数が存在する場合もある。 その場合は、真のカテゴリカル変数と他の変数との関係が線形であれば、提案手法をデータセットに適用することができる。</p></li>
+<li><p>潜在変数の生成やリンク関数の設定については任意になってしまっている。</p>
+<ul>
+<li>つまり、適切なリンク関数を自分で設定しなければならない</li>
+<li>潜在変数の分布やリンク関数の設定の仕方を変えてシミュレーションしてみることなどが今後の課題</li>
+</ul></li>
+<li><p>L-LiNGAMとPNL Causal Modelとの関係は解決済みだが、L-LiNGAMの識別可能性や一致性は未解決</p>
+<ul>
+<li>PNL Causal Modelが識別可能だから、L-LiNGAMも識別可能だろうという感じ(シミュレーションの結果も良好だし。)</li>
+<li>ただし、数値例は、誤差の等分散性や真のリンク関数を適切に選べているという暗黙の仮定が置かれているので、ちゃんと検証しないと要注意</li>
+</ul></li>
+</ul>
 </div>
 
 
