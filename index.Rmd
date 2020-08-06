@@ -51,10 +51,13 @@ knitr::opts_knit$set(width = 75)
 * Judea Pearl(2015) [Causal Effect Heterogeneity](https://reijikonishi.github.io/labseminar/paper_review_Pearl_2015.html#/)
 * Biwei Huang et al.(2020) [Causal Discovery from Heterogeneous/Nnstationary Data](https://reijikonishi.github.io/labseminar/paper_review_Huang_2020.html)
 * Wei Wenjuan, et al(2018) [Mixed Causal Structure Discovery with Application to Prescriptive Pricing](https://reijikonishi.github.io/labseminar/paper_review_Wenjuan_2018.html)
+* Mako Yamayoshi, et al(2020) [An estimation of causal structure based on Latent LiNGAM for mixed data](https://reijikonishi.github.io/labseminar/paper_review_Yamayoshi_2020.html)
 
 
 # 更新履歴
 
+* 2020/08/07
+  * Mako Yamayoshi, et al(2020) 追加
 * 2020/07/21
   * Wei Wenjuan, et al(2018) 追加
 * 2020/06/23
