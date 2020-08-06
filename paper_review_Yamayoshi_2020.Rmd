@@ -1,0 +1,46 @@
+---
+title: "An estimation of causal structure based on Latent LiNGAM for mixed data"
+author: "Reiji Konishi"
+date: "2020/8/7"
+output:
+  html_document:
+    self_contained: TRUE
+    df_print: paged
+    toc: TRUE
+    toc_float: TRUE
+    toc_depth: 2
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r knitr_init, echo=FALSE, message=FALSE, warning=FALSE}
+# library
+library(knitr)
+library(rmdformats)
+
+# Global Options
+options(max.print = 100, stringsAsFactors = FALSE)
+knitr::opts_chunk$set(
+  echo = TRUE,
+  tidy = TRUE,
+  comment = NA,
+  warning = FALSE,
+  message = FALSE,
+  eval = TRUE
+)
+
+knitr::opts_knit$set(width = 75)
+```
+
+\newcommand{\indep}{\mathop{\,\perp\!\!\!\!\!\perp\,}}
+\newcommand{\notindep}{\mathop{\,\perp\!\!\!\!\!/\!\!\!\!\!\perp\,}}
+\newcommand{\mat}[1]{\begin{pmatrix} #1 \end{pmatrix}}
+\usepackage{color}
+\usepackage{amsmath}
+
+# L-LiNGAM
+
+[Mako Yamayoshi, et al(2020) , An estimation of causal structure based on Latent LiNGAM for mixed data *Behaviormetrika*](https://link.springer.com/article/10.1007%2Fs41237-019-00095-3)
+
+
+## 概要
