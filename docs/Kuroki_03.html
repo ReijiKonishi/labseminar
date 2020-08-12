@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Reiji Konishi" />
+  <title>構造的因果モデルの基礎 輪読</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="site_libs/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+
+<link rel="stylesheet" href="site_libs/reveal.js-3.3.0.1/css/theme/sky.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="for_revealjs.css"/>
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}  
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+    
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+    <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+    <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">構造的因果モデルの基礎 輪読</h1>
+  <h1 class="subtitle">第3章 因果ダイアグラムの基礎</h1>
+    <h2 class="author">Reiji Konishi</h2>
+    <h3 class="date">2020/8/13</h3>
+</section>
+
+<section><section id="robustness" class="title-slide slide level1"><h1>因果関係の頑健性</h1></section><section id="causality_data_generating_process" class="slide level2">
+<h2>因果とデータ生成過程</h2>
+<ul>
+<li>ベイジアンネットワーク
+<ul>
+<li>統計的な独立関係を記述するツール</li>
+<li>必ずしも因果関係を意味しない</li>
+<li>任意の変数順序で逐次的に因数分解可能(2.36式)</li>
+<li>しかし、因果的な解釈をすることも…</li>
+</ul></li>
+<li>因果関係(データ生成過程)は普遍的
+<ul>
+<li>それ故、有向グラフに普遍的で説得力のある解釈を与えようとしてしまう</li>
+<li>事前知識(肌感)とデータから導かれる統計的な独立関係が合うかどうかで判断しがち</li>
+</ul></li>
+<li>因果関係を物理的なデータ生成過程として捉えて、その視覚的表現である因果ダイアグラムについて解説</li>
+</ul>
+</section></section>
+<section><section id="causal_diagram" class="title-slide slide level1"><h1>因果ダイアグラム</h1></section><section id="definition" class="slide level2">
+<h2>定義(因果ダイアグラム)</h2>
+<div class="box">
+<p>DAG <span class="math inline">\(G\)</span>とその頂点に対応する確率変数の集合<span class="math inline">\(\mathbf V = \{X_1, \dots, X_p\}\)</span></p>
+<p>グラフ<span class="math inline">\(G\)</span>が確率変数間の関数関係を以下の形で規定し、 確率変数がこの関数関係に従って自律的でかつ定常的に生成される時、 DAG <span class="math inline">\(G\)</span>は因果ダイアグラムという</p>
+<p><span class="math display">\[
+X_i = g_i(\text{pa}(X_i), \epsilon_i), \quad i = 1, \dots, p \tag{3.1}
+\]</span></p>
+</div>
+<ul>
+<li>錯乱項<span class="math inline">\(\epsilon_i\)</span>は互いに独立</li>
+<li>自律的 P6
+<ul>
+<li>モデルの方程式の一部が変化しても、他の構造には影響を与えない</li>
+</ul></li>
+<li>定常的 P75(後述)
+<ul>
+<li>データ生成過程が客観的な知識に基づいて記述されたもので、人間の主観的な認識ではないこと</li>
+</ul></li>
+<li><span class="math inline">\(\text{pa}(X_i)\)</span>は<span class="math inline">\(X_i\)</span>の直接的原因</li>
+<li>3.1式のモデルはデータ生成過程の正確な記述ではなく<strong>近似</strong></li>
+</ul>
+</section><section id="discssion1" class="slide level2">
+<h2>考察(錯乱項の独立性)</h2>
+<ul>
+<li>因果ダイアグラム上の変数<span class="math inline">\(\mathbf V\)</span>に含まれる要素が観測可能であるかどうかは定義に含まれていない
+<ul>
+<li>観測できる変数もできない変数も全部書き表す必要がある</li>
+</ul></li>
+<li>因果ダイアグラムの定義は、6章の構造的因果モデルとは若干異なる
+<ul>
+<li>因果ダイアグラム:錯乱項<span class="math inline">\(\epsilon_i\)</span>は互いに独立と仮定(マルコフ的)</li>
+<li>一般的な構造的因果モデルは錯乱項が独立でなくてもOK(セミ・マルコフ的)</li>
+</ul></li>
+<li>錯乱項同士が従属だと、双方向矢線で結ぶ
+<ul>
+<li>例えば、<span class="math inline">\(\epsilon_i\)</span>と<span class="math inline">\(\epsilon_j\)</span>が従属する場合</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[
+X_i \longleftrightarrow X_j
+\]</span></p>
+<ul>
+<li>錯乱項どうしの独立関係を担保するため、潜在変数<span class="math inline">\(U\)</span>を用いて表現することも
+<ul>
+<li><span class="math inline">\(U\)</span>は、双方向矢線を構成する非観測変数の集合を代表したもの</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[
+X_i \leftarrow U \rightarrow X_j
+\]</span></p>
+</section><section id="discussion2" class="slide level2">
+<h2>考察(辺の有無)</h2>
+<p>2つの頂点間の矢線について</p>
+<ul>
+<li>ベイジアンネットワーク
+<ul>
+<li>矢線がない:何らかの条件付き独立関係が成り立っている</li>
+<li>矢線がある:変数間に従属関係がある</li>
+</ul></li>
+<li>因果ダイアグラム
+<ul>
+<li>矢線がない:直接的な因果関係が存在しない</li>
+<li>矢線がある:直接的な因果関係or従属関係が存在する可能性を示す</li>
+</ul></li>
+<li>「矢線が存在しない = 因果関係がない」ということを主張するためには強い根拠が必要
+<ul>
+<li>3.4節で再度議論</li>
+</ul></li>
+</ul>
+</section><section id="discussion3" class="slide level2">
+<h2>考察(定常性)</h2>
+<ul>
+<li><span class="math inline">\(X_i = g_i(\text{pa}(X_i), \epsilon_i)\)</span>に含まれる各方程式は普遍的なもの
+<ul>
+<li>特定の状況下で得られたものではない</li>
+<li>人間の主観的な理解に依存して変化することもない</li>
+</ul></li>
+<li>例:サンゴの生存率と捕食者の個体密度
+<ul>
+<li>捕食者がサンゴを捕食しているのを観測 = 捕食者の密度 $$ サンゴの生存率</li>
+<li>もし捕食者が死にかけのサンゴしか食べないなら、サンゴの生存率 <span class="math inline">\(\rightarrow\)</span> 捕食者の密度</li>
+<li>後者が真の因果関係なら、前者はデータに基づく我々の主観的な理解</li>
+</ul></li>
+</ul>
+<div class="box">
+<p>定常性とは、データ生成過程が客観的な知識に基づいて記述されたものであり、 それが我々の主観的な理解と異なるからと言って、 データ生成過程が我々の主観的な理解と一致するように変化するわけではないことを保証するものである。</p>
+</div>
+<ul>
+<li>うーん、深い…？</li>
+</ul>
+</section><section id="stability_faithful" class="slide level2">
+<h2>定常性と忠実性の違い</h2>
+<ul>
+<li>定常性と忠実性は同義的に使われることは多いが、この本での定義は異なる
+<ul>
+<li>定常性:定性的な因果関係に基づくもの(忠実性を満たさないものも含む)</li>
+<li>忠実性:条件付き独立関係とそれを表現したDAGに着目したもの</li>
+</ul></li>
+<li>例:$ X Y $
+<ul>
+<li>定常性の観点では、<span class="math inline">\(Y\)</span>が<span class="math inline">\(X\)</span>の原因となることはないことを意味している
+<ul>
+<li>因果関係の有無や大きさをデータによって判断</li>
+</ul></li>
+<li>忠実性の観点では、<span class="math inline">\(X\)</span>が<span class="math inline">\(Y\)</span>に影響を与えている前提で、その影響の大きさが興味の対象</li>
+</ul></li>
+</ul>
+</section><section id="discussion4" class="slide level2">
+<h2>考察(自律性)</h2>
+<ul>
+<li><span class="math inline">\(X_i = g_i(\text{pa}(X_i), \epsilon_i)\)</span>に含まれる各方程式はモジュール
+<ul>
+<li>モジュール同士に依存関係がない</li>
+<li>いくつかの構造方程式が変化したとしても、直接的には変化の対象となっていない構造方程式はそのまま</li>
+<li>直接的変化が起こった構造方程式だけを修正することで、変化に対応した因果モデルを構築できる</li>
+<li>3.5節で詳しく</li>
+</ul></li>
+<li>因果関係を記述する数理モデルに柔軟性を与える仮定</li>
+</ul>
+</section><section id="bn_causality" class="slide level2">
+<h2>BNと因果ダイアグラムの思想の違い</h2>
+<ul>
+<li>2章の条件付き確率は、同時分布に基づいて定式化</li>
+<li>ベイジアンネットワークは、任意の変数順序でDAGを構築可能
+<ul>
+<li>同時分布の近似、統計的独立関係の視覚的表現</li>
+<li>(近似の良さなどを問わなければ)一意性がない</li>
+</ul></li>
+<li>因果ダイアグラムは、データ生成過程を視覚的に表現したもの
+<ul>
+<li>条件付き確率に基づいて同時分布を定式化</li>
+</ul></li>
+<li>因果ダイアグラムは、データ生成過程が与えられたら一意に定まる
+<ul>
+<li>因果ダイアグラムが与えられたら、定性的なデータ生成過程も一意に定まる(方程式の詳細はわからないけど)</li>
+</ul></li>
+</ul>
+</section></section>
+<section><section id="確率構造的因果モデル物理モデル" class="title-slide slide level1"><h1>確率・構造的因果モデル・物理モデル</h1></section><section id="causality_probability" class="slide level2">
+<h2>確率と因果関係</h2>
+<p>データを用いて因果関係を調べることが多い。この時どんなことに気をつけるべきか？</p>
+<ul>
+<li><p>まずは確率分布の考え方について</p></li>
+<li><p>データが採取された背景(<span class="math inline">\(K\)</span>)が存在していて、データは「<span class="math inline">\(K\)</span>による条件付き」となっている</p></li>
+<li><p>暗黙的に制約された背景の中で因果推論を行おうとしている</p></li>
+</ul>
+</section><section id="causality_probability" class="slide level2">
+<h2>物理モデルと因果関係</h2>
+<ul>
+<li>物理の方程式は対称的</li>
+<li>一方で、「AがBを引き起こす」と「BがAを引きをこす」とを比較する時、1つの方程式の話をしているわけではない</li>
+<li>因果モデルは3つの要素が追加されている
+<ul>
+<li>inとoutの区別(左辺が右辺で生成されている、両辺の入れ替えが発生するような式変形はNG)</li>
+<li>各方程式は独立したメカニズムに対応しているという仮定</li>
+<li>介入・自律性</li>
+</ul></li>
+<li>例:気体の体積と圧力の関係を定式化したボイルの法則</li>
+</ul>
+</section><section id="macro_micro" class="slide level2">
+<h2>大域的と局所的</h2>
+<ul>
+<li>大域的な研究成果は、小さな研究成果の積み重ねと考えると、 局所的世界で因果関係を議論するのは普通
+<ul>
+<li>ただし、不要な議論を避けるために、データが採取された背景や問題設定を明確にしておく</li>
+</ul></li>
+<li>見かけ上同じ測定項目でも、どの粒度の現象に興味があるのかによって、扱う因果関係の問題は異なる
+<ul>
+<li>マクロ的な現象に興味があるのか？ミクロ的な現象に興味があるのか？</li>
+</ul></li>
+</ul>
+</section><section id="external_validity" class="slide level2">
+<h2>外的妥当性</h2>
+<ul>
+<li>データが採取された状況とデータ解析結果を適用しようとする状況では、 大なり小なり背景情報は異なる
+<ul>
+<li>RCTでも人種・性別・地域などの背景が異なれば結果が異なることは十分あり得る</li>
+<li>交互作用効果を適切に評価しよう！(詳しくは4.7節)</li>
+</ul></li>
+<li>ある集団で得られた結果が、別の集団でどの程度成り立つかという問題
+<ul>
+<li>移設可能性(transportability)</li>
+<li>大域的に捉えると、一般化可能性(generalizability)や外的妥当性(external validity)</li>
+<li>RCT最強と思わないでね？</li>
+</ul></li>
+</ul>
+</section></section>
+<section><section id="interpretation_arrow" class="title-slide slide level1"><h1>矢線の解釈</h1></section><section id="arrow" class="slide level2">
+<h2>矢線の解釈</h2>
+<p>因果推論の観点から、グラフの矢線に対する直感的な解釈をやり直す(これまでは統計的独立関係の観点だった)</p>
+<ul>
+<li><span class="math inline">\(X \rightarrow Y\)</span>は、<span class="math inline">\(X\)</span>が<span class="math inline">\(Y\)</span>に対して直接的に影響を与える<strong>可能性がある</strong>と言っているだけ
+<ul>
+<li>データで評価して見たら、「直接的な因果関係はなかった」と判断される場合もある</li>
+</ul></li>
+<li>因果ダイアグラムはデータ生成過程の定性的な性質を視覚的に表現しただけ
+<ul>
+<li>矢線があっても、生成過程の詳細や、因果効果の強さは分からない</li>
+<li>矢線が無いと、定量的に評価しなくても直接的な因果関係がないことは確認できる(故に強い主張)</li>
+<li>統計的仮説検定の帰無仮説を考えるとわかりやすい
+<ul>
+<li>帰無仮説が棄却されなくても、帰無仮説を積極的に採択するわけじゃない</li>
+</ul></li>
+</ul></li>
+</ul>
+</section></section>
+<section><section id="module" class="title-slide slide level1"><h1>モジュール性と外的操作</h1></section><section id="autonomous" class="slide level2">
+<h2>自律性の仮定</h2>
+<ul>
+<li>自律性を仮定するから、DAGを用いた因果推論が柔軟になる
+<ul>
+<li>外的操作の対象となっている構造方程式だけを興味のある外的操作方程式に入れ替えればOK</li>
+</ul></li>
+<li>データ生成過程に基づく数理モデルは偉大
+<ul>
+<li>データ生成過程が反映されていない同時分布を使っても、条件付き確率に基づく予測しかできない</li>
+<li>自律性を仮定し、構造方程式モデルの構成要素をモジュールとみなせれば、 介入を行ったときの反応の状態を数学的に取り扱える</li>
+</ul></li>
+</ul>
+</section><section id="intervention" class="slide level2">
+<h2>介入(外的操作)</h2>
+<ul>
+<li>構造方程式モデルにおける外的操作とは、興味ある構造方程式を他の方程式に置き換えること
+<ul>
+<li>3.16式と3.18式を見比べる</li>
+<li>外的操作を行う前の因果ダイアグラム:図3-2</li>
+<li>外的操作を行った後の因果ダイアグラム:図3-3(a)</li>
+</ul></li>
+<li>確率変数の同時分布は、<span class="math inline">\(\text{do}(X=x)\)</span>を使って書ける
+<ul>
+<li>関数関係の置き換えという数学的操作</li>
+<li>「<span class="math inline">\(X=x\)</span>または<span class="math inline">\(x&#39;\)</span>」のような選言的な外的操作を直接的には扱えない
+<ul>
+<li>No Multiple Versions of Treatmentが成り立たないケース</li>
+<li>処理水準内では異質性が存在しないという仮定(P13下)</li>
+</ul></li>
+</ul></li>
+</ul>
+</section><section id="intervention_conditioning" class="slide level2">
+<h2>介入と条件付けの違い</h2>
+<ul>
+<li>条件付け(conditioning)
+<ul>
+<li><span class="math inline">\(X=x\)</span>が観察されている状況</li>
+<li>因果ダイアグラムそのものに変化はない</li>
+</ul></li>
+<li>介入(外的操作, intervention)
+<ul>
+<li>強制的に<span class="math inline">\(X=x\)</span>に固定する</li>
+<li>元の因果ダイアグラムから介入対象の変数に向かう矢線をすべて取り除く</li>
+</ul></li>
+</ul>
+</section><section id="intervention_RCT" class="slide level2">
+<h2>介入とRCT</h2>
+<ul>
+<li>P87の内容</li>
+<li>介入は強制的に確率1で値を固定するから、ランダム割付とは異なる？
+<ul>
+<li>介入は、ある値に固定すること(原子的介入)だけじゃない</li>
+</ul></li>
+<li>RCTは、<span class="math inline">\(X\)</span>に対応する構造方程式を確率<span class="math inline">\(p^*(x_1)\)</span>で<span class="math inline">\(X=x_1\)</span>を取り、 確率<span class="math inline">\(1-p^*(x_1)\)</span>で<span class="math inline">\(X=x_0\)</span>を取るような確率変数に置き換える操作を考えれば良い
+<ul>
+<li>同時分布は、3.22式で与えられる</li>
+<li>因果ダイアグラムは、<span class="math inline">\(X\)</span>に向かう矢線が取り除かれた形式で記述</li>
+</ul></li>
+<li>RCTはdoオペレーターで定義される確率分布を直接求める研究デザイン</li>
+</ul>
+</section><section id="do_1" class="slide level2">
+<h2>doオペレーターの性質1</h2>
+<div class="box">
+<p><span class="math inline">\(X_i\)</span>を一定の値<span class="math inline">\(x_i\)</span>に固定するという外的操作が確率1で行われるならば、以下が成り立つ</p>
+<p><span class="math display">\[
+p(x_i|\text{do}(X_i = x_i)) = 1
+\]</span></p>
+</div>
+</section><section id="do_2" class="slide level2">
+<h2>doオペレーターの性質2</h2>
+<div class="box">
+<p><span class="math display">\[
+p(x_i | \text{do}(\text{pa}(X_i) = \text{pa}(x_i))) = p(x_i | \text{pa}(x_i))
+\]</span></p>
+<p>が成立する。</p>
+</div>
+<ul>
+<li><p><span class="math inline">\(\text{pa}(X_i) = (X_{i,1}, \dots, X_{i,q})^\top\)</span></p></li>
+<li><p><span class="math inline">\(\text{pa}(x_i) = (x_{i,1}, \dots, x_{i,q})^\top\)</span></p></li>
+<li><p><span class="math inline">\(\text{do}(\text{pa}(X_i) = \text{pa}(x_i))\)</span>は、<span class="math inline">\((\text{do}(X_{i,1} = x_{i,1}), \dots, \text{do}(X_{i,q} = x_{i,q}))^\top\)</span>を意味する</p></li>
+<li><p><span class="math inline">\(X_i\)</span>の直接的原因集合<span class="math inline">\(\text{pa}(X_i)\)</span>に外的操作を行ったときの<span class="math inline">\(X_i\)</span>の確率分布は、<span class="math inline">\(\text{pa}(X_i)\)</span>を与えた時の<span class="math inline">\(X_i\)</span>の条件付き確率分布に等しい</p>
+<ul>
+<li>左辺は、<span class="math inline">\(\text{pa}(X_i)\)</span>に向かう矢線を取り除いた因果ダイアグラム</li>
+<li>右辺は、因果ダイアグラムはそのままに<span class="math inline">\(\text{pa}(X_i)\)</span>を条件つけただけ</li>
+</ul></li>
+</ul>
+</section><section id="do_3" class="slide level2">
+<h2>doオペレーターの性質3</h2>
+<div class="box">
+<p><span class="math inline">\(\{ X_i \} \cup \text{pa}(X_i)\)</span>と排反な任意の集合<span class="math inline">\(\mathbf S\)</span>に対して、以下が成り立つ</p>
+<p><span class="math display">\[
+\begin{align}
+p(&amp;x_i | \text{do}(\text{pa}(X_i) = \text{pa}(x_i)), \text{do}(\mathbf S = \mathbf s)) \\
+&amp;= p(x_i | \text{do}(\text{pa}(X_i) = \text{pa}(x_i)) \\
+&amp;= p(x_i | \text{pa}(x_i))
+\end{align}
+\]</span></p>
+</div>
+<p><span class="math inline">\(X_i\)</span>の直接的原因<span class="math inline">\(\text{pa}(X_i)\)</span>と<span class="math inline">\(\mathbf S\)</span>の両方に外的操作を行ったときの<span class="math inline">\(X_i\)</span>の確率分布は、 <span class="math inline">\(\text{pa}(X_i)\)</span>のみに外的操作を行ったときの<span class="math inline">\(X_i\)</span>の確率分布と等しい</p>
+<p>また、性質2より、上記は<span class="math inline">\(\text{pa}(X_i)\)</span>を与えたときの<span class="math inline">\(X_i\)</span>の条件付き確率分布と等しい</p>
+</section></section>
+    </div>
+  </div>
+
+  <script src="site_libs/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="site_libs/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: true,
+        // Transition style
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+
+
+        chalkboard: {
+          theme: 'whiteboard',
+        },
+
+        keyboard: {
+          67: function() { RevealChalkboard.toggleNotesCanvas() },    // toggle notes canvas when 'c' is pressed
+          66: function() { RevealChalkboard.toggleChalkboard() }, // toggle chalkboard when 'b' is pressed
+          46: function() { RevealChalkboard.clear() },    // clear chalkboard when 'DEL' is pressed
+           8: function() { RevealChalkboard.reset() },    // reset chalkboard data on current slide when 'BACKSPACE' is pressed
+          68: function() { RevealChalkboard.download() }, // downlad recorded chalkboard drawing when 'd' is pressed
+        },
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'site_libs/reveal.js-3.3.0.1/plugin/chalkboard/chalkboard.js', async: true },
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
