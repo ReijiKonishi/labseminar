@@ -45,6 +45,12 @@ knitr::opts_knit$set(width = 75)
 - 3章: [因果ダイアグラムと因果効果の識別可能条件](https://reijikonishi.github.io/labseminar/Pearl_03.html)
 
 
+### 黒木学 構造的因果モデルの基礎
+
+スライド形式でのまとめ
+
+- 3章前半:[因果ダイアグラムの基礎(3.5節まで)](https://reijikonishi.github.io/labseminar/Kuroki_03.html)
+
 
 ## 論文レビュー
 
@@ -55,7 +61,8 @@ knitr::opts_knit$set(width = 75)
 
 
 # 更新履歴
-
+* 2020/08/13
+  * 輪読「構造的因果モデルの基礎」の3章資料追加
 * 2020/08/07
   * Mako Yamayoshi, et al(2020) 追加
 * 2020/07/21
