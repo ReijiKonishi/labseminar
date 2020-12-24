@@ -1,0 +1,46 @@
+---
+title: "Learning Large-Scale Poisson DAG Models based on OverDispersion Scoring"
+author: "Reiji Konishi"
+date: "2020/9/1"
+output:
+  html_document:
+    self_contained: TRUE
+    df_print: paged
+    toc: TRUE
+    toc_float: TRUE
+    toc_depth: 2
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r knitr_init, echo=FALSE, message=FALSE, warning=FALSE}
+# library
+library(knitr)
+library(rmdformats)
+
+# Global Options
+options(max.print = 100, stringsAsFactors = FALSE)
+knitr::opts_chunk$set(
+  echo = TRUE,
+  tidy = TRUE,
+  comment = NA,
+  warning = FALSE,
+  message = FALSE,
+  eval = TRUE
+)
+
+knitr::opts_knit$set(width = 75)
+```
+
+
+# 概要
+
+[Gunwoong Park, et al(2017) , Learning Large-Scale Poisson DAG Models based on OverDispersion Scoring *arXiv:170408783*](http://papers.nips.cc/paper/5896-learning-large-scale-poisson-dag-models-based-on-overdispersion-scoring)
+
+* ポアソンDAGモデルの識別可能性と推定アルゴリズムについて
+* 各変数がポアソン分布に従い、パラメータがDAGの親変数に依存するモデル
+* 過分散を利用すると、ポアソンDAGの因果的順序を多項式時間で学習できることを証明
+
+
+# Poisson DAG Models
+
